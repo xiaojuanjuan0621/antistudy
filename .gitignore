@@ -1,0 +1,22 @@
+# 依赖包
+node_modules/
+package-lock.json
+
+# 本地数据与上传的视频媒体文件（避免把几十G视频推到Git仓库）
+data/
+uploads/
+*.db
+*.db-journal
+
+# 临时打包文件
+*.tar.gz
+*.b64
+deploy_*.txt
+chunk_run_*
+inject_step*.txt
+dist/
+
+# 环境变量与系统文件
+.env
+.DS_Store
+Thumbs.db
