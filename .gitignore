@@ -4,7 +4,8 @@ package-lock.json
 
 # 本地数据与上传的视频媒体文件（避免把几十G视频推到Git仓库）
 data/
-uploads/
+uploads/*
+!uploads/assets/
 *.db
 *.db-journal
 

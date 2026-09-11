@@ -2,8 +2,8 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>知识冒险岛 (ANti Study) - 少年 AI 学习探索基地</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>知识冒险岛 (ANti Study) - 少年 AI 学习与探索基地</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
   <script>
@@ -26,190 +26,269 @@
     }
   </script>
   <style>
+    :root {
+      --sat: env(safe-area-inset-top, 0px);
+      --sab: env(safe-area-inset-bottom, 0px);
+      --sal: env(safe-area-inset-left, 0px);
+      --sar: env(safe-area-inset-right, 0px);
+    }
     body {
       touch-action: manipulation;
-      user-select: none;
-      -webkit-user-select: none;
       background: #0B0F19;
       color: #F1F5F9;
-      overflow: hidden;
-    }
-    .ipad-container {
-      width: 100vw;
-      height: 100vh;
+      min-height: 100vh;
+      min-height: 100dvh;
       display: flex;
       flex-direction: column;
     }
+    .app-container {
+      width: 100%;
+      height: 100vh;
+      height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      padding-top: var(--sat);
+      padding-bottom: 0;
+      padding-left: var(--sal);
+      padding-right: var(--sar);
+    }
     ::-webkit-scrollbar {
-      width: 6px;
-      height: 6px;
+      width: 5px;
+      height: 5px;
     }
     ::-webkit-scrollbar-thumb {
       background: #334155;
       border-radius: 4px;
     }
     .glass-card {
-      background: rgba(30, 41, 59, 0.7);
-      backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(30, 41, 59, 0.75);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.09);
     }
     @keyframes pulse-flame {
       0%, 100% { transform: scale(1); filter: drop-shadow(0 0 8px rgba(255, 77, 79, 0.6)); }
-      50% { transform: scale(1.1); filter: drop-shadow(0 0 16px rgba(255, 153, 0, 0.9)); }
+      50% { transform: scale(1.12); filter: drop-shadow(0 0 16px rgba(255, 153, 0, 0.9)); }
     }
     .flame-active {
       animation: pulse-flame 2s infinite ease-in-out;
     }
     @keyframes pet-bounce {
       0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-8px); }
+      50% { transform: translateY(-7px); }
     }
     .pet-bounce {
       animation: pet-bounce 2.5s infinite ease-in-out;
     }
+    .mobile-bottom-nav {
+      padding-bottom: calc(0.5rem + var(--sab));
+    }
+    .reader-theme-dark {
+      background-color: #0d131f;
+      color: #e2e8f0;
+    }
+    .reader-theme-eye {
+      background-color: #f6eedb;
+      color: #2d3748;
+    }
+    .reader-theme-green {
+      background-color: #e8f5e9;
+      color: #1b5e20;
+    }
+    @keyframes sound-wave {
+      0%, 100% { height: 4px; }
+      50% { height: 18px; }
+    }
+    .sound-bar-1 { animation: sound-wave 1.2s infinite ease-in-out; }
+    .sound-bar-2 { animation: sound-wave 0.8s infinite 0.2s ease-in-out; }
+    .sound-bar-3 { animation: sound-wave 1.1s infinite 0.4s ease-in-out; }
+    .sound-bar-4 { animation: sound-wave 0.9s infinite 0.1s ease-in-out; }
   </style>
 </head>
 <body class="font-sans antialiased">
 
-  <div class="ipad-container">
+  <div class="app-container">
     
-    <!-- 1. iPad 顶部轻量状态栏 -->
-    <header class="h-16 px-6 glass-card border-b border-slate-800 flex items-center justify-between z-20">
-      <div class="flex items-center space-x-3">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-cyan-400 flex items-center justify-center shadow-lg shadow-brand-500/20">
-          <span class="text-xl">🏝️</span>
+    <!-- 1. 顶部响应式导航栏 -->
+    <header class="h-14 md:h-16 px-3 sm:px-6 glass-card border-b border-slate-800 flex items-center justify-between z-20 flex-shrink-0">
+      <!-- 左侧 Logo & 标题 -->
+      <div class="flex items-center space-x-2 sm:space-x-3">
+        <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-2xl bg-gradient-to-tr from-brand-600 via-indigo-500 to-cyan-400 p-0.5 shadow-lg shadow-brand-500/25 flex-shrink-0">
+          <img src="/uploads/assets/pet_panda.png" class="w-full h-full object-cover rounded-[14px]" alt="Logo">
         </div>
         <div>
-          <h1 class="font-black text-lg text-white flex items-center gap-2">
+          <h1 class="font-black text-sm sm:text-lg text-white flex items-center gap-1.5 leading-tight">
             知识冒险岛
           </h1>
-          <p class="text-xs text-slate-400">每天看一课 · 探索大世界</p>
+          <p class="text-[10px] sm:text-xs text-slate-400 hidden sm:block">看视频 · 读好书 · 听故事</p>
         </div>
       </div>
 
-      <div class="flex items-center space-x-4">
+      <!-- 右侧资产 & 状态卡片 -->
+      <div class="flex items-center space-x-1.5 sm:space-x-3">
         <!-- 连胜小火焰 -->
-        <div class="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-slate-800/80 border border-slate-700/60 shadow-inner">
-          <span class="text-xl flame-active">🔥</span>
-          <span class="text-sm font-bold text-amber-400" id="top-streak">18 天连胜</span>
+        <div class="flex items-center space-x-1 px-2 py-1 sm:px-3 sm:py-1.5 rounded-xl bg-slate-800/80 border border-slate-700/60 shadow-inner">
+          <span class="text-sm sm:text-base flame-active">🔥</span>
+          <span class="text-xs sm:text-sm font-bold text-amber-400" id="top-streak">18 天</span>
         </div>
 
         <!-- 等级与经验 -->
-        <div class="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-slate-800/80 border border-slate-700/60">
-          <span class="text-xs font-bold text-cyan-400 px-1.5 py-0.5 rounded bg-cyan-500/20">Lv.3</span>
-          <span class="text-xs font-semibold text-slate-300" id="top-xp-text">1850 经验</span>
+        <div class="flex items-center space-x-1 px-2 py-1 sm:px-3 sm:py-1.5 rounded-xl bg-slate-800/80 border border-slate-700/60">
+          <span class="text-[10px] sm:text-xs font-bold text-cyan-400 px-1 py-0.5 rounded bg-cyan-500/20">Lv.3</span>
+          <span class="text-xs font-semibold text-slate-300 hidden sm:inline" id="top-xp-text">1850 XP</span>
         </div>
 
         <!-- 心愿币 (点击直接弹窗填写心愿) -->
-        <button onclick="openWishModal()" class="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 transition">
-          <span class="text-lg">💰</span>
-          <span class="text-sm font-bold text-amber-300" id="top-coins">680 心愿币</span>
-          <span class="text-[10px] text-amber-400 bg-amber-500/20 px-1 rounded ml-1">✏️</span>
+        <button onclick="openWishModal()" class="flex items-center space-x-1 px-2 py-1 sm:px-3 sm:py-1.5 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 transition">
+          <span class="text-sm sm:text-base">💰</span>
+          <span class="text-xs sm:text-sm font-bold text-amber-300" id="top-coins">680</span>
+          <span class="text-[10px] text-amber-400 bg-amber-500/20 px-1 rounded hidden sm:inline">✏️</span>
         </button>
 
         <!-- 管理后台快捷入口 -->
-        <a href="admin.html" class="flex items-center space-x-1 px-3 py-1.5 rounded-xl bg-indigo-600/30 hover:bg-indigo-600/50 border border-indigo-500/40 text-xs font-bold text-indigo-200 transition">
-          <span>⚙️ 批量上传 ↗</span>
+        <a href="admin.html" class="flex items-center space-x-1 px-2 py-1 sm:px-3 sm:py-1.5 rounded-xl bg-indigo-600/30 hover:bg-indigo-600/50 border border-indigo-500/40 text-[11px] sm:text-xs font-bold text-indigo-200 transition">
+          <span>⚙️<span class="hidden sm:inline"> 上传</span></span>
         </a>
 
         <!-- 用户名 -->
-        <div class="flex items-center space-x-2 pl-2">
-          <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100" class="w-8 h-8 rounded-full ring-2 ring-brand-500/50 object-cover">
-          <span class="text-sm font-medium text-slate-200">张安泽</span>
+        <div class="flex items-center space-x-1.5 pl-1 sm:pl-2">
+          <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100" class="w-7 h-7 sm:w-8 sm:h-8 rounded-full ring-2 ring-brand-500/50 object-cover" alt="用户头像">
+          <span class="text-xs sm:text-sm font-medium text-slate-200 hidden md:inline">张安泽</span>
         </div>
       </div>
     </header>
 
-    <!-- 2. 主体横屏双栏 -->
-    <main class="flex-1 flex overflow-hidden">
+    <!-- 2. 主体区 (桌面/iPad 左侧栏 + 手机端底部栏) -->
+    <main class="flex-1 flex flex-col md:flex-row overflow-hidden relative">
       
-      <!-- 左侧导航 -->
-      <nav class="w-20 bg-slate-900/90 border-r border-slate-800 flex flex-col items-center py-6 space-y-6 select-none">
-        <button onclick="switchTab('workspace')" id="nav-workspace" class="nav-item active flex flex-col items-center p-3 rounded-2xl text-cyan-400 bg-brand-500/15 border border-brand-500/30 transition w-14">
-          <span class="text-2xl mb-1">🗺️</span>
-          <span class="text-[10px] font-bold">学习地图</span>
+      <!-- 桌面/平板侧边导航 (md及以上显示) -->
+      <nav class="hidden md:flex w-20 bg-slate-900/90 border-r border-slate-800 flex-col items-center py-5 space-y-4 select-none flex-shrink-0 z-10">
+        <button onclick="switchTab('workspace')" id="nav-workspace" class="nav-item active flex flex-col items-center p-2.5 rounded-2xl text-cyan-400 bg-brand-500/15 border border-brand-500/30 transition w-14">
+          <span class="text-xl mb-0.5">🗺️</span>
+          <span class="text-[10px] font-bold">地图</span>
         </button>
-        <button onclick="switchTab('interactive_video')" id="nav-video" class="nav-item flex flex-col items-center p-3 rounded-2xl text-slate-400 hover:text-slate-200 transition w-14">
-          <span class="text-2xl mb-1">🎬</span>
-          <span class="text-[10px] font-bold">正在看</span>
+        <button onclick="switchTab('interactive_video')" id="nav-video" class="nav-item flex flex-col items-center p-2.5 rounded-2xl text-slate-400 hover:text-slate-200 transition w-14">
+          <span class="text-xl mb-0.5">🎬</span>
+          <span class="text-[10px] font-bold">看视频</span>
         </button>
-        <button onclick="switchTab('ai_pk')" id="nav-pk" class="nav-item flex flex-col items-center p-3 rounded-2xl text-slate-400 hover:text-slate-200 transition w-14">
-          <span class="text-2xl mb-1">🤖</span>
+        <button onclick="switchTab('books')" id="nav-books" class="nav-item flex flex-col items-center p-2.5 rounded-2xl text-slate-400 hover:text-slate-200 transition w-14">
+          <span class="text-xl mb-0.5">📖</span>
+          <span class="text-[10px] font-bold">看书</span>
+        </button>
+        <button onclick="switchTab('audios')" id="nav-audios" class="nav-item flex flex-col items-center p-2.5 rounded-2xl text-slate-400 hover:text-slate-200 transition w-14">
+          <span class="text-xl mb-0.5">🎧</span>
+          <span class="text-[10px] font-bold">听音频</span>
+        </button>
+        <button onclick="switchTab('ai_pk')" id="nav-pk" class="nav-item flex flex-col items-center p-2.5 rounded-2xl text-slate-400 hover:text-slate-200 transition w-14">
+          <span class="text-xl mb-0.5">🤖</span>
           <span class="text-[10px] font-bold">对战</span>
         </button>
-        <button onclick="switchTab('cards')" id="nav-cards" class="nav-item flex flex-col items-center p-3 rounded-2xl text-slate-400 hover:text-slate-200 transition w-14">
-          <span class="text-2xl mb-1">🎴</span>
-          <span class="text-[10px] font-bold">卡牌</span>
-        </button>
-        <button onclick="switchTab('parent')" id="nav-parent" class="nav-item flex flex-col items-center p-3 rounded-2xl text-slate-400 hover:text-slate-200 transition w-14">
-          <span class="text-2xl mb-1">📊</span>
+        <button onclick="switchTab('parent')" id="nav-parent" class="nav-item flex flex-col items-center p-2.5 rounded-2xl text-slate-400 hover:text-slate-200 transition w-14">
+          <span class="text-xl mb-0.5">📊</span>
           <span class="text-[10px] font-bold">周报</span>
         </button>
       </nav>
 
-      <!-- 右侧主体内容容器 -->
-      <div class="flex-1 relative bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 overflow-hidden">
+      <!-- 主体内容容器 -->
+      <div class="flex-1 relative bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 overflow-hidden flex flex-col">
 
         <!-- ================= VIEW 1: 学习地图 (极简清晰大纲 + 陪伴宠物) ================= -->
-        <section id="view-workspace" class="view-panel w-full h-full p-8 overflow-y-auto">
-          <div class="max-w-6xl mx-auto space-y-6">
+        <section id="view-workspace" class="view-panel w-full h-full p-4 sm:p-6 md:p-8 overflow-y-auto">
+          <div class="max-w-6xl mx-auto space-y-4 sm:space-y-6 pb-6">
             
-            <!-- 陪伴连胜小宠物互动卡 (小熊猫/探索机器人) -->
-            <div class="relative overflow-hidden rounded-3xl p-6 bg-gradient-to-r from-blue-900/40 via-indigo-950/40 to-slate-800/60 border border-brand-500/30 flex items-center justify-between">
-              <div class="space-y-2 z-10 flex-1 pr-6">
-                <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-cyan-500/20 text-cyan-300 text-xs font-bold">
+            <!-- 陪伴连胜小宠物互动卡 (带生动的AI生图海报底图与吉祥物) -->
+            <div class="relative overflow-hidden rounded-3xl p-5 sm:p-8 border border-brand-500/30 flex flex-col-reverse sm:flex-row items-start sm:items-center justify-between gap-4 shadow-2xl bg-slate-900">
+              <!-- 背景装饰图 -->
+              <img src="/uploads/assets/island_banner.png" class="absolute inset-0 w-full h-full object-cover opacity-25 filter blur-[1px]" alt="Banner Background">
+              <div class="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/80 to-transparent"></div>
+
+              <div class="space-y-2.5 z-10 flex-1 w-full sm:w-auto relative">
+                <div class="inline-flex items-center flex-wrap gap-1.5 sm:space-x-2 px-3 py-1 rounded-full bg-cyan-500/20 text-cyan-300 text-xs font-bold border border-cyan-500/30 backdrop-blur-sm">
                   <span id="pet-name">🐼 连胜伙伴 · 智多星小拓</span>
                   <span class="text-amber-400">🔥 陪伴连胜 18 天</span>
                 </div>
-                <h2 class="text-2xl font-black text-white" id="pet-bubble-text">
-                  “安泽，今天我们继续闯过数学第 2 关吧！”
+                <h2 class="text-xl sm:text-3xl font-black text-white leading-snug drop-shadow-md" id="pet-bubble-text">
+                  “安泽，今天我们继续探索知识大世界吧！”
                 </h2>
-                <p class="text-xs text-slate-300">
-                  每看完 1 课，小拓都会为你点燃连胜火焰、增加 15 心愿币！
+                <p class="text-xs sm:text-sm text-slate-300 max-w-xl">
+                  每天看一课视频、读一本好书或听一段故事，小拓都会为你点燃连胜火焰、增加 15 心愿币！
                 </p>
-                <div class="pt-1 flex gap-2">
-                  <button onclick="interactWithPet()" class="px-3.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs border border-slate-700 flex items-center gap-1">
+                <div class="pt-2 flex flex-wrap gap-2.5">
+                  <button onclick="interactWithPet()" class="px-4 py-2 rounded-xl bg-slate-800/90 hover:bg-slate-700 text-slate-200 font-bold text-xs border border-slate-700 flex items-center gap-1.5 active:scale-95 transition shadow-md">
                     <span>🐾 摸摸小拓 / 换装</span>
+                  </button>
+                  <button onclick="switchTab('books')" class="px-4 py-2 rounded-xl bg-indigo-600/40 hover:bg-indigo-600/70 text-indigo-200 font-bold text-xs border border-indigo-500/40 flex items-center gap-1.5 active:scale-95 transition shadow-md backdrop-blur-sm">
+                    <span>📖 阅览室读好书</span>
+                  </button>
+                  <button onclick="switchTab('audios')" class="px-4 py-2 rounded-xl bg-amber-600/40 hover:bg-amber-600/70 text-amber-200 font-bold text-xs border border-amber-500/40 flex items-center gap-1.5 active:scale-95 transition shadow-md backdrop-blur-sm">
+                    <span>🎧 有声馆听故事</span>
                   </button>
                 </div>
               </div>
 
-              <!-- 活泼跳跃的宠物形象 -->
-              <div class="text-8xl select-none cursor-pointer pet-bounce transform hover:scale-110 transition" onclick="interactWithPet()" id="pet-avatar" title="点击和小宠物互动">
-                🐼
+              <!-- 活泼跳跃的宠物形象 (AI 生图 3D 吉祥物) -->
+              <div class="self-end sm:self-center z-10 flex-shrink-0 cursor-pointer pet-bounce transform hover:scale-105 active:scale-95 transition" onclick="interactWithPet()" title="点击和小宠物互动">
+                <div class="w-24 h-24 sm:w-36 sm:h-36 rounded-3xl overflow-hidden ring-4 ring-brand-500/40 shadow-2xl bg-slate-800">
+                  <img src="/uploads/assets/pet_panda.png" id="pet-avatar-img" class="w-full h-full object-cover" alt="Pet Avatar">
+                </div>
               </div>
             </div>
 
-            <!-- 🗺️ 学习地图列表 (可以无限上传很多个，分类清晰) -->
+            <!-- 快捷多维探索入口卡 (生动图文图标) -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+              <div onclick="switchTab('interactive_video')" class="p-4 rounded-2xl glass-card border-brand-500/30 hover:border-brand-500/60 cursor-pointer transition active:scale-95 group relative overflow-hidden">
+                <div class="text-3xl mb-1.5 group-hover:scale-110 transition">🎬</div>
+                <div class="text-xs sm:text-sm font-bold text-white">视频课程</div>
+                <div class="text-[10px] sm:text-xs text-cyan-300">系统大纲规划</div>
+              </div>
+              <div onclick="switchTab('books')" class="p-4 rounded-2xl glass-card border-cyan-500/30 hover:border-cyan-500/60 cursor-pointer transition active:scale-95 group relative overflow-hidden">
+                <div class="text-3xl mb-1.5 group-hover:scale-110 transition">📖</div>
+                <div class="text-xs sm:text-sm font-bold text-white">少年阅览室</div>
+                <div class="text-[10px] sm:text-xs text-cyan-300" id="dash-book-count">3 本精品好书</div>
+              </div>
+              <div onclick="switchTab('audios')" class="p-4 rounded-2xl glass-card border-amber-500/30 hover:border-amber-500/60 cursor-pointer transition active:scale-95 group relative overflow-hidden">
+                <div class="text-3xl mb-1.5 group-hover:scale-110 transition">🎧</div>
+                <div class="text-xs sm:text-sm font-bold text-white">有声故事馆</div>
+                <div class="text-[10px] sm:text-xs text-amber-300" id="dash-audio-count">3 个精彩故事</div>
+              </div>
+              <div onclick="switchTab('ai_pk')" class="p-4 rounded-2xl glass-card border-emerald-500/30 hover:border-emerald-500/60 cursor-pointer transition active:scale-95 group relative overflow-hidden">
+                <div class="text-3xl mb-1.5 group-hover:scale-110 transition">🤖</div>
+                <div class="text-xs sm:text-sm font-bold text-white">AI 切磋擂台</div>
+                <div class="text-[10px] sm:text-xs text-emerald-300">自适应切磋对战</div>
+              </div>
+            </div>
+
+            <!-- 🗺️ 学习地图列表 (手机1列，平板及以上2列，封面大图) -->
             <div>
-              <div class="flex items-center justify-between mb-4">
-                <h3 class="text-lg font-bold text-white flex items-center gap-2">
-                  <span>🗺️ 我的探索地图</span>
+              <div class="flex items-center justify-between mb-3 sm:mb-4">
+                <h3 class="text-base sm:text-lg font-bold text-white flex items-center gap-2">
+                  <span>🗺️ 我的视频探索地图</span>
                   <span class="text-xs font-normal text-slate-400" id="total-series-label">(共 2 个完整系列)</span>
                 </h3>
               </div>
 
-              <div class="grid grid-cols-2 gap-6" id="learning-plans-container">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6" id="learning-plans-container">
                 <!-- 动态渲染所有课程系列 -->
               </div>
             </div>
 
             <!-- 🎯 心愿目标栏 (点击即可直接修改) -->
-            <div onclick="openWishModal()" class="p-5 rounded-2xl glass-card border-amber-500/30 hover:border-amber-500/60 cursor-pointer transition flex items-center justify-between group">
-              <div class="flex items-center space-x-4">
-                <div class="w-12 h-12 rounded-xl bg-amber-500/20 flex items-center justify-center text-2xl group-hover:scale-110 transition">
+            <div onclick="openWishModal()" class="p-4 sm:p-5 rounded-3xl glass-card border-amber-500/30 hover:border-amber-500/60 cursor-pointer transition flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 group">
+              <div class="flex items-center space-x-3 sm:space-x-4">
+                <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-amber-500/20 flex items-center justify-center text-2xl sm:text-3xl group-hover:scale-110 transition flex-shrink-0">
                   🎁
                 </div>
                 <div>
-                  <div class="flex items-center gap-2">
-                    <span class="text-xs font-bold px-2 py-0.5 rounded bg-amber-500/20 text-amber-400">我的心愿</span>
-                    <h4 class="font-bold text-sm text-white" id="banner-wish-title">《DK 青少年科学大百科》全套</h4>
-                    <span class="text-xs text-slate-400 group-hover:text-amber-300">✏️ 点击更换</span>
+                  <div class="flex items-center gap-2 flex-wrap">
+                    <span class="text-[11px] sm:text-xs font-bold px-2 py-0.5 rounded bg-amber-500/20 text-amber-400">我的心愿</span>
+                    <h4 class="font-bold text-xs sm:text-sm text-white" id="banner-wish-title">《DK 青少年科学大百科》全套</h4>
+                    <span class="text-[11px] sm:text-xs text-slate-400 group-hover:text-amber-300">✏️ 点击更换</span>
                   </div>
-                  <p class="text-xs text-slate-400 mt-0.5" id="banner-wish-desc">目标 1000 心愿币 · 当前还差 320 币</p>
+                  <p class="text-[11px] sm:text-xs text-slate-400 mt-0.5" id="banner-wish-desc">目标 1000 心愿币 · 当前还差 320 币</p>
                 </div>
               </div>
-              <div class="w-52 space-y-1">
+              <div class="w-full sm:w-52 space-y-1">
                 <div class="flex justify-between text-xs font-bold">
                   <span class="text-amber-400" id="banner-wish-progress-text">680 / 1000 币</span>
                   <span class="text-slate-400" id="banner-wish-pct">68%</span>
@@ -223,101 +302,183 @@
           </div>
         </section>
 
-        <!-- ================= VIEW 2: 正在看 (沉浸播放 + 右侧大纲 + 下节课) ================= -->
-        <section id="view-interactive-video" class="view-panel hidden w-full h-full p-6 flex flex-col">
-          <div class="flex items-center justify-between mb-3">
-            <button onclick="switchTab('workspace')" class="flex items-center gap-2 text-xs text-slate-300 hover:text-white px-3 py-1.5 rounded-xl bg-slate-800/80 border border-slate-700">
-              ← 返回探索地图
+        <!-- ================= VIEW 2: 正在看视频 (沉浸播放 + 右侧/底部大纲 + 下节课) ================= -->
+        <section id="view-interactive-video" class="view-panel hidden w-full h-full p-3 sm:p-5 md:p-6 flex flex-col overflow-y-auto lg:overflow-hidden">
+          <!-- 播放器顶部操作条 -->
+          <div class="flex items-center justify-between mb-2 sm:mb-3 flex-shrink-0 gap-2">
+            <button onclick="switchTab('workspace')" class="flex items-center gap-1 sm:gap-2 text-xs text-slate-300 hover:text-white px-2.5 py-1.5 rounded-xl bg-slate-800/80 border border-slate-700 flex-shrink-0">
+              <span>←</span> <span class="hidden sm:inline">返回探索地图</span><span class="sm:hidden">地图</span>
             </button>
-            <div class="text-center">
-              <span class="text-xs px-2.5 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 font-bold" id="player-series-title">
+            <div class="text-center truncate px-2">
+              <span class="text-[10px] sm:text-xs px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 font-bold block truncate" id="player-series-title">
                 小学四年级数学·分数的奥秘
               </span>
-              <h3 class="text-sm font-bold text-white mt-0.5" id="player-current-title">第2讲：真分数与假分数的秘密</h3>
+              <h3 class="text-xs sm:text-sm font-bold text-white mt-0.5 truncate" id="player-current-title">第2讲：真分数与假分数的秘密</h3>
             </div>
-            <div class="flex items-center gap-2">
-              <span class="text-xs px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30" id="player-mode-badge">
+            <div class="flex items-center gap-2 flex-shrink-0">
+              <span class="text-[10px] sm:text-xs px-2 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30" id="player-mode-badge">
                 ● 自由直看
               </span>
             </div>
           </div>
 
-          <div class="flex-1 flex gap-5 overflow-hidden">
+          <!-- 播放区主体：手机竖排，平板/桌面横排 -->
+          <div class="flex-1 flex flex-col lg:flex-row gap-4 lg:gap-5 overflow-visible lg:overflow-hidden min-h-0 pb-4 lg:pb-0">
             <!-- 播放器大屏 -->
-            <div class="flex-1 relative rounded-3xl overflow-hidden bg-black border border-slate-800 shadow-2xl flex flex-col justify-between">
+            <div class="flex-1 relative rounded-2xl sm:rounded-3xl overflow-hidden bg-black border border-slate-800 shadow-2xl flex flex-col justify-between aspect-video lg:aspect-auto min-h-[220px] sm:min-h-[320px]">
               <video id="course-video-player" class="w-full h-full object-cover" src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4" playsinline controls></video>
 
-              <!-- 答题蒙层 -->
-              <div id="ai-question-overlay" class="hidden absolute inset-0 bg-slate-950/85 backdrop-blur-md p-8 flex flex-col justify-center items-center z-30">
-                <div class="max-w-xl w-full glass-card p-6 rounded-3xl border-brand-500/50 shadow-2xl space-y-4">
-                  <span class="text-xs font-bold text-cyan-400 px-2 py-0.5 rounded bg-cyan-500/20">💡 思考时刻</span>
-                  <h4 class="text-base font-bold text-white" id="q-text">题目加载中...</h4>
-                  <div class="space-y-2" id="q-options-container"></div>
-                  <div id="q-feedback-panel" class="hidden p-3 rounded-xl text-xs space-y-1"></div>
-                  <button id="q-continue-btn" onclick="resumeVideoAfterAnswer()" class="hidden w-full py-3 rounded-xl bg-brand-500 text-white font-bold text-sm">
-                    继续观看 ▶
-                  </button>
-                </div>
-              </div>
-
               <!-- 底部完成打钩按钮 -->
-              <div class="absolute bottom-4 right-4 z-10">
-                <button onclick="handleCompleteAndNext()" class="px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-xs shadow-lg shadow-emerald-500/30 flex items-center gap-1.5 transition active:scale-95">
-                  <span>✓ 这一课我看完了，进入下一课</span> →
+              <div class="absolute bottom-3 right-3 sm:bottom-4 sm:right-4 z-10">
+                <button onclick="handleCompleteAndNext()" class="px-3.5 py-2 sm:px-5 sm:py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-[11px] sm:text-xs shadow-lg shadow-emerald-500/30 flex items-center gap-1.5 transition active:scale-95">
+                  <span>✓ <span class="hidden sm:inline">这一课我看完了，</span>进入下一课</span> →
                 </button>
               </div>
             </div>
 
-            <!-- 右侧大纲列表 -->
-            <div class="w-80 glass-card rounded-3xl p-5 flex flex-col justify-between overflow-hidden">
-              <div class="overflow-hidden flex flex-col flex-1">
-                <div class="flex items-center justify-between mb-3 border-b border-slate-700/60 pb-2">
-                  <h4 class="font-bold text-sm text-white flex items-center gap-2">
+            <!-- 右侧/下方大纲列表 -->
+            <div class="w-full lg:w-80 glass-card rounded-2xl sm:rounded-3xl p-4 sm:p-5 flex flex-col justify-between flex-shrink-0 max-h-80 lg:max-h-full">
+              <div class="overflow-hidden flex flex-col flex-1 min-h-0">
+                <div class="flex items-center justify-between mb-2 sm:mb-3 border-b border-slate-700/60 pb-2 flex-shrink-0">
+                  <h4 class="font-bold text-xs sm:text-sm text-white flex items-center gap-1.5">
                     <span>📑 全部课程目录</span>
                   </h4>
-                  <span class="text-xs text-slate-400" id="playlist-count-label">共 4 讲</span>
+                  <span class="text-[11px] sm:text-xs text-slate-400" id="playlist-count-label">共 4 讲</span>
                 </div>
-                <div class="space-y-2 overflow-y-auto flex-1 pr-1" id="series-playlist-container"></div>
+                <div class="space-y-2 overflow-y-auto flex-1 pr-1 max-h-48 lg:max-h-none" id="series-playlist-container"></div>
               </div>
 
               <!-- 下节课预告卡片 -->
-              <div class="mt-4 p-3.5 rounded-2xl bg-indigo-950/50 border border-indigo-500/30" id="next-lesson-preview-box">
-                <span class="text-[11px] font-bold text-indigo-300 block mb-0.5">👉 下一课看什么：</span>
+              <div class="mt-3 p-3 rounded-2xl bg-indigo-950/50 border border-indigo-500/30 flex-shrink-0" id="next-lesson-preview-box">
+                <span class="text-[10px] sm:text-[11px] font-bold text-indigo-300 block mb-0.5">👉 下一课看什么：</span>
                 <p class="text-xs font-bold text-white line-clamp-1" id="next-lesson-title">第3讲：分数通分与加减法</p>
               </div>
             </div>
           </div>
         </section>
 
-        <!-- ================= VIEW 3: 对战 ================= -->
-        <section id="view-ai-pk" class="view-panel hidden w-full h-full p-8 overflow-y-auto">
-          <div class="max-w-4xl mx-auto space-y-6">
-            <h2 class="text-2xl font-black text-white">🤖 挑战学霸 AI</h2>
+        <!-- ================= VIEW 3: 📖 阅览室 (看书) ================= -->
+        <section id="view-books" class="view-panel hidden w-full h-full p-4 sm:p-6 md:p-8 overflow-y-auto">
+          <div class="max-w-6xl mx-auto space-y-4 sm:space-y-6 pb-6">
+            
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800/80 pb-4">
+              <div>
+                <h2 class="text-lg sm:text-2xl font-black text-white flex items-center gap-2">
+                  <span>📖 少年阅览室</span>
+                  <span class="text-xs px-2.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 font-bold">精选好书 & 篇章</span>
+                </h2>
+                <p class="text-xs text-slate-400 mt-1">沉浸式自主阅读，读完打卡增加经验与心愿币！</p>
+              </div>
+              <div class="flex gap-2">
+                <a href="admin.html" class="px-3 py-1.5 rounded-xl bg-indigo-600/30 hover:bg-indigo-600/50 text-indigo-200 text-xs font-bold border border-indigo-500/40 flex items-center gap-1 transition">
+                  <span>⚙️ 后台传书 ↗</span>
+                </a>
+              </div>
+            </div>
+
+            <!-- 书籍分类网格 (精美封面图卡片) -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6" id="books-cards-container">
+              <!-- 动态加载书籍卡片 -->
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ================= VIEW 4: 🎧 有声听书馆 (音频播放器) ================= -->
+        <section id="view-audios" class="view-panel hidden w-full h-full p-4 sm:p-6 md:p-8 overflow-y-auto">
+          <div class="max-w-6xl mx-auto space-y-4 sm:space-y-6 pb-6">
+            
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800/80 pb-4">
+              <div>
+                <h2 class="text-lg sm:text-2xl font-black text-white flex items-center gap-2">
+                  <span>🎧 有声故事与美读馆</span>
+                  <span class="text-xs px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 font-bold">名著故事 · 科学探秘</span>
+                </h2>
+                <p class="text-xs text-slate-400 mt-1">闭上眼睛听世界，支持连续播放与打卡奖励！</p>
+              </div>
+              <div class="flex gap-2">
+                <a href="admin.html" class="px-3 py-1.5 rounded-xl bg-amber-600/30 hover:bg-amber-600/50 text-amber-200 text-xs font-bold border border-amber-500/40 flex items-center gap-1 transition">
+                  <span>⚙️ 后台传音频 ↗</span>
+                </a>
+              </div>
+            </div>
+
+            <!-- 正在播放焦点卡片 (配生动封面图) -->
+            <div id="audio-hero-card" class="rounded-3xl p-5 sm:p-6 bg-gradient-to-r from-amber-950/40 via-purple-950/30 to-slate-900 border border-amber-500/30 flex flex-col md:flex-row items-center gap-5 justify-between shadow-2xl">
+              <div class="flex items-center space-x-4 w-full md:w-auto">
+                <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl overflow-hidden ring-2 ring-amber-500/50 shadow-lg flex-shrink-0 relative">
+                  <img src="/uploads/assets/audio_wukong.png" id="audio-hero-cover" class="w-full h-full object-cover" alt="Audio Cover">
+                  <!-- 播放波纹动画 -->
+                  <div id="audio-wave-anim" class="hidden absolute inset-x-0 bottom-0 bg-black/60 flex items-end justify-center space-x-1 h-6 pb-1">
+                    <span class="w-1 bg-amber-400 rounded-full sound-bar-1"></span>
+                    <span class="w-1 bg-amber-400 rounded-full sound-bar-2"></span>
+                    <span class="w-1 bg-amber-400 rounded-full sound-bar-3"></span>
+                    <span class="w-1 bg-amber-400 rounded-full sound-bar-4"></span>
+                  </div>
+                </div>
+                <div class="space-y-1 truncate flex-1">
+                  <span class="text-[10px] sm:text-xs px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 font-bold" id="audio-hero-category">名著故事</span>
+                  <h3 class="text-sm sm:text-lg font-bold text-white truncate" id="audio-hero-title">请在下方选择想要收听的有声故事</h3>
+                  <p class="text-xs text-slate-400 truncate" id="audio-hero-speaker">主播：小拓AI主播</p>
+                </div>
+              </div>
+
+              <!-- 音频控制播放条 -->
+              <div class="w-full md:w-80 flex flex-col items-center space-y-2">
+                <audio id="global-audio-element" controls class="w-full h-10 rounded-xl"></audio>
+                <div class="flex items-center justify-between w-full text-xs text-slate-400 pt-1">
+                  <span id="audio-status-text">就绪</span>
+                  <button onclick="handleCompleteAudio()" id="btn-audio-finish" class="hidden px-3 py-1 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-xs transition active:scale-95 shadow-md">
+                    ✓ 听完打卡 (+25 XP / +8 币)
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- 音频列表 -->
+            <div>
+              <h3 class="text-sm sm:text-base font-bold text-white mb-3">🎵 精彩有声节目</h3>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4" id="audios-cards-container">
+                <!-- 动态渲染音频卡片 -->
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ================= VIEW 5: 对战 ================= -->
+        <section id="view-ai-pk" class="view-panel hidden w-full h-full p-4 sm:p-6 md:p-8 overflow-y-auto">
+          <div class="max-w-4xl mx-auto space-y-4 sm:space-y-6">
+            <h2 class="text-xl sm:text-2xl font-black text-white">🤖 挑战学霸 AI</h2>
             <div class="p-6 rounded-3xl glass-card text-center space-y-3">
-              <p class="text-sm text-slate-300">学完课程后，随时和 AI 对手切磋一下！</p>
-              <button onclick="alert('已就绪！')" class="px-6 py-2.5 rounded-xl bg-brand-500 text-white font-bold text-xs">
+              <p class="text-xs sm:text-sm text-slate-300">学完课程后，随时和 AI 对手切磋一下！</p>
+              <button onclick="alert('对战竞技场已就绪！即将开启新一轮答题对战！')" class="px-6 py-2.5 rounded-xl bg-brand-500 hover:bg-brand-600 text-white font-bold text-xs transition active:scale-95">
                 开始挑战
               </button>
             </div>
           </div>
         </section>
 
-        <!-- ================= VIEW 4: 卡牌 ================= -->
-        <section id="view-cards" class="view-panel hidden w-full h-full p-8 overflow-y-auto">
-          <div class="max-w-5xl mx-auto space-y-6">
-            <h2 class="text-2xl font-black text-white">🎴 探索卡牌馆</h2>
-            <div class="p-6 rounded-3xl glass-card">
-              <p class="text-xs text-slate-300">每完成一讲视频，点亮一张新卡牌！</p>
-            </div>
-          </div>
-        </section>
-
-        <!-- ================= VIEW 5: 家长周报 ================= -->
-        <section id="view-parent" class="view-panel hidden w-full h-full p-8 overflow-y-auto">
-          <div class="max-w-5xl mx-auto space-y-6">
-            <h2 class="text-2xl font-black text-white">📊 本周成长周报</h2>
-            <div class="p-6 rounded-3xl glass-card">
-              <p class="text-xs text-slate-300">安泽本周学习节奏良好，已连续探索 18 天！</p>
+        <!-- ================= VIEW 6: 家长周报 ================= -->
+        <section id="view-parent" class="view-panel hidden w-full h-full p-4 sm:p-6 md:p-8 overflow-y-auto">
+          <div class="max-w-5xl mx-auto space-y-4 sm:space-y-6">
+            <h2 class="text-xl sm:text-2xl font-black text-white">📊 本周成长周报</h2>
+            <div class="p-6 rounded-3xl glass-card space-y-3">
+              <p class="text-xs sm:text-sm text-slate-300">安泽本周学习节奏良好，涵盖看课、阅览与听书探索！</p>
+              <div class="grid grid-cols-3 gap-3 pt-2">
+                <div class="p-3 rounded-xl bg-slate-800/80 text-center">
+                  <span class="text-xs text-slate-400 block">连续探索</span>
+                  <span class="text-base font-bold text-amber-400">18 天</span>
+                </div>
+                <div class="p-3 rounded-xl bg-slate-800/80 text-center">
+                  <span class="text-xs text-slate-400 block">心愿达成率</span>
+                  <span class="text-base font-bold text-cyan-400">68%</span>
+                </div>
+                <div class="p-3 rounded-xl bg-slate-800/80 text-center">
+                  <span class="text-xs text-slate-400 block">阅读与听书</span>
+                  <span class="text-base font-bold text-emerald-400">稳步推进</span>
+                </div>
+              </div>
             </div>
           </div>
         </section>
@@ -325,21 +486,91 @@
       </div>
     </main>
 
+    <!-- 3. 手机端底部固定导航栏 (md以下屏幕显示) -->
+    <nav class="md:hidden glass-card border-t border-slate-800 flex items-center justify-around py-2 px-1 z-30 flex-shrink-0 mobile-bottom-nav select-none">
+      <button onclick="switchTab('workspace')" id="nav-m-workspace" class="nav-m-item flex flex-col items-center py-1 px-2 rounded-xl text-cyan-400 font-bold">
+        <span class="text-lg">🗺️</span>
+        <span class="text-[10px] mt-0.5">地图</span>
+      </button>
+      <button onclick="switchTab('interactive_video')" id="nav-m-video" class="nav-m-item flex flex-col items-center py-1 px-2 rounded-xl text-slate-400">
+        <span class="text-lg">🎬</span>
+        <span class="text-[10px] mt-0.5">看课</span>
+      </button>
+      <button onclick="switchTab('books')" id="nav-m-books" class="nav-m-item flex flex-col items-center py-1 px-2 rounded-xl text-slate-400">
+        <span class="text-lg">📖</span>
+        <span class="text-[10px] mt-0.5">看书</span>
+      </button>
+      <button onclick="switchTab('audios')" id="nav-m-audios" class="nav-m-item flex flex-col items-center py-1 px-2 rounded-xl text-slate-400">
+        <span class="text-lg">🎧</span>
+        <span class="text-[10px] mt-0.5">听书</span>
+      </button>
+      <button onclick="switchTab('ai_pk')" id="nav-m-pk" class="nav-m-item flex flex-col items-center py-1 px-2 rounded-xl text-slate-400">
+        <span class="text-lg">🤖</span>
+        <span class="text-[10px] mt-0.5">对战</span>
+      </button>
+      <button onclick="switchTab('parent')" id="nav-m-parent" class="nav-m-item flex flex-col items-center py-1 px-2 rounded-xl text-slate-400">
+        <span class="text-lg">📊</span>
+        <span class="text-[10px] mt-0.5">周报</span>
+      </button>
+    </nav>
+
   </div>
 
-  <!-- 3. 心愿目标设置弹窗 (简便好用) -->
-  <div id="wish-modal" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-    <div class="max-w-md w-full glass-card p-6 rounded-3xl border border-amber-500/40 shadow-2xl space-y-4">
+  <!-- 4. 📖 护眼全屏阅读器弹窗 -->
+  <div id="reader-modal" class="hidden fixed inset-0 z-50 flex flex-col reader-theme-dark overflow-hidden transition-colors duration-300">
+    <div class="h-14 px-4 sm:px-6 border-b border-white/10 flex items-center justify-between flex-shrink-0">
+      <div class="flex items-center space-x-2 truncate">
+        <button onclick="closeReaderModal()" class="px-2.5 py-1 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-bold flex items-center gap-1 transition">
+          ← 退出阅读
+        </button>
+        <h3 class="text-xs sm:text-sm font-bold truncate pl-2" id="reader-title">书名</h3>
+      </div>
+      
+      <div class="flex items-center space-x-2 text-xs">
+        <div class="flex rounded-lg overflow-hidden border border-white/20">
+          <button onclick="setReaderTheme('dark')" class="px-2 py-1 bg-slate-900 text-white text-[10px]">深色</button>
+          <button onclick="setReaderTheme('eye')" class="px-2 py-1 bg-[#f6eedb] text-slate-900 text-[10px]">羊皮纸</button>
+          <button onclick="setReaderTheme('green')" class="px-2 py-1 bg-[#e8f5e9] text-emerald-900 text-[10px]">护眼绿</button>
+        </div>
+        <button onclick="adjustFontSize(1)" class="px-2 py-1 rounded-lg bg-white/10 font-bold">A+</button>
+        <button onclick="adjustFontSize(-1)" class="px-2 py-1 rounded-lg bg-white/10 font-bold">A-</button>
+      </div>
+    </div>
+
+    <div class="flex-1 overflow-y-auto p-4 sm:p-8 max-w-3xl mx-auto w-full font-serif leading-relaxed" id="reader-body">
+      <div class="text-center py-4 border-b border-white/10 mb-6">
+        <h1 class="text-xl sm:text-3xl font-black mb-2" id="reader-main-title">标题</h1>
+        <p class="text-xs opacity-75" id="reader-author">作者</p>
+      </div>
+
+      <div id="reader-content-text" class="text-sm sm:text-base space-y-4 whitespace-pre-line">
+        正文加载中...
+      </div>
+
+      <div class="my-10 p-6 rounded-3xl bg-white/5 border border-white/10 text-center space-y-3">
+        <span class="text-3xl">🎉</span>
+        <h4 class="text-base font-bold">读完全文啦！为自己的专注点赞！</h4>
+        <p class="text-xs opacity-75">点击打卡即可获得 +30 XP 和 +10 心愿币奖励！</p>
+        <button onclick="handleCompleteBook()" id="btn-complete-book" class="px-6 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-bold text-xs shadow-lg shadow-emerald-500/30 active:scale-95 transition">
+          ✓ 读完打卡 (+30 XP / +10 币)
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. 心愿目标设置弹窗 -->
+  <div id="wish-modal" class="hidden fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto">
+    <div class="max-w-md w-full glass-card p-5 sm:p-6 rounded-3xl border border-amber-500/40 shadow-2xl space-y-4 my-auto">
       <div class="flex items-center justify-between">
         <div class="flex items-center space-x-2">
           <span class="text-2xl">🎁</span>
           <h3 class="text-base font-bold text-white">设定我的心愿目标</h3>
         </div>
-        <button onclick="closeWishModal()" class="text-slate-400 hover:text-white text-lg">✕</button>
+        <button onclick="closeWishModal()" class="w-8 h-8 rounded-full bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center text-sm">✕</button>
       </div>
 
       <p class="text-xs text-slate-300">
-        认真看完视频、答对问题都会奖励心愿币。存满心愿币，就可以找爸爸妈妈兑现心愿啦！
+        认真看视频、读好书、听故事都会奖励心愿币。存满心愿币，就可以找爸爸妈妈兑现心愿啦！
       </p>
 
       <div class="space-y-3 text-xs">
@@ -355,10 +586,10 @@
       </div>
 
       <div class="pt-2 flex gap-3">
-        <button onclick="closeWishModal()" class="flex-1 py-2.5 rounded-xl bg-slate-800 text-slate-300 font-bold text-xs">
+        <button onclick="closeWishModal()" class="flex-1 py-2.5 rounded-xl bg-slate-800 text-slate-300 font-bold text-xs active:scale-95 transition">
           取消
         </button>
-        <button onclick="saveWishGoal()" class="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-400 text-slate-950 font-bold text-xs shadow-lg shadow-amber-500/20">
+        <button onclick="saveWishGoal()" class="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-400 text-slate-950 font-bold text-xs shadow-lg shadow-amber-500/20 active:scale-95 transition">
           保存心愿 🚀
         </button>
       </div>
@@ -368,27 +599,47 @@
   <script>
     let currentCourseContext = null;
     let currentChildData = null;
+    let currentReadingBookId = null;
+    let currentPlayingAudioId = null;
+    let currentReaderFontSize = 16;
 
     function switchTab(tabId) {
       document.querySelectorAll('.view-panel').forEach(el => el.classList.add('hidden'));
+
       document.querySelectorAll('.nav-item').forEach(el => {
-        el.classList.remove('text-cyan-400', 'bg-brand-500/15', 'border', 'border-brand-500/30');
+        el.classList.remove('text-cyan-400', 'bg-brand-500/15', 'border', 'border-brand-500/30', 'active');
+        el.classList.add('text-slate-400');
+      });
+
+      document.querySelectorAll('.nav-m-item').forEach(el => {
+        el.classList.remove('text-cyan-400', 'font-bold');
         el.classList.add('text-slate-400');
       });
 
       const targetView = document.getElementById('view-' + tabId.replace('_', '-'));
-      const targetNav = document.getElementById('nav-' + (tabId === 'interactive_video' ? 'video' : tabId === 'ai_pk' ? 'pk' : tabId));
+      const navSuffix = (tabId === 'interactive_video' ? 'video' : tabId === 'ai_pk' ? 'pk' : tabId);
+      const targetNav = document.getElementById('nav-' + navSuffix);
+      const targetMobileNav = document.getElementById('nav-m-' + navSuffix);
 
       if (targetView) targetView.classList.remove('hidden');
+      
       if (targetNav) {
-        targetNav.classList.add('text-cyan-400', 'bg-brand-500/15', 'border', 'border-brand-500/30');
+        targetNav.classList.add('text-cyan-400', 'bg-brand-500/15', 'border', 'border-brand-500/30', 'active');
         targetNav.classList.remove('text-slate-400');
+      }
+
+      if (targetMobileNav) {
+        targetMobileNav.classList.add('text-cyan-400', 'font-bold');
+        targetMobileNav.classList.remove('text-slate-400');
       }
 
       const vid = document.getElementById('course-video-player');
       if (tabId !== 'interactive_video' && vid) {
         vid.pause();
       }
+
+      if (tabId === 'books') loadBooksData();
+      if (tabId === 'audios') loadAudiosData();
     }
 
     // 加载学生数据与学习地图
@@ -399,9 +650,14 @@
         if (res.success && res.data) {
           currentChildData = res.data.child;
           
-          document.getElementById('top-streak').innerText = `${currentChildData.streakDays} 天连胜`;
-          document.getElementById('top-xp-text').innerText = `${currentChildData.xp} 经验`;
-          document.getElementById('top-coins').innerText = `${currentChildData.wishBalance} 心愿币`;
+          document.getElementById('top-streak').innerText = `${currentChildData.streakDays} 天`;
+          document.getElementById('top-xp-text').innerText = `${currentChildData.xp} XP`;
+          document.getElementById('top-coins').innerText = `${currentChildData.wishBalance}`;
+
+          if (res.data.stats) {
+            document.getElementById('dash-book-count').innerText = `${res.data.stats.booksTotal} 本藏书`;
+            document.getElementById('dash-audio-count').innerText = `${res.data.stats.audiosTotal} 个故事`;
+          }
 
           // 渲染心愿卡
           const goal = currentChildData.wishGoal;
@@ -434,32 +690,37 @@
 
       seriesList.forEach(s => {
         const card = document.createElement('div');
-        card.className = 'glass-card rounded-3xl p-6 space-y-4 border border-slate-700/60 relative overflow-hidden';
+        card.className = 'glass-card rounded-3xl p-5 space-y-3.5 border border-slate-700/60 relative overflow-hidden flex flex-col justify-between group';
         
         card.innerHTML = `
-          <div class="flex items-center justify-between">
-            <span class="text-xs px-2.5 py-0.5 rounded-full bg-brand-500/20 text-cyan-300 font-bold">${s.subject === 'math' ? '数学' : '科学'}</span>
-            <span class="text-xs font-bold text-emerald-400">已完成 ${s.completedEpisodes} / 共 ${s.totalEpisodes} 讲 (${s.progressPercent}%)</span>
-          </div>
-
-          <div>
-            <h4 class="text-base font-bold text-white mb-1">${s.title}</h4>
-            <p class="text-xs text-slate-400 line-clamp-1">${s.description || '包含系统规划视频'}</p>
-          </div>
-
-          <div class="w-full bg-slate-800 h-2.5 rounded-full overflow-hidden">
-            <div class="bg-gradient-to-r from-emerald-500 to-cyan-400 h-full rounded-full transition-all duration-500" style="width: ${s.progressPercent}%;"></div>
-          </div>
-
-          <div class="p-3.5 rounded-2xl bg-slate-800/90 border border-slate-700 space-y-1">
-            <div class="flex justify-between items-center">
-              <span class="text-[11px] font-bold text-cyan-300">👉 接下来学：</span>
-              <span class="text-[10px] text-slate-400">${s.nextEpisode ? s.nextEpisode.durationMinutes + ' 分钟' : ''}</span>
+          <div class="space-y-3">
+            <!-- 课程封面大图 -->
+            <div class="w-full h-36 sm:h-44 rounded-2xl overflow-hidden relative shadow-md">
+              <img src="${s.coverImage || '/uploads/assets/series_math.png'}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" alt="${s.title}">
+              <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent"></div>
+              <span class="absolute top-2.5 left-2.5 text-xs px-2.5 py-0.5 rounded-full bg-brand-500/80 text-white font-bold backdrop-blur-md shadow">${s.subject === 'math' ? '🔢 数学' : '🧬 科学'}</span>
+              <span class="absolute top-2.5 right-2.5 text-xs px-2.5 py-0.5 rounded-full bg-slate-900/80 text-emerald-400 font-bold backdrop-blur-md">${s.completedEpisodes}/${s.totalEpisodes} 讲 (${s.progressPercent}%)</span>
             </div>
-            <h5 class="text-xs font-bold text-white">${s.nextEpisode ? s.nextEpisode.title : '🎉 本系列已学完！'}</h5>
+
+            <div>
+              <h4 class="text-sm sm:text-base font-bold text-white mb-1 group-hover:text-cyan-300 transition">${s.title}</h4>
+              <p class="text-xs text-slate-400 line-clamp-2">${s.description || '包含系统规划视频'}</p>
+            </div>
+
+            <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+              <div class="bg-gradient-to-r from-emerald-500 to-cyan-400 h-full rounded-full transition-all duration-500" style="width: ${s.progressPercent}%;"></div>
+            </div>
+
+            <div class="p-3 rounded-2xl bg-slate-800/90 border border-slate-700 space-y-0.5">
+              <div class="flex justify-between items-center text-[10px] sm:text-[11px]">
+                <span class="font-bold text-cyan-300">👉 接下来学：</span>
+                <span class="text-slate-400">${s.nextEpisode ? s.nextEpisode.durationMinutes + ' 分钟' : ''}</span>
+              </div>
+              <h5 class="text-xs font-bold text-white truncate">${s.nextEpisode ? s.nextEpisode.title : '🎉 本系列已学完！'}</h5>
+            </div>
           </div>
 
-          <button onclick="openCourseEpisode('${s.nextEpisode ? s.nextEpisode.id : s.episodes[0].id}')" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-brand-500 to-cyan-500 text-white font-bold text-xs shadow-lg shadow-brand-500/20 hover:scale-[1.02] transition flex items-center justify-center gap-1.5">
+          <button onclick="openCourseEpisode('${s.nextEpisode ? s.nextEpisode.id : s.episodes[0].id}')" class="w-full mt-2 py-2.5 rounded-xl bg-gradient-to-r from-brand-500 to-cyan-500 text-white font-bold text-xs shadow-lg shadow-brand-500/20 active:scale-95 hover:opacity-95 transition flex items-center justify-center gap-1.5">
             <span>▶ ${s.completedEpisodes > 0 ? '继续第 ' + (s.completedEpisodes + 1) + ' 讲' : '开始第 1 讲'}</span>
           </button>
         `;
@@ -467,7 +728,7 @@
       });
     }
 
-    // 播放指定课程
+    // 播放指定课程视频
     async function openCourseEpisode(courseId) {
       try {
         const resp = await fetch(`/api/course/context/${courseId}`);
@@ -504,7 +765,7 @@
       data.playlist.forEach((ep) => {
         const item = document.createElement('div');
         item.onclick = () => openCourseEpisode(ep.id);
-        item.className = `p-3 rounded-2xl border text-xs cursor-pointer transition flex items-center justify-between ${
+        item.className = `p-2.5 sm:p-3 rounded-xl sm:rounded-2xl border text-xs cursor-pointer transition flex items-center justify-between ${
           ep.isCurrent 
             ? 'bg-brand-500/20 border-brand-500 text-cyan-300 font-bold ring-1 ring-brand-500/50' 
             : ep.isCompleted 
@@ -513,13 +774,13 @@
         }`;
 
         item.innerHTML = `
-          <div class="flex items-center space-x-2">
-            <span class="${ep.isCompleted ? 'text-emerald-400' : ep.isCurrent ? 'text-cyan-400' : 'text-slate-500'} font-bold">
+          <div class="flex items-center space-x-2 truncate mr-2">
+            <span class="${ep.isCompleted ? 'text-emerald-400' : ep.isCurrent ? 'text-cyan-400' : 'text-slate-500'} font-bold flex-shrink-0">
               ${ep.isCompleted ? '✓' : ep.isCurrent ? '▶' : ep.episodeIndex}
             </span>
-            <span class="line-clamp-1">${ep.title}</span>
+            <span class="truncate">${ep.title}</span>
           </div>
-          <span class="text-[10px] text-slate-500 font-mono">${ep.durationMinutes}m</span>
+          <span class="text-[10px] text-slate-500 font-mono flex-shrink-0">${ep.durationMinutes}m</span>
         `;
         playlistContainer.appendChild(item);
       });
@@ -564,6 +825,202 @@
       }
     }
 
+    // ================= 📖 阅览室与阅读器逻辑 =================
+    async function loadBooksData() {
+      try {
+        const resp = await fetch('/api/books/list');
+        const res = await resp.json();
+        const container = document.getElementById('books-cards-container');
+        container.innerHTML = '';
+        const books = res.data || [];
+
+        books.forEach(b => {
+          const card = document.createElement('div');
+          card.className = 'glass-card rounded-3xl p-4 sm:p-5 flex flex-col justify-between space-y-3.5 border border-slate-700/60 hover:border-cyan-500/50 transition group';
+          card.innerHTML = `
+            <div class="space-y-3">
+              <!-- 书籍精美封面 -->
+              <div class="w-full h-44 sm:h-52 rounded-2xl overflow-hidden relative shadow-lg bg-slate-900">
+                <img src="${b.cover_image || '/uploads/assets/book_insects.png'}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" alt="${b.title}">
+                <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent"></div>
+                <span class="absolute top-2.5 left-2.5 text-xs px-2.5 py-0.5 rounded-full bg-cyan-500/80 text-slate-950 font-bold backdrop-blur-md">${b.category}</span>
+                <span class="absolute top-2.5 right-2.5 text-xs px-2 py-0.5 rounded-full bg-slate-900/80 text-slate-300 font-medium backdrop-blur-md">⏱️ ${b.read_minutes}m</span>
+              </div>
+
+              <div>
+                <h3 class="text-sm sm:text-base font-bold text-white group-hover:text-cyan-300 transition line-clamp-1 mb-1">${b.title}</h3>
+                <p class="text-xs text-slate-400 line-clamp-2 leading-relaxed">${b.summary || b.content_text.slice(0, 70)}</p>
+              </div>
+
+              <div class="text-[11px] text-slate-500 flex items-center justify-between pt-1 border-t border-slate-800">
+                <span>作者：${b.author}</span>
+                <span>${b.read_count} 次阅读</span>
+              </div>
+            </div>
+
+            <button onclick="openBookReader('${b.id}')" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-bold text-xs shadow-md shadow-cyan-500/20 active:scale-95 transition flex items-center justify-center gap-1.5">
+              <span>📖 ${b.is_completed ? '再次阅读' : '开始沉浸阅读'}</span>
+            </button>
+          `;
+          container.appendChild(card);
+        });
+      } catch (e) {
+        console.error('Failed to load books', e);
+      }
+    }
+
+    async function openBookReader(bookId) {
+      try {
+        const resp = await fetch(`/api/books/${bookId}`);
+        const res = await resp.json();
+        if (res.success && res.data) {
+          const b = res.data;
+          currentReadingBookId = b.id;
+          document.getElementById('reader-title').innerText = b.title;
+          document.getElementById('reader-main-title').innerText = b.title;
+          document.getElementById('reader-author').innerText = `作者：${b.author} · ${b.category}`;
+          document.getElementById('reader-content-text').innerText = b.content_text || '本书正在数字化排版中...';
+          document.getElementById('reader-modal').classList.remove('hidden');
+        }
+      } catch (e) {
+        alert('加载书籍失败');
+      }
+    }
+
+    function closeReaderModal() {
+      document.getElementById('reader-modal').classList.add('hidden');
+    }
+
+    function setReaderTheme(theme) {
+      const modal = document.getElementById('reader-modal');
+      modal.classList.remove('reader-theme-dark', 'reader-theme-eye', 'reader-theme-green');
+      modal.classList.add('reader-theme-' + theme);
+    }
+
+    function adjustFontSize(delta) {
+      currentReaderFontSize = Math.min(24, Math.max(13, currentReaderFontSize + delta));
+      document.getElementById('reader-content-text').style.fontSize = currentReaderFontSize + 'px';
+    }
+
+    async function handleCompleteBook() {
+      if (!currentReadingBookId) return;
+      try {
+        const resp = await fetch('/api/books/complete', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ bookId: currentReadingBookId })
+        });
+        const res = await resp.json();
+        if (res.success) {
+          alert(res.message);
+          closeReaderModal();
+          loadWorkspaceData();
+          loadBooksData();
+        }
+      } catch (e) {
+        alert('打卡失败，请检查网络');
+      }
+    }
+
+    // ================= 🎧 有声故事馆与播放器逻辑 =================
+    async function loadAudiosData() {
+      try {
+        const resp = await fetch('/api/audios/list');
+        const res = await resp.json();
+        const container = document.getElementById('audios-cards-container');
+        container.innerHTML = '';
+        const audios = res.data || [];
+
+        if (audios.length > 0 && !currentPlayingAudioId) {
+          prepareAudioHero(audios[0]);
+        }
+
+        audios.forEach((a) => {
+          const item = document.createElement('div');
+          item.className = `p-3.5 sm:p-4 rounded-3xl glass-card border border-slate-700/60 hover:border-amber-500/50 cursor-pointer transition flex items-center justify-between gap-3 group ${
+            currentPlayingAudioId === a.id ? 'ring-2 ring-amber-500/60 bg-amber-500/10' : ''
+          }`;
+          const durMin = Math.ceil(a.duration_seconds / 60);
+
+          item.innerHTML = `
+            <div class="flex items-center space-x-3.5 truncate">
+              <!-- 音频封面图 -->
+              <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl overflow-hidden flex-shrink-0 shadow-md ring-1 ring-white/10 group-hover:scale-105 transition">
+                <img src="${a.cover_image || '/uploads/assets/audio_wukong.png'}" class="w-full h-full object-cover" alt="${a.title}">
+              </div>
+              <div class="space-y-0.5 truncate">
+                <div class="flex items-center gap-2">
+                  <span class="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 font-bold">${a.category}</span>
+                  <span class="text-[10px] text-slate-400 font-mono">约 ${durMin} 分钟</span>
+                </div>
+                <h4 class="text-xs sm:text-sm font-bold text-white truncate group-hover:text-amber-300 transition">${a.title}</h4>
+                <p class="text-[10px] text-slate-400 truncate">${a.speaker} · ${a.play_count} 次播放</p>
+              </div>
+            </div>
+
+            <button onclick="playAudioTrack('${a.id}')" class="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:opacity-90 text-slate-950 font-bold text-xs flex-shrink-0 active:scale-95 transition shadow">
+              ▶ 播放
+            </button>
+          `;
+          container.appendChild(item);
+        });
+      } catch (e) {
+        console.error('Failed to load audios', e);
+      }
+    }
+
+    function prepareAudioHero(audio) {
+      document.getElementById('audio-hero-title').innerText = audio.title;
+      document.getElementById('audio-hero-category').innerText = audio.category;
+      document.getElementById('audio-hero-speaker').innerText = `主播：${audio.speaker} · 约 ${Math.ceil(audio.duration_seconds/60)} 分钟`;
+      if (audio.cover_image) {
+        document.getElementById('audio-hero-cover').src = audio.cover_image;
+      }
+      const player = document.getElementById('global-audio-element');
+      player.src = audio.audio_url;
+    }
+
+    async function playAudioTrack(audioId) {
+      try {
+        const resp = await fetch(`/api/audios/${audioId}`);
+        const res = await resp.json();
+        if (res.success && res.data) {
+          const a = res.data;
+          currentPlayingAudioId = a.id;
+          prepareAudioHero(a);
+          const player = document.getElementById('global-audio-element');
+          
+          document.getElementById('audio-status-text').innerText = '正在播放 🎵';
+          document.getElementById('audio-wave-anim').classList.remove('hidden');
+          document.getElementById('btn-audio-finish').classList.remove('hidden');
+
+          player.play().catch(() => {});
+          loadAudiosData();
+        }
+      } catch (e) {
+        alert('播放音频失败');
+      }
+    }
+
+    async function handleCompleteAudio() {
+      if (!currentPlayingAudioId) return;
+      try {
+        const resp = await fetch('/api/audios/complete', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ audioId: currentPlayingAudioId })
+        });
+        const res = await resp.json();
+        if (res.success) {
+          alert(res.message);
+          loadWorkspaceData();
+          loadAudiosData();
+        }
+      } catch (e) {
+        alert('打卡失败');
+      }
+    }
+
     // 心愿弹窗操作
     function openWishModal() {
       document.getElementById('wish-modal').classList.remove('hidden');
@@ -592,28 +1049,29 @@
       }
     }
 
-    // 宠物互动与切换
-    const petAvatars = ['🐼', '🤖', '🦊', '🚀', '🦉'];
-    const petNames = ['🐼 智多星小拓', '🤖 探索者小机', '🦊 灵巧小狐', '🚀 星际探索号', '🦉 智慧夜鹰'];
-    const petDialogues = [
-      '“安泽，每次看到你按时学习，我都特别开心！”',
-      '“今天又向前迈进了一步，心愿礼物越来越近啦！”',
-      '“学累了可以站起来喝杯水，眼睛也要休息一下哦！”',
-      '“有不懂的问题随时找我，我们一起探索！”'
-    ];
-    let currentPetIdx = 0;
-
     function interactWithPet() {
-      currentPetIdx = (currentPetIdx + 1) % petAvatars.length;
-      document.getElementById('pet-avatar').innerText = petAvatars[currentPetIdx];
-      document.getElementById('pet-name').innerText = petNames[currentPetIdx];
-      
-      const randomText = petDialogues[Math.floor(Math.random() * petDialogues.length)];
-      document.getElementById('pet-bubble-text').innerText = randomText;
+      alert('🐾 小拓高兴地跳了起来：“安泽今天也要元气满满地探索大世界哦！”');
     }
 
     window.addEventListener('DOMContentLoaded', () => {
       loadWorkspaceData();
+
+      const player = document.getElementById('global-audio-element');
+      if (player) {
+        player.addEventListener('play', () => {
+          document.getElementById('audio-wave-anim')?.classList.remove('hidden');
+          document.getElementById('audio-status-text').innerText = '正在播放 🎵';
+        });
+        player.addEventListener('pause', () => {
+          document.getElementById('audio-wave-anim')?.classList.add('hidden');
+          document.getElementById('audio-status-text').innerText = '已暂停';
+        });
+        player.addEventListener('ended', () => {
+          document.getElementById('audio-wave-anim')?.classList.add('hidden');
+          document.getElementById('audio-status-text').innerText = '已播完，快点击打卡领奖励！';
+          document.getElementById('btn-audio-finish')?.classList.remove('hidden');
+        });
+      }
     });
   </script>
 </body>
