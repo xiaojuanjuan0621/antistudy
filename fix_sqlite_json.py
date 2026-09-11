@@ -1,4 +1,9 @@
-const express = require('express');
+# 读取 app.js，将 better-sqlite3 替换为轻量内嵌纯 JS 的 LowDB / JSON 数据存储，彻底解决 Aliyun Linux 3 的 GLIBC 动态库兼容问题
+with open('app.js', 'r', encoding='utf-8') as f:
+    code = f.read()
+
+# 编写无任何 C++ 原生库依赖的纯 JS 数据库实现
+pure_js_db_app = """const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const multer = require('multer');
@@ -340,3 +345,9 @@ const PORT = 3300;
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`[ANti Study Server] Running on http://0.0.0.0:${PORT}`);
 });
+"""
+
+with open('app.js', 'w', encoding='utf-8') as f:
+    f.write(pure_js_db_app)
+
+print("Updated app.js with 100% pure JS database (zero GLIBC errors)")
