@@ -60,7 +60,7 @@ function loadDB() {
           title: '小学四年级数学·分数的奥秘全集',
           subject: 'math',
           coverImage: 'https://iili.io/nfESWL7.webp',
-          media_type: 'video', // video | book | audio
+          media_type: 'video',
           grade_level: 4,
           description: '系统梳理分数的产生、分子分母的意义与生活应用题。',
           total_episodes: 4,
@@ -76,30 +76,9 @@ function loadDB() {
           description: '像看动画一样探索人体微观细胞与免疫防御大战！',
           total_episodes: 2,
           created_at: new Date().toISOString()
-        },
-        {
-          id: 'series_book_01',
-          title: '世界经典名著·《西游记》少年精读图册',
-          subject: 'chinese',
-          media_type: 'book',
-          grade_level: 4,
-          description: '大字彩绘版西游故事，包含大闹天宫、三打白骨精等经典章节。',
-          total_episodes: 3,
-          created_at: new Date().toISOString()
-        },
-        {
-          id: 'series_audio_01',
-          title: '每天一首必背古诗词·名家唯美配乐朗诵',
-          subject: 'chinese',
-          media_type: 'audio',
-          grade_level: 4,
-          description: '清晨早读磨耳朵，感受唐诗宋词的韵律之美。',
-          total_episodes: 4,
-          created_at: new Date().toISOString()
         }
       ],
       courses: [
-        // 视频
         {
           id: 'course_math_01',
           series_id: 'series_math_g4',
@@ -171,61 +150,97 @@ function loadDB() {
           video_url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4',
           duration_seconds: 450,
           is_completed: 0
-        },
-        // 电子书 / PDF 演示
+        }
+      ],
+      books: [
         {
-          id: 'book_xyj_01',
-          series_id: 'series_book_01',
-          episode_index: 1,
-          title: '第1回：猴王初问世，花果山福地洞天',
-          subject: 'chinese',
-          media_type: 'book',
+          id: 'book_01',
+          title: '昆虫记·神奇的蜣螂与夏日蝉鸣',
+          author: '法布尔 (法)',
+          category: '自然探索',
           grade_level: 4,
-          video_url: 'https://raw.githubusercontent.com/mozilla/pdf.js/master/examples/learning/helloworld.pdf',
-          duration_seconds: 300,
-          is_completed: 0
+          cover_image: 'https://iili.io/nfESx5v.webp',
+          read_minutes: 10,
+          summary: '跟随伟大的昆虫学家法布尔，观察大自然中微小生命的智慧与坚韧。',
+          content_text: `【第一章：聪明的蜣螂工程师】\n\n阳光洒满南法的荒原，微风中夹杂着百里香的气息。在厚厚的泥土下，一个微小的生命正在忙碌。\n\n这就是蜣螂——大自然中最勤勉的清道夫。它们用扁平如铲子的头部和强劲有力的前足，将散落的有机碎屑一点一点聚集起来。在它的灵巧制作下，一个圆滚滚的小球逐渐成型。\n\n这不仅仅是一个小泥球，这是它们精心培育后代的庇护所与粮仓。86螂用倒推的方式，在崎岖不平的土地上推动着比自己重数倍的泥球前行。即使遇到陡坡跌落，它也从不放弃，重新爬起继续前行。\n\n【第二章：夏日树梢的歌唱家】\n\n“知了——知了——”，盛夏的阳光把大地烤得滚烫，而在高高的白杨树上，蝉正在不知疲倦地放声高歌。\n\n很多人以为蝉的歌声只是为了热闹，其实这是雄蝉独特的发声器官在振动。在泥土黑暗深处蛰伏了四年甚至更久的蝉蛹，只有在这个夏天短短的几个星期里，才能在阳光下尽情飞翔和歌唱。生命虽短，却绚烂无比！`,
+          read_count: 36,
+          is_completed: 1,
+          created_at: new Date().toISOString()
         },
         {
-          id: 'book_xyj_02',
-          series_id: 'series_book_01',
-          episode_index: 2,
-          title: '第2回：龙宫借金箍棒，齐天大圣战哪吒',
-          subject: 'chinese',
-          media_type: 'book',
+          id: 'book_02',
+          title: '中国古代神话·后羿射日与女娲补天',
+          author: '传统神话整理',
+          category: '国学经典',
           grade_level: 4,
-          video_url: 'https://raw.githubusercontent.com/mozilla/pdf.js/master/examples/learning/helloworld.pdf',
-          duration_seconds: 360,
-          is_completed: 0
+          cover_image: 'https://iili.io/nfESuzN.webp',
+          read_minutes: 8,
+          summary: '感受中华上古先民战胜自然、勇于担当的英雄史诗。',
+          content_text: `【上篇：女娲炼石补苍天】\n\n往古之时，四极废，九州裂，天不兼覆，地不周载。烈火炎炎不熄，洪水浩浩不息。\n\n女娲目睹人类受难，心生慈悲。她踏遍三山五岳，寻找五色神石。经过九九八十一天的熔炼，终于将苍天补好。天地重归宁静，万物生机勃勃。\n\n【下篇：后羿神箭挽狂澜】\n\n相传尧帝之时，十日并出，焦禾稼，杀草木，而民无所食。\n\n英雄后羿挺身而出，手持红色的神弓，搭上白色的神箭。他登上昆仑之巅，凝神聚气，“嗖！嗖！嗖！”九支神箭破空而出，九个太阳化作金乌坠落，留下一轮温和的太阳造福人间。百姓欢呼雀跃，大地重现生机！`,
+          read_count: 24,
+          is_completed: 0,
+          created_at: new Date().toISOString()
         },
-        // 音乐 / 音频 演示
         {
-          id: 'audio_gsc_01',
-          series_id: 'series_audio_01',
-          episode_index: 1,
-          title: '第1首：《静夜思》- 李白（配乐朗读+诗意讲解）',
-          subject: 'chinese',
-          media_type: 'audio',
+          id: 'book_03',
+          title: '海底两万里·潜入神秘的鹦鹉螺号',
+          author: '儒勒·凡尔纳',
+          category: '科幻冒险',
           grade_level: 4,
-          video_url: 'https://commondatastorage.googleapis.com/codeskulptor-demos/DDR_assets/Sevish_-__nbsp_.mp3',
+          cover_image: 'https://iili.io/nfES7qX.webp',
+          read_minutes: 12,
+          summary: '尼摩船长带着阿龙纳斯教授，在深邃莫测的太平洋深处展开了一场壮丽的大冒险。',
+          content_text: `【第一章：来自深海的怪兽】\n\n1866年，全世界的航海界都被一件不可思议的怪事震惊了。几艘远洋轮船在公海上遇到了一头巨大而神秘的“海怪”，它不仅身形庞大，而且速度极快，甚至能发出奇异的冷光。\n\n阿龙纳斯教授登上了“林肯号”驱逐舰前往探寻真相。然而在一场激烈的遭遇战中，教授与仆人康塞尔不幸落水，意外爬上了这个怪物的脊背——他们惊讶地发现，这根本不是什么海怪，而是一艘由坚硬钢板打造的钢铁巨潜艇！\n\n【第二章：尼摩船长的奇幻世界】\n\n舱门缓缓打开，神秘的尼摩船长出现在他们面前。“欢迎登上鹦鹉螺号，”船长目光深邃而坚定，“在这片广袤无垠的深海之中，我们拥有绝对的自由与宁静！”\n\n透过巨大的水晶舷窗，海底世界如梦如幻：发光的珊瑚林、五彩斑斓的热带鱼群、沉睡千年的古城遗迹……一场震撼心灵的深海科幻之旅正式开启！`,
+          read_count: 18,
+          is_completed: 0,
+          created_at: new Date().toISOString()
+        }
+      ],
+      audios: [
+        {
+          id: 'audio_01',
+          title: '大闹天宫：齐天大圣勇闯南天门',
+          speaker: '小拓AI播音员',
+          category: '名著故事',
+          grade_level: 4,
+          cover_image: 'https://iili.io/nfESB0g.webp',
+          duration_seconds: 240,
+          play_count: 42,
+          audio_url: 'https://commondatastorage.googleapis.com/codeskulptor-demos/DDR_assets/Sevish_-__nbsp_.mp3',
+          is_completed: 1,
+          created_at: new Date().toISOString()
+        },
+        {
+          id: 'audio_02',
+          title: '宇宙探秘：黑洞到底有多神奇？',
+          speaker: '科学探索号',
+          category: '宇宙科学',
+          grade_level: 4,
+          cover_image: 'https://iili.io/nfESKs1.webp',
           duration_seconds: 180,
-          is_completed: 1
+          play_count: 29,
+          audio_url: 'https://commondatastorage.googleapis.com/codeskulptor-demos/DDR_assets/Kangaroo_MusiQue_-_The_Neverending_Story.mp3',
+          is_completed: 0,
+          created_at: new Date().toISOString()
         },
         {
-          id: 'audio_gsc_02',
-          series_id: 'series_audio_01',
-          episode_index: 2,
-          title: '第2首：《望庐山瀑布》- 李白（飞流直下三千尺）',
-          subject: 'chinese',
-          media_type: 'audio',
+          id: 'audio_03',
+          title: '早读古诗：春晓 & 望庐山瀑布 (配乐朗诵)',
+          speaker: '国学雅韵',
+          category: '国学经典',
           grade_level: 4,
-          video_url: 'https://commondatastorage.googleapis.com/codeskulptor-demos/DDR_assets/Kangaroo_MusiQue_-_The_Neverending_Story.mp3',
+          cover_image: 'https://iili.io/nfESJOQ.webp',
           duration_seconds: 210,
-          is_completed: 0
+          play_count: 35,
+          audio_url: 'https://commondatastorage.googleapis.com/codeskulptor-demos/DDR_assets/Sevish_-__nbsp_.mp3',
+          is_completed: 0,
+          created_at: new Date().toISOString()
         }
       ],
       records: {
         'course_math_01': { is_completed: 1, actual_watch_seconds: 360 },
-        'audio_gsc_01': { is_completed: 1, actual_watch_seconds: 180 }
+        'book_01': { is_completed: 1, read_count: 1 },
+        'audio_01': { is_completed: 1 }
       }
     };
     fs.writeFileSync(dbFilePath, JSON.stringify(defaultData, null, 2), 'utf8');
@@ -262,6 +277,11 @@ app.get('/api/student/dashboard', (req, res) => {
           current: db.child.wish_goal_current,
         },
       },
+      stats: {
+        booksTotal: (db.books || []).length,
+        audiosTotal: (db.audios || []).length,
+        coursesTotal: (db.courses || []).length
+      }
     },
   });
 });
@@ -378,6 +398,88 @@ app.post('/api/student/wish-goal', (req, res) => {
   res.json({ success: true, message: '🎉 心愿已更新！' });
 });
 
+// ==================== 📖 书籍/绘本相关 API ====================
+app.get('/api/books/list', (req, res) => {
+  const db = loadDB();
+  const books = (db.books || []).map(b => ({
+    ...b,
+    is_completed: db.records && db.records[b.id] && db.records[b.id].is_completed === 1 ? 1 : 0
+  }));
+  res.json({ success: true, data: books });
+});
+
+app.get('/api/books/:id', (req, res) => {
+  const db = loadDB();
+  const book = (db.books || []).find(b => b.id === req.params.id);
+  if (!book) return res.status(404).json({ success: false, message: '书籍不存在' });
+  
+  book.read_count = (book.read_count || 0) + 1;
+  saveDB(db);
+  res.json({ success: true, data: book });
+});
+
+app.post('/api/books/complete', (req, res) => {
+  const db = loadDB();
+  const { bookId } = req.body;
+  if (!db.records) db.records = {};
+  db.records[bookId] = {
+    is_completed: 1,
+    completed_at: new Date().toISOString()
+  };
+
+  db.child.xp += 30;
+  db.child.wish_coins += 10;
+  db.child.wish_goal_current += 10;
+  saveDB(db);
+
+  res.json({
+    success: true,
+    message: '🎉 恭喜读完本书！获得 +30 XP 和 +10 心愿币！',
+    grantedRewards: { xp: 30, wishCoins: 10 }
+  });
+});
+
+// ==================== 🎧 有声音频相关 API ====================
+app.get('/api/audios/list', (req, res) => {
+  const db = loadDB();
+  const audios = (db.audios || []).map(a => ({
+    ...a,
+    is_completed: db.records && db.records[a.id] && db.records[a.id].is_completed === 1 ? 1 : 0
+  }));
+  res.json({ success: true, data: audios });
+});
+
+app.get('/api/audios/:id', (req, res) => {
+  const db = loadDB();
+  const audio = (db.audios || []).find(a => a.id === req.params.id);
+  if (!audio) return res.status(404).json({ success: false, message: '音频不存在' });
+
+  audio.play_count = (audio.play_count || 0) + 1;
+  saveDB(db);
+  res.json({ success: true, data: audio });
+});
+
+app.post('/api/audios/complete', (req, res) => {
+  const db = loadDB();
+  const { audioId } = req.body;
+  if (!db.records) db.records = {};
+  db.records[audioId] = {
+    is_completed: 1,
+    completed_at: new Date().toISOString()
+  };
+
+  db.child.xp += 25;
+  db.child.wish_coins += 8;
+  db.child.wish_goal_current += 8;
+  saveDB(db);
+
+  res.json({
+    success: true,
+    message: '🎉 恭喜听完本期音频故事！获得 +25 XP 和 +8 心愿币！',
+    grantedRewards: { xp: 25, wishCoins: 8 }
+  });
+});
+
 // Multer 文件上传配置（支持视频、音频、PDF图书文档）
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, uploadsDir),
@@ -432,6 +534,44 @@ app.post('/api/admin/series/batch-upload', upload.array('videoFiles', 100), (req
       is_published: 1,
       created_at: new Date().toISOString()
     });
+
+    // 如果上传的是书本(PDF/文档)，自动同步写入阅览室 books 列表
+    if (detectedType === 'book') {
+      if (!db.books) db.books = [];
+      db.books.unshift({
+        id: `book_${seriesId}_${epIdx}`,
+        title: `${seriesTitle} · ${epTitle}`,
+        author: '名师精编',
+        category: subject === 'chinese' ? '国学经典' : '自然探索',
+        grade_level: Number(gradeLevel) || 4,
+        cover_image: 'https://iili.io/nfESx5v.webp',
+        read_minutes: 8,
+        summary: description || `《${seriesTitle}》配套阅读读物。`,
+        content_text: `【${epTitle}】\n\n已成功载入《${seriesTitle}》电子读物内容！\n文件路径：/uploads/${f.filename}\n\n请在宽屏或平板上尽情阅读，探索更多知识！`,
+        file_url: `/uploads/${f.filename}`,
+        read_count: 0,
+        is_completed: 0,
+        created_at: new Date().toISOString()
+      });
+    }
+
+    // 如果上传的是音频，自动同步写入有声故事馆 audios 列表
+    if (detectedType === 'audio') {
+      if (!db.audios) db.audios = [];
+      db.audios.unshift({
+        id: `audio_${seriesId}_${epIdx}`,
+        title: `${seriesTitle} · ${epTitle}`,
+        speaker: '小拓AI主播',
+        category: subject === 'chinese' ? '国学经典' : '名著故事',
+        grade_level: Number(gradeLevel) || 4,
+        cover_image: 'https://iili.io/nfESB0g.webp',
+        duration_seconds: 180,
+        play_count: 0,
+        audio_url: `/uploads/${f.filename}`,
+        is_completed: 0,
+        created_at: new Date().toISOString()
+      });
+    }
   }
 
   saveDB(db);

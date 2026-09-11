@@ -734,15 +734,22 @@
         const resp = await fetch(`/api/course/context/${courseId}`);
         const res = await resp.json();
 
-        if (res.success) {
+        if (res.success && res.data && res.data.course) {
           currentCourseContext = res.data;
           renderPlayerContext(res.data);
           switchTab('interactive_video');
           const vid = document.getElementById('course-video-player');
-          vid.play().catch(() => {});
+          if (vid && res.data.course.video_url) {
+            vid.play().catch((err) => {
+              console.log('Autoplay prevented or video loading:', err);
+            });
+          }
+        } else {
+          alert('未能获取该课程内容');
         }
       } catch (e) {
         console.error('Failed to open episode', e);
+        alert('加载课程视频出错，请稍后重试');
       }
     }
 
@@ -753,10 +760,10 @@
 
       document.getElementById('player-series-title').innerText = series ? series.title : '系列课程';
       document.getElementById('player-current-title').innerText = course.title;
-      document.getElementById('player-mode-badge').innerText = course.isInteractive ? '● AI 思考模式' : '● 自由直看';
+      document.getElementById('player-mode-badge').innerText = (course.isInteractive || course.is_interactive) ? '● AI 思考模式' : '● 自由直看';
 
       const vid = document.getElementById('course-video-player');
-      vid.src = course.videoUrl;
+      vid.src = course.video_url || course.videoUrl || '';
 
       const playlistContainer = document.getElementById('series-playlist-container');
       playlistContainer.innerHTML = '';
@@ -804,7 +811,7 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             courseId,
-            actualWatchDuration: currentCourseContext.course.durationSeconds,
+            actualWatchDuration: currentCourseContext.course.duration_seconds || currentCourseContext.course.durationSeconds || 300,
           })
         });
         const res = await resp.json();
