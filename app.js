@@ -59,6 +59,7 @@ function loadDB() {
           id: 'series_math_g4',
           title: '小学四年级数学·分数的奥秘全集',
           subject: 'math',
+          coverImage: 'https://iili.io/nfEhRsf.png',
           media_type: 'video', // video | book | audio
           grade_level: 4,
           description: '系统梳理分数的产生、分子分母的意义与生活应用题。',
@@ -69,6 +70,7 @@ function loadDB() {
           id: 'series_bio_g4',
           title: '少年探索课·人体微观细胞与免疫王国',
           subject: 'biology',
+          coverImage: 'https://iili.io/nfEhIbn.png',
           media_type: 'video',
           grade_level: 4,
           description: '像看动画一样探索人体微观细胞与免疫防御大战！',
@@ -281,6 +283,7 @@ app.get('/api/series/list', (req, res) => {
       id: s.id,
       title: s.title,
       subject: s.subject,
+      coverImage: s.coverImage || (s.subject === 'math' ? 'https://iili.io/nfEhRsf.png' : 'https://iili.io/nfEhIbn.png'),
       mediaType: s.media_type || 'video',
       gradeLevel: s.grade_level,
       description: s.description,
