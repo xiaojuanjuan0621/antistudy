@@ -322,8 +322,13 @@
       formData.append('gradeLevel', grade);
       formData.append('description', desc);
       formData.append('mediaType', mediaType);
+      
+      // 将原文件名列表转为 JSON 发送，100% 避免 multipart header 编码丢失导致中文乱码
+      const fileNamesList = selectedBatchFiles.map(f => f.name);
+      formData.append('fileNamesJson', JSON.stringify(fileNamesList));
+
       selectedBatchFiles.forEach(file => {
-        formData.append('videoFiles', file, file.name);
+        formData.append('videoFiles', file);
       });
 
       try {

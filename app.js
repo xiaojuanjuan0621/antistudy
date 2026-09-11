@@ -504,12 +504,19 @@ const upload = multer({
 // 批量上传：支持新建系列 / 追加到现有系列，支持视频、书本(PDF)、音乐音频
 app.post('/api/admin/series/batch-upload', upload.array('videoFiles', 100), (req, res) => {
   const db = loadDB();
-  let { seriesId, seriesTitle, subject, gradeLevel, description, mediaType } = req.body;
+  let { seriesId, seriesTitle, subject, gradeLevel, description, mediaType, fileNamesJson } = req.body;
   const files = req.files || [];
 
   if (!files || files.length === 0) {
     return res.status(400).json({ success: false, message: '请选择要上传的文件！' });
   }
+
+  let originalNamesList = [];
+  try {
+    if (fileNamesJson) {
+      originalNamesList = JSON.parse(fileNamesJson);
+    }
+  } catch (e) {}
 
   const detectedType = mediaType || 'video'; // video | book | audio
   if (!db.series) db.series = [];
@@ -548,20 +555,21 @@ app.post('/api/admin/series/batch-upload', upload.array('videoFiles', 100), (req
   const existingEpisodes = db.courses.filter(c => c.series_id === seriesId);
   let startIdx = existingEpisodes.length;
 
-  const sortedFiles = [...files].sort((a, b) => a.originalname.localeCompare(b.originalname, undefined, { numeric: true }));
-
-  for (let i = 0; i < sortedFiles.length; i++) {
-    const f = sortedFiles[i];
-    // 彻底解决 UTF-8 中文字符乱码
-    let rawFilename = f.originalname;
+  // 保持文件和传递进来的原文件名准确对应
+  const mappedFiles = files.map((file, idx) => {
+    let name = originalNamesList[idx] || file.originalname;
     try {
-      rawFilename = Buffer.from(f.originalname, 'latin1').toString('utf8');
-      if (rawFilename.includes('')) {
-        rawFilename = f.originalname;
+      if (name === file.originalname) {
+        name = Buffer.from(file.originalname, 'latin1').toString('utf8');
       }
-    } catch (e) {
-      rawFilename = f.originalname;
-    }
+    } catch (e) {}
+    return { file, name };
+  }).sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }));
+
+  for (let i = 0; i < mappedFiles.length; i++) {
+    const item = mappedFiles[i];
+    const f = item.file;
+    const rawFilename = item.name;
 
     const epIdx = startIdx + i + 1;
     let epTitle = path.parse(rawFilename).name;
