@@ -322,7 +322,10 @@
       formData.append('gradeLevel', grade);
       formData.append('description', desc);
       formData.append('mediaType', mediaType);
-      selectedBatchFiles.forEach(file => formData.append('videoFiles', file));
+      selectedBatchFiles.forEach(file => {
+        // 显式以 UTF-8 编码文件名追加到 FormData，彻底防止传输中文乱码
+        formData.append('videoFiles', file, encodeURIComponent(file.name));
+      });
 
       try {
         const resp = await fetch('/api/admin/series/batch-upload', { method: 'POST', body: formData });

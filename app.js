@@ -537,9 +537,20 @@ app.post('/api/admin/series/batch-upload', upload.array('videoFiles', 100), (req
   const sortedFiles = [...files].sort((a, b) => a.originalname.localeCompare(b.originalname, undefined, { numeric: true }));
 
   for (let i = 0; i < sortedFiles.length; i++) {
-    const f = sortedFiles[i];
+    // 修复中文文件名在 multer/latin1/URI 各种编码环境下的乱码问题
+    let rawFilename = f.originalname;
+    try {
+      if (rawFilename.includes('%')) {
+        rawFilename = decodeURIComponent(rawFilename);
+      } else {
+        rawFilename = Buffer.from(f.originalname, 'latin1').toString('utf8');
+      }
+    } catch (e) {
+      rawFilename = f.originalname;
+    }
+
     const epIdx = startIdx + i + 1;
-    let epTitle = path.parse(f.originalname).name;
+    let epTitle = path.parse(rawFilename).name;
     const prefix = detectedType === 'book' ? '第' + epIdx + '回：' : detectedType === 'audio' ? '第' + epIdx + '首：' : '第' + epIdx + '讲：';
     if (!epTitle.startsWith('第')) epTitle = `${prefix}${epTitle}`;
 
@@ -570,7 +581,7 @@ app.post('/api/admin/series/batch-upload', upload.array('videoFiles', 100), (req
         cover_image: 'https://iili.io/nfESx5v.webp',
         read_minutes: 8,
         summary: description || `《${seriesTitle}》配套阅读读物。`,
-        content_text: `【${epTitle}】\n\n已成功载入《${seriesTitle}》电子读物内容！\n文件：${f.originalname}\n\n请在宽屏或平板上尽情阅读，探索更多知识！`,
+        content_text: `【${epTitle}】\n\n已成功载入《${seriesTitle}》电子读物内容！\n文件：${rawFilename}\n\n请在宽屏或平板上尽情阅读，探索更多知识！`,
         file_url: `/uploads/${f.filename}`,
         read_count: 0,
         is_completed: 0,

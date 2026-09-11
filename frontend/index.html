@@ -326,10 +326,13 @@
           <div class="flex-1 flex flex-col lg:flex-row gap-4 lg:gap-5 overflow-visible lg:overflow-hidden min-h-0 pb-4 lg:pb-0">
             <!-- 播放器大屏 -->
             <div class="flex-1 relative rounded-2xl sm:rounded-3xl overflow-hidden bg-black border border-slate-800 shadow-2xl flex flex-col justify-between aspect-video lg:aspect-auto min-h-[220px] sm:min-h-[320px]">
-              <video id="course-video-player" class="w-full h-full object-cover" src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4" playsinline controls></video>
+              <video id="course-video-player" class="w-full h-full object-contain cursor-pointer" onclick="toggleVideoFullScreen()" src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4" playsinline controls></video>
 
-              <!-- 底部完成打钩按钮 -->
-              <div class="absolute bottom-3 right-3 sm:bottom-4 sm:right-4 z-10">
+              <!-- 全屏放大与打钩按钮 -->
+              <div class="absolute bottom-3 right-3 sm:bottom-4 sm:right-4 z-10 flex items-center gap-2">
+                <button onclick="toggleVideoFullScreen()" class="px-3 py-2 sm:px-4 sm:py-2.5 rounded-xl bg-slate-900/80 hover:bg-slate-800 text-white font-bold text-[11px] sm:text-xs border border-white/20 backdrop-blur-md flex items-center gap-1 transition active:scale-95">
+                  <span>⛶ 全屏放大</span>
+                </button>
                 <button onclick="handleCompleteAndNext()" class="px-3.5 py-2 sm:px-5 sm:py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-[11px] sm:text-xs shadow-lg shadow-emerald-500/30 flex items-center gap-1.5 transition active:scale-95">
                   <span>✓ <span class="hidden sm:inline">这一课我看完了，</span>进入下一课</span> →
                 </button>
@@ -676,8 +679,10 @@
         const sResp = await fetch('/api/series/list');
         const sRes = await sResp.json();
         if (sRes.success && sRes.data) {
-          renderSeriesCards(sRes.data);
-          document.getElementById('total-series-label').innerText = `(共 ${sRes.data.length} 个系列专辑)`;
+          // 首页视频探索地图只筛选展示视频类专辑
+          const videoSeries = sRes.data.filter(s => !s.mediaType || s.mediaType === 'video');
+          renderSeriesCards(videoSeries);
+          document.getElementById('total-series-label').innerText = `(共 ${videoSeries.length} 个视频专辑)`;
         }
       } catch (e) {
         console.error('Failed to load workspace', e);
@@ -726,6 +731,20 @@
         `;
         container.appendChild(card);
       });
+    }
+
+    function toggleVideoFullScreen() {
+      const vid = document.getElementById('course-video-player');
+      if (!vid) return;
+      if (document.fullscreenElement) {
+        document.exitFullscreen().catch(() => {});
+      } else if (vid.requestFullscreen) {
+        vid.requestFullscreen().catch(() => {});
+      } else if (vid.webkitRequestFullscreen) {
+        vid.webkitRequestFullscreen();
+      } else if (vid.webkitEnterFullscreen) {
+        vid.webkitEnterFullscreen();
+      }
     }
 
     // 播放指定课程视频
