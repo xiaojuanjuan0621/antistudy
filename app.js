@@ -16,7 +16,14 @@ const frontendDir = path.join(__dirname, 'frontend');
 if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
 if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir, { recursive: true });
 
-app.use('/uploads', express.static(uploadsDir));
+app.use('/uploads', express.static(uploadsDir, {
+  setHeaders: (res, filePath) => {
+    if (filePath.endsWith('.pdf')) {
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', 'inline');
+    }
+  }
+}));
 app.use(express.static(frontendDir));
 
 app.get('/', (req, res) => {
@@ -537,13 +544,13 @@ app.post('/api/admin/series/batch-upload', upload.array('videoFiles', 100), (req
   const sortedFiles = [...files].sort((a, b) => a.originalname.localeCompare(b.originalname, undefined, { numeric: true }));
 
   for (let i = 0; i < sortedFiles.length; i++) {
-    // 修复中文文件名在 multer/latin1/URI 各种编码环境下的乱码问题
+    const f = sortedFiles[i];
+    // 彻底解决 UTF-8 中文字符乱码
     let rawFilename = f.originalname;
     try {
-      if (rawFilename.includes('%')) {
-        rawFilename = decodeURIComponent(rawFilename);
-      } else {
-        rawFilename = Buffer.from(f.originalname, 'latin1').toString('utf8');
+      rawFilename = Buffer.from(f.originalname, 'latin1').toString('utf8');
+      if (rawFilename.includes('')) {
+        rawFilename = f.originalname;
       }
     } catch (e) {
       rawFilename = f.originalname;
