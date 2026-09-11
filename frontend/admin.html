@@ -81,8 +81,16 @@
           </h3>
           <div class="space-y-3 text-sm">
             
-            <!-- 资源类型选择 (视频/书籍/音乐) -->
+            <!-- 上传模式：新建系列 / 追加到现有系列 -->
             <div>
+              <label class="block text-xs font-bold text-slate-400 mb-1">目标系列 / 专辑归属</label>
+              <select id="select-target-series" onchange="handleSeriesSelectChange()" class="w-full px-4 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-cyan-300 font-bold focus:outline-none focus:border-brand-500 text-xs">
+                <option value="new">✨ + 新建全新系列专辑</option>
+              </select>
+            </div>
+
+            <!-- 资源类型选择 (视频/书籍/音乐) -->
+            <div id="media-type-box">
               <label class="block text-xs font-bold text-slate-400 mb-1">资源类型</label>
               <div class="grid grid-cols-3 gap-2">
                 <label class="flex items-center justify-center gap-1.5 p-2.5 rounded-xl bg-slate-800 border border-slate-700 cursor-pointer hover:border-brand-500 text-xs font-bold text-white">
@@ -100,37 +108,39 @@
               </div>
             </div>
 
-            <div>
-              <label class="block text-xs font-bold text-slate-400 mb-1">系列大标题</label>
-              <input id="input-series-title" type="text" value="世界经典名著·《西游记》少年精读全集 (全20讲)" class="w-full px-4 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white focus:outline-none focus:border-brand-500">
-            </div>
-
-            <div class="grid grid-cols-2 gap-3">
+            <div id="series-meta-box" class="space-y-3">
               <div>
-                <label class="block text-xs font-bold text-slate-400 mb-1">所属学科 / 分类</label>
-                <select id="input-series-subject" class="w-full px-4 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white focus:outline-none focus:border-brand-500">
-                  <option value="chinese">📖 语文 / 经典名著</option>
-                  <option value="math">🔢 小学数学</option>
-                  <option value="biology">🧬 自然生物 / 科学</option>
-                  <option value="history">🏛️ 历史与文明</option>
-                  <option value="english">🔤 趣味英语</option>
-                </select>
+                <label class="block text-xs font-bold text-slate-400 mb-1">系列大标题</label>
+                <input id="input-series-title" type="text" value="世界经典名著·《西游记》少年精读全集" class="w-full px-4 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white focus:outline-none focus:border-brand-500">
               </div>
-              <div>
-                <label class="block text-xs font-bold text-slate-400 mb-1">适用年级</label>
-                <select id="input-series-grade" class="w-full px-4 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white focus:outline-none focus:border-brand-500">
-                  <option value="4">小学四年级</option>
-                  <option value="3">小学三年级</option>
-                  <option value="5">小学五年级</option>
-                  <option value="6">小学六年级</option>
-                  <option value="7">初中阶段</option>
-                </select>
-              </div>
-            </div>
 
-            <div>
-              <label class="block text-xs font-bold text-slate-400 mb-1">简介与鼓励寄语</label>
-              <textarea id="input-series-desc" rows="2" class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-xs text-white focus:outline-none focus:border-brand-500">跟随孙悟空师徒四人西天取经，历经九九八十一难，学习勇敢与智慧！</textarea>
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-xs font-bold text-slate-400 mb-1">所属学科 / 分类</label>
+                  <select id="input-series-subject" class="w-full px-4 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white focus:outline-none focus:border-brand-500">
+                    <option value="chinese">📖 语文 / 经典名著</option>
+                    <option value="math">🔢 小学数学</option>
+                    <option value="biology">🧬 自然生物 / 科学</option>
+                    <option value="history">🏛️ 历史与文明</option>
+                    <option value="english">🔤 趣味英语</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-slate-400 mb-1">适用年级</label>
+                  <select id="input-series-grade" class="w-full px-4 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white focus:outline-none focus:border-brand-500">
+                    <option value="4">小学四年级</option>
+                    <option value="3">小学三年级</option>
+                    <option value="5">小学五年级</option>
+                    <option value="6">小学六年级</option>
+                    <option value="7">初中阶段</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold text-slate-400 mb-1">简介与鼓励寄语</label>
+                <textarea id="input-series-desc" rows="2" class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-xs text-white focus:outline-none focus:border-brand-500">跟随孙悟空师徒四人西天取经，历经九九八十一难，学习勇敢与智慧！</textarea>
+              </div>
             </div>
           </div>
         </div>
@@ -185,6 +195,51 @@
 
   <script>
     let selectedBatchFiles = [];
+    let allAvailableSeries = [];
+
+    async function loadSeriesForSelect() {
+      try {
+        const resp = await fetch('/api/series/list');
+        const res = await resp.json();
+        allAvailableSeries = res.data || [];
+        const select = document.getElementById('select-target-series');
+        select.innerHTML = '<option value="new">✨ + 新建全新系列专辑</option>';
+        allAvailableSeries.forEach(s => {
+          const typeIcon = s.mediaType === 'book' ? '📖' : s.mediaType === 'audio' ? '🎵' : '🎬';
+          const opt = document.createElement('option');
+          opt.value = s.id;
+          opt.innerText = `${typeIcon} ${s.title} (已有 ${s.totalEpisodes} 讲/回)`;
+          select.appendChild(opt);
+        });
+      } catch (e) {
+        console.error('Failed to load series for select', e);
+      }
+    }
+
+    function handleSeriesSelectChange() {
+      const select = document.getElementById('select-target-series');
+      const val = select.value;
+      const metaBox = document.getElementById('series-meta-box');
+      const mediaTypeBox = document.getElementById('media-type-box');
+      
+      if (val === 'new') {
+        metaBox.classList.remove('hidden');
+        mediaTypeBox.classList.remove('hidden');
+      } else {
+        const target = allAvailableSeries.find(s => s.id === val);
+        metaBox.classList.add('hidden');
+        mediaTypeBox.classList.add('hidden');
+        if (target) {
+          const radios = document.querySelectorAll('input[name="media_type"]');
+          radios.forEach(r => {
+            if (r.value === target.mediaType) {
+              r.checked = true;
+            }
+          });
+          updateTypePlaceholder();
+        }
+      }
+    }
 
     function updateTypePlaceholder() {
       const type = document.querySelector('input[name="media_type"]:checked').value;
@@ -221,6 +276,7 @@
       document.getElementById('section-' + (tab === 'batch' ? 'batch' : 'series-list')).classList.remove('hidden');
       document.getElementById('tab-btn-' + tab).className = 'px-5 py-2.5 rounded-xl bg-brand-500 text-white font-bold text-sm shadow-lg shadow-brand-500/30 transition flex items-center gap-2';
       if (tab === 'series_list') loadSeriesList();
+      if (tab === 'batch') loadSeriesForSelect();
     }
 
     function handleBatchFilesSelected(e) {
@@ -241,6 +297,7 @@
     }
 
     async function submitBatchUpload() {
+      const selectedSeriesId = document.getElementById('select-target-series').value;
       const title = document.getElementById('input-series-title').value;
       const subject = document.getElementById('input-series-subject').value;
       const grade = document.getElementById('input-series-grade').value;
@@ -259,6 +316,7 @@
       submitBtn.classList.add('opacity-50');
 
       const formData = new FormData();
+      formData.append('seriesId', selectedSeriesId);
       formData.append('seriesTitle', title);
       formData.append('subject', subject);
       formData.append('gradeLevel', grade);
@@ -270,7 +328,11 @@
         const resp = await fetch('/api/admin/series/batch-upload', { method: 'POST', body: formData });
         const res = await resp.json();
         if (res.success) {
-          alert(`🎉 恭喜！《${title}》（共 ${selectedBatchFiles.length} 个文件）已成功一键批量发布！\n小朋友在 iPad 端可以随时看视频、翻看电子书或听配乐诗歌朗诵！`);
+          alert(res.message);
+          selectedBatchFiles = [];
+          document.getElementById('batch-file-input').value = '';
+          document.getElementById('selected-files-list').classList.add('hidden');
+          document.getElementById('batch-file-label').innerHTML = '点击批量选择整套文件 (支持多选)';
           switchAdminTab('series_list');
         } else {
           alert('上传失败: ' + res.message);
@@ -300,37 +362,81 @@
       }
     }
 
+    async function deleteSeriesItem(seriesId, seriesTitle) {
+      if (!confirm(`⚠️ 确定要删除系列《${seriesTitle}》及其包含的全部音视频/章节文件吗？\n删除后不可恢复！`)) {
+        return;
+      }
+      try {
+        const resp = await fetch(`/api/admin/series/${seriesId}`, { method: 'DELETE' });
+        const res = await resp.json();
+        if (res.success) {
+          alert(res.message);
+          loadSeriesList();
+          loadSeriesForSelect();
+        } else {
+          alert('删除失败: ' + (res.message || '未知错误'));
+        }
+      } catch (e) {
+        alert('删除请求失败: ' + e.message);
+      }
+    }
+
     function renderFilteredSeries(list) {
       const container = document.getElementById('series-cards-container');
       container.innerHTML = '';
+      if (list.length === 0) {
+        container.innerHTML = '<div class="col-span-2 py-12 text-center text-slate-500 text-sm">暂无该类型的资源系列，快去批量上传吧！</div>';
+        return;
+      }
       list.forEach(s => {
         const typeBadge = s.mediaType === 'book' ? '📖 电子书' : s.mediaType === 'audio' ? '🎵 音乐诗歌' : '🎬 视频课程';
         const card = document.createElement('div');
-        card.className = 'glass-panel rounded-3xl p-6 space-y-4 border border-slate-700/60';
+        card.className = 'glass-panel rounded-3xl p-6 space-y-4 border border-slate-700/60 flex flex-col justify-between';
         card.innerHTML = `
-          <div class="flex items-center justify-between">
-            <span class="text-xs px-2.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 font-bold">${typeBadge} · ${s.gradeLevel}年级</span>
-            <span class="text-xs text-slate-400 font-bold">已完成 ${s.completedEpisodes} / 共 ${s.totalEpisodes} 讲 (${s.progressPercent}%)</span>
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-xs px-2.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 font-bold">${typeBadge} · ${s.gradeLevel}年级</span>
+              <span class="text-xs text-slate-400 font-bold">已完成 ${s.completedEpisodes} / 共 ${s.totalEpisodes} 讲 (${s.progressPercent}%)</span>
+            </div>
+            <div>
+              <h4 class="text-base font-bold text-white mb-1">${s.title}</h4>
+              <p class="text-xs text-slate-400 line-clamp-2">${s.description || '系统规划资源'}</p>
+            </div>
+            <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+              <div class="bg-gradient-to-r from-emerald-500 to-cyan-400 h-full rounded-full" style="width: ${s.progressPercent}%;"></div>
+            </div>
+            <div class="p-3 rounded-2xl bg-slate-800/80 border border-slate-700/60 text-xs">
+              <span class="text-slate-400 block mb-1">👉 当前进度与下节推荐：</span>
+              <span class="text-cyan-300 font-bold">${s.nextEpisode ? s.nextEpisode.title : '已全部学完！'}</span>
+            </div>
           </div>
-          <div>
-            <h4 class="text-base font-bold text-white mb-1">${s.title}</h4>
-            <p class="text-xs text-slate-400 line-clamp-2">${s.description || '系统规划资源'}</p>
-          </div>
-          <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
-            <div class="bg-gradient-to-r from-emerald-500 to-cyan-400 h-full rounded-full" style="width: ${s.progressPercent}%;"></div>
-          </div>
-          <div class="p-3 rounded-2xl bg-slate-800/80 border border-slate-700/60 text-xs">
-            <span class="text-slate-400 block mb-1">👉 当前进度与下节推荐：</span>
-            <span class="text-cyan-300 font-bold">${s.nextEpisode ? s.nextEpisode.title : '已全部学完！'}</span>
-          </div>
-          <div class="flex justify-between items-center pt-2">
-            <span class="text-xs text-slate-500">共 ${s.totalEpisodes} 个文件</span>
-            <a href="index.html" class="px-3 py-1.5 rounded-xl bg-brand-500/20 text-cyan-300 text-xs font-bold border border-brand-500/40 hover:bg-brand-500/30 transition">去学生端学习 →</a>
+          
+          <div class="flex justify-between items-center pt-3 border-t border-slate-800">
+            <button onclick="deleteSeriesItem('${s.id}', '${s.title.replace(/'/g, "\\'")}')" class="px-3 py-1.5 rounded-xl bg-red-500/20 text-red-300 hover:bg-red-500/30 text-xs font-bold border border-red-500/30 transition flex items-center gap-1">
+              <span>🗑️ 删除该系列</span>
+            </button>
+            <div class="flex gap-2">
+              <button onclick="appendMoreToSeries('${s.id}')" class="px-3 py-1.5 rounded-xl bg-indigo-500/20 text-indigo-300 hover:bg-indigo-500/30 text-xs font-bold border border-indigo-500/30 transition">
+                + 追加新内容
+              </button>
+              <a href="index.html" class="px-3 py-1.5 rounded-xl bg-brand-500/20 text-cyan-300 text-xs font-bold border border-brand-500/40 hover:bg-brand-500/30 transition">去学生端 →</a>
+            </div>
           </div>
         `;
         container.appendChild(card);
       });
     }
+
+    function appendMoreToSeries(seriesId) {
+      switchAdminTab('batch');
+      const select = document.getElementById('select-target-series');
+      select.value = seriesId;
+      handleSeriesSelectChange();
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      loadSeriesForSelect();
+    });
   </script>
 </body>
 </html>

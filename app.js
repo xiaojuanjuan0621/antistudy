@@ -487,40 +487,64 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-// 批量上传：支持视频、书本(PDF)、音乐音频
+// 批量上传：支持新建系列 / 追加到现有系列，支持视频、书本(PDF)、音乐音频
 app.post('/api/admin/series/batch-upload', upload.array('videoFiles', 100), (req, res) => {
   const db = loadDB();
-  const { seriesTitle, subject, gradeLevel, description, mediaType } = req.body;
+  let { seriesId, seriesTitle, subject, gradeLevel, description, mediaType } = req.body;
   const files = req.files || [];
-  const seriesId = 'series_' + Date.now();
+
+  if (!files || files.length === 0) {
+    return res.status(400).json({ success: false, message: '请选择要上传的文件！' });
+  }
 
   const detectedType = mediaType || 'video'; // video | book | audio
-
-  const newSeries = {
-    id: seriesId,
-    title: seriesTitle,
-    subject: subject || 'chinese',
-    media_type: detectedType,
-    grade_level: Number(gradeLevel) || 4,
-    description: description || '',
-    total_episodes: files.length,
-    created_at: new Date().toISOString()
-  };
   if (!db.series) db.series = [];
-  db.series.unshift(newSeries);
+  if (!db.courses) db.courses = [];
+  if (!db.books) db.books = [];
+  if (!db.audios) db.audios = [];
+
+  let targetSeries = null;
+  if (seriesId && seriesId !== 'new') {
+    targetSeries = db.series.find(s => s.id === seriesId);
+  }
+
+  if (targetSeries) {
+    seriesId = targetSeries.id;
+    seriesTitle = targetSeries.title;
+    subject = targetSeries.subject;
+    gradeLevel = targetSeries.grade_level;
+    description = targetSeries.description;
+  } else {
+    seriesId = 'series_' + Date.now();
+    targetSeries = {
+      id: seriesId,
+      title: seriesTitle || '未命名系列',
+      subject: subject || 'chinese',
+      coverImage: detectedType === 'book' ? 'https://iili.io/nfESx5v.webp' : detectedType === 'audio' ? 'https://iili.io/nfESB0g.webp' : 'https://iili.io/nfESWL7.webp',
+      media_type: detectedType,
+      grade_level: Number(gradeLevel) || 4,
+      description: description || '',
+      total_episodes: 0,
+      created_at: new Date().toISOString()
+    };
+    db.series.unshift(targetSeries);
+  }
+
+  // 获取该系列现有的最高讲数序号
+  const existingEpisodes = db.courses.filter(c => c.series_id === seriesId);
+  let startIdx = existingEpisodes.length;
 
   const sortedFiles = [...files].sort((a, b) => a.originalname.localeCompare(b.originalname, undefined, { numeric: true }));
-  if (!db.courses) db.courses = [];
 
   for (let i = 0; i < sortedFiles.length; i++) {
     const f = sortedFiles[i];
-    const epIdx = i + 1;
+    const epIdx = startIdx + i + 1;
     let epTitle = path.parse(f.originalname).name;
     const prefix = detectedType === 'book' ? '第' + epIdx + '回：' : detectedType === 'audio' ? '第' + epIdx + '首：' : '第' + epIdx + '讲：';
     if (!epTitle.startsWith('第')) epTitle = `${prefix}${epTitle}`;
 
     db.courses.push({
-      id: `item_${seriesId}_${epIdx}`,
+      id: `item_${seriesId}_${epIdx}_${Date.now()}_${i}`,
       series_id: seriesId,
       episode_index: epIdx,
       title: epTitle,
@@ -535,11 +559,10 @@ app.post('/api/admin/series/batch-upload', upload.array('videoFiles', 100), (req
       created_at: new Date().toISOString()
     });
 
-    // 如果上传的是书本(PDF/文档)，自动同步写入阅览室 books 列表
     if (detectedType === 'book') {
-      if (!db.books) db.books = [];
       db.books.unshift({
-        id: `book_${seriesId}_${epIdx}`,
+        id: `book_${seriesId}_${epIdx}_${Date.now()}_${i}`,
+        series_id: seriesId,
         title: `${seriesTitle} · ${epTitle}`,
         author: '名师精编',
         category: subject === 'chinese' ? '国学经典' : '自然探索',
@@ -547,7 +570,7 @@ app.post('/api/admin/series/batch-upload', upload.array('videoFiles', 100), (req
         cover_image: 'https://iili.io/nfESx5v.webp',
         read_minutes: 8,
         summary: description || `《${seriesTitle}》配套阅读读物。`,
-        content_text: `【${epTitle}】\n\n已成功载入《${seriesTitle}》电子读物内容！\n文件路径：/uploads/${f.filename}\n\n请在宽屏或平板上尽情阅读，探索更多知识！`,
+        content_text: `【${epTitle}】\n\n已成功载入《${seriesTitle}》电子读物内容！\n文件：${f.originalname}\n\n请在宽屏或平板上尽情阅读，探索更多知识！`,
         file_url: `/uploads/${f.filename}`,
         read_count: 0,
         is_completed: 0,
@@ -555,11 +578,10 @@ app.post('/api/admin/series/batch-upload', upload.array('videoFiles', 100), (req
       });
     }
 
-    // 如果上传的是音频，自动同步写入有声故事馆 audios 列表
     if (detectedType === 'audio') {
-      if (!db.audios) db.audios = [];
       db.audios.unshift({
-        id: `audio_${seriesId}_${epIdx}`,
+        id: `audio_${seriesId}_${epIdx}_${Date.now()}_${i}`,
+        series_id: seriesId,
         title: `${seriesTitle} · ${epTitle}`,
         speaker: '小拓AI主播',
         category: subject === 'chinese' ? '国学经典' : '名著故事',
@@ -574,8 +596,70 @@ app.post('/api/admin/series/batch-upload', upload.array('videoFiles', 100), (req
     }
   }
 
+  // 更新总集数
+  targetSeries.total_episodes = db.courses.filter(c => c.series_id === seriesId).length;
+
   saveDB(db);
-  res.json({ success: true, message: `🎉 成功上传《${seriesTitle}》（共 ${files.length} 个文件）！` });
+  res.json({ success: true, message: `🎉 成功上传/追加至《${seriesTitle}》（新增 ${files.length} 个文件，当前共 ${targetSeries.total_episodes} 讲/回）！` });
+});
+
+// ==================== 🗑️ 删除系列/专辑 API ====================
+app.delete('/api/admin/series/:id', (req, res) => {
+  const db = loadDB();
+  const seriesId = req.params.id;
+
+  // 1. 删除系列中的所有课程/章节文件
+  const toDeleteCourses = (db.courses || []).filter(c => c.series_id === seriesId);
+  toDeleteCourses.forEach(c => {
+    if (c.video_filename) {
+      const p = path.join(uploadsDir, c.video_filename);
+      if (fs.existsSync(p)) {
+        try { fs.unlinkSync(p); } catch (e) {}
+      }
+    }
+  });
+
+  db.series = (db.series || []).filter(s => s.id !== seriesId);
+  db.courses = (db.courses || []).filter(c => c.series_id !== seriesId);
+  db.books = (db.books || []).filter(b => b.series_id !== seriesId && b.id !== seriesId);
+  db.audios = (db.audios || []).filter(a => a.series_id !== seriesId && a.id !== seriesId);
+
+  saveDB(db);
+  res.json({ success: true, message: '🎉 系列专辑及关联资料已全部删除！' });
+});
+
+// ==================== 🗑️ 删除单本图书 API ====================
+app.delete('/api/admin/books/:id', (req, res) => {
+  const db = loadDB();
+  const bookId = req.params.id;
+  const book = (db.books || []).find(b => b.id === bookId);
+  if (book && book.file_url && book.file_url.startsWith('/uploads/')) {
+    const fn = path.basename(book.file_url);
+    const p = path.join(uploadsDir, fn);
+    if (fs.existsSync(p)) {
+      try { fs.unlinkSync(p); } catch (e) {}
+    }
+  }
+  db.books = (db.books || []).filter(b => b.id !== bookId);
+  saveDB(db);
+  res.json({ success: true, message: '🎉 图书已成功删除！' });
+});
+
+// ==================== 🗑️ 删除单个音频 API ====================
+app.delete('/api/admin/audios/:id', (req, res) => {
+  const db = loadDB();
+  const audioId = req.params.id;
+  const audio = (db.audios || []).find(a => a.id === audioId);
+  if (audio && audio.audio_url && audio.audio_url.startsWith('/uploads/')) {
+    const fn = path.basename(audio.audio_url);
+    const p = path.join(uploadsDir, fn);
+    if (fs.existsSync(p)) {
+      try { fs.unlinkSync(p); } catch (e) {}
+    }
+  }
+  db.audios = (db.audios || []).filter(a => a.id !== audioId);
+  saveDB(db);
+  res.json({ success: true, message: '🎉 音频已成功删除！' });
 });
 
 const PORT = 3300;
