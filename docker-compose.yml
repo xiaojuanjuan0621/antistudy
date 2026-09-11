@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  antistudy:
+    build: .
+    container_name: antistudy_app
+    restart: always
+    ports:
+      - "3300:3300"
+    volumes:
+      - ./data:/app/data
+      - ./uploads:/app/uploads
+    environment:
+      - NODE_ENV=production
+      - PORT=3300
