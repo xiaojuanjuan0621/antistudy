@@ -7,7 +7,8 @@ const { exec } = require('child_process');
 
 const app = express();
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '500mb' }));
+app.use(express.urlencoded({ limit: '500mb', extended: true }));
 
 const dataDir = path.join(__dirname, 'data');
 const uploadsDir = path.join(__dirname, 'uploads');
@@ -492,7 +493,13 @@ const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, uploadsDir),
   filename: (req, file, cb) => cb(null, 'media-' + Date.now() + '-' + Math.round(Math.random() * 1e9) + path.extname(file.originalname)),
 });
-const upload = multer({ storage });
+const upload = multer({
+  storage,
+  limits: {
+    fileSize: 1024 * 1024 * 500, // 单文件最大 500MB
+    fieldSize: 1024 * 1024 * 500
+  }
+});
 
 // 批量上传：支持新建系列 / 追加到现有系列，支持视频、书本(PDF)、音乐音频
 app.post('/api/admin/series/batch-upload', upload.array('videoFiles', 100), (req, res) => {
@@ -678,6 +685,15 @@ app.delete('/api/admin/audios/:id', (req, res) => {
   db.audios = (db.audios || []).filter(a => a.id !== audioId);
   saveDB(db);
   res.json({ success: true, message: '🎉 音频已成功删除！' });
+});
+
+// 全局异常与文件过大错误拦截
+app.use((err, req, res, next) => {
+  console.error('Server error:', err);
+  if (err.code === 'LIMIT_FILE_SIZE') {
+    return res.status(413).json({ success: false, message: '文件体积超出限制（单个文件最大支持500MB）' });
+  }
+  res.status(500).json({ success: false, message: err.message || '服务器内部错误' });
 });
 
 const PORT = 3300;
