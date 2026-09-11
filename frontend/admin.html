@@ -2,154 +2,123 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>知识冒险岛 (ANti Study) - 课程与多媒体资源管理后台</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>知识冒险岛 - 多媒体与资源管理后台</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
   <script>
     tailwind.config = {
       theme: {
         extend: {
-          fontFamily: {
-            sans: ['"Plus Jakarta Sans"', '"Noto Sans SC"', 'sans-serif'],
-          },
-          colors: {
-            brand: {
-              50: '#F0F7FF',
-              500: '#0066FF',
-              600: '#0052CC',
-              700: '#003D99',
-            },
-            adminBg: '#090D16',
-            panelBg: '#131B2E',
-            cardBg: '#1E293B',
-          }
+          fontFamily: { sans: ['"Plus Jakarta Sans"', '"Noto Sans SC"', 'sans-serif'] },
+          colors: { brand: { 500: '#0066FF', 600: '#0052CC' }, adminBg: '#090D16', panelBg: '#131B2E', cardBg: '#1E293B' }
         }
       }
     }
   </script>
   <style>
-    :root {
-      --sat: env(safe-area-inset-top, 0px);
-      --sab: env(safe-area-inset-bottom, 0px);
-      --sal: env(safe-area-inset-left, 0px);
-      --sar: env(safe-area-inset-right, 0px);
-    }
-    body {
-      background-color: #090D16;
-      color: #F1F5F9;
-      padding-top: var(--sat);
-      padding-bottom: var(--sab);
-      padding-left: var(--sal);
-      padding-right: var(--sar);
-    }
-    .glass-panel {
-      background: rgba(19, 27, 46, 0.75);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-    }
+    body { background-color: #090D16; color: #F1F5F9; }
+    .glass-panel { background: rgba(19, 27, 46, 0.75); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.08); }
   </style>
 </head>
 <body class="font-sans antialiased min-h-screen flex flex-col">
-
-  <!-- 1. 顶部管理台导航 -->
-  <header class="h-14 sm:h-16 px-4 sm:px-8 glass-panel border-b border-slate-800 flex items-center justify-between sticky top-0 z-50">
-    <div class="flex items-center space-x-2.5 sm:space-x-4">
-      <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-2xl bg-gradient-to-tr from-brand-600 via-indigo-500 to-cyan-400 p-0.5 shadow-lg shadow-brand-500/25 flex-shrink-0">
-        <img src="/uploads/assets/pet_panda.png" class="w-full h-full object-cover rounded-[14px]" alt="Logo">
+  <header class="h-16 px-8 glass-panel border-b border-slate-800 flex items-center justify-between sticky top-0 z-50">
+    <div class="flex items-center space-x-4">
+      <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-500 flex items-center justify-center shadow-lg shadow-brand-500/20">
+        <span class="text-xl">⚙️</span>
       </div>
       <div>
-        <h1 class="font-black text-sm sm:text-lg text-white flex items-center gap-1.5 sm:gap-2 leading-tight">
-          资源管理中心
-          <span class="text-[10px] sm:text-xs px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-semibold border border-emerald-500/30 hidden sm:inline-block">视频 · 电子书 · 有声音频</span>
+        <h1 class="font-black text-lg text-white flex items-center gap-2">
+          ANti Study · 资源管理后台
+          <span class="text-xs px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-semibold border border-emerald-500/30">支持视频·图书·音乐</span>
         </h1>
-        <p class="text-[10px] sm:text-xs text-slate-400 hidden sm:block">一站式上传课程视频、书籍绘本与有声故事，支持上传自定义封面图片与图标！</p>
+        <p class="text-xs text-slate-400">一键上传整套视频、电子书PDF、早读配乐音频，孩子直看有规划！</p>
       </div>
     </div>
-
-    <div class="flex items-center space-x-2 sm:space-x-4">
-      <a href="index.html" class="px-2.5 py-1.5 sm:px-4 sm:py-2 rounded-xl bg-brand-500/20 hover:bg-brand-500/30 text-cyan-300 text-xs font-bold border border-brand-500/40 flex items-center gap-1 transition">
-        <span>📱 <span class="hidden sm:inline">进入学生端预览</span><span class="sm:hidden">学生端</span></span> ↗
+    <div class="flex items-center space-x-4">
+      <a href="index.html" class="px-4 py-2 rounded-xl bg-brand-500/20 hover:bg-brand-500/30 text-cyan-300 text-xs font-bold border border-brand-500/40 flex items-center gap-1.5 transition">
+        <span>📱 进入 iPad 学生端预览</span> ↗
       </a>
-      <div class="hidden md:flex items-center space-x-2 pl-3 border-l border-slate-800">
-        <div class="w-7 h-7 rounded-full bg-slate-700 flex items-center justify-center text-[10px] font-bold text-slate-200">
-          家长
-        </div>
-        <span class="text-xs font-medium text-slate-300">安泽家长 / 管理员</span>
+      <div class="flex items-center space-x-2 pl-4 border-l border-slate-800">
+        <div class="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center text-xs font-bold text-slate-200">家长</div>
+        <span class="text-xs font-medium text-slate-300">安泽家长 / 资源管理员</span>
       </div>
     </div>
   </header>
 
-  <!-- 2. 主体工作区 -->
-  <main class="flex-1 p-3.5 sm:p-6 md:p-8 max-w-7xl mx-auto w-full space-y-4 sm:space-y-6">
-    
-    <!-- 顶部大分类选项卡切换 -->
-    <div class="flex flex-wrap items-center justify-between border-b border-slate-800 pb-3 gap-2">
-      <div class="flex flex-wrap gap-2">
-        <button onclick="switchAdminTab('video_batch')" id="tab-btn-video_batch" class="px-3.5 py-2 sm:px-5 sm:py-2.5 rounded-xl bg-brand-500 text-white font-bold text-xs sm:text-sm shadow-lg shadow-brand-500/30 transition flex items-center gap-1.5 active:scale-95">
-          <span>🎬 课程视频上传</span>
+  <main class="flex-1 p-8 max-w-7xl mx-auto w-full space-y-8">
+    <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+      <div class="flex space-x-4">
+        <button onclick="switchAdminTab('batch')" id="tab-btn-batch" class="px-5 py-2.5 rounded-xl bg-brand-500 text-white font-bold text-sm shadow-lg shadow-brand-500/30 transition flex items-center gap-2">
+          <span>📦 一键批量上传 (视频 / 书籍 / 音乐)</span>
         </button>
-        <button onclick="switchAdminTab('series_list')" id="tab-btn-series_list" class="px-3.5 py-2 sm:px-5 sm:py-2.5 rounded-xl bg-slate-800 text-slate-400 hover:text-slate-200 font-bold text-xs sm:text-sm transition flex items-center gap-1.5 active:scale-95">
-          <span>📚 已规划视频专辑</span>
-        </button>
-        <button onclick="switchAdminTab('books')" id="tab-btn-books" class="px-3.5 py-2 sm:px-5 sm:py-2.5 rounded-xl bg-slate-800 text-slate-400 hover:text-slate-200 font-bold text-xs sm:text-sm transition flex items-center gap-1.5 active:scale-95">
-          <span>📖 书籍绘本管理</span>
-        </button>
-        <button onclick="switchAdminTab('audios')" id="tab-btn-audios" class="px-3.5 py-2 sm:px-5 sm:py-2.5 rounded-xl bg-slate-800 text-slate-400 hover:text-slate-200 font-bold text-xs sm:text-sm transition flex items-center gap-1.5 active:scale-95">
-          <span>🎧 有声音频管理</span>
+        <button onclick="switchAdminTab('series_list')" id="tab-btn-series_list" class="px-5 py-2.5 rounded-xl bg-slate-800 text-slate-400 hover:text-slate-200 font-bold text-sm transition flex items-center gap-2">
+          <span>📚 已规划的资源大纲库</span>
         </button>
       </div>
-
-      <div class="text-[11px] sm:text-xs text-slate-400">
-        <span>💡 上传时可自定义封面图片，未传则自动套用高颜值 AI 默认插画！</span>
+      <div class="text-xs text-slate-400 flex gap-4">
+        <span>💡 提示：按 01、02、03 命名，系统将自动排好先后顺序与下一课！</span>
       </div>
     </div>
 
-    <!-- ================= TAB 1: 视频课程批量上传 ================= -->
-    <section id="section-video_batch" class="admin-section space-y-4 sm:space-y-6">
-      
-      <!-- 说明横幅 -->
-      <div class="glass-panel rounded-2xl sm:rounded-3xl p-4 sm:p-6 border-indigo-500/30 bg-gradient-to-r from-blue-950/40 via-indigo-950/20 to-slate-900 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+    <section id="section-batch" class="space-y-6">
+      <div class="glass-panel rounded-3xl p-6 border-indigo-500/30 bg-gradient-to-r from-blue-950/40 via-indigo-950/20 to-slate-900 flex items-center justify-between">
         <div class="space-y-1">
-          <h3 class="text-sm sm:text-base font-bold text-white flex items-center gap-2">
-            <span>✨ 视频批量上传 · 自动打包完整系列</span>
+          <h3 class="text-base font-bold text-white flex items-center gap-2">
+            <span>✨ 视频、电子书、经典古诗词音频，通通一次性拖入！</span>
           </h3>
           <p class="text-xs text-slate-300 leading-relaxed">
-            多选视频（如 01-三角形.mp4, 02-四边形.mp4），系统自动排序并为小朋友建立<strong>“已学几节 / 还剩几节 / 下一节是什么”</strong>的清晰地图！
+            支持整套西游记微课、彩绘PDF图册、早读磨耳朵诗歌音频，系统自动识别并为孩子生成<strong>“已读几讲 / 还剩几讲 / 下一回是什么”</strong>的清晰规划地图！
           </p>
         </div>
-        <span class="text-3xl sm:text-5xl opacity-80 self-end sm:self-center">🗺️</span>
+        <span class="text-5xl opacity-80">📖</span>
       </div>
 
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 lg:gap-8">
-        
-        <!-- 左侧：系列基本信息 -->
-        <div class="col-span-1 lg:col-span-5 glass-panel rounded-2xl sm:rounded-3xl p-4 sm:p-6 space-y-4">
-          <h3 class="text-sm sm:text-base font-bold text-white flex items-center gap-2">
-            <span>📝 系列专辑信息</span>
+      <div class="grid grid-cols-12 gap-8">
+        <div class="col-span-5 glass-panel rounded-3xl p-6 space-y-4">
+          <h3 class="text-base font-bold text-white flex items-center gap-2">
+            <span>📝 资源专辑信息</span>
           </h3>
+          <div class="space-y-3 text-sm">
+            
+            <!-- 资源类型选择 (视频/书籍/音乐) -->
+            <div>
+              <label class="block text-xs font-bold text-slate-400 mb-1">资源类型</label>
+              <div class="grid grid-cols-3 gap-2">
+                <label class="flex items-center justify-center gap-1.5 p-2.5 rounded-xl bg-slate-800 border border-slate-700 cursor-pointer hover:border-brand-500 text-xs font-bold text-white">
+                  <input type="radio" name="media_type" value="video" checked onchange="updateTypePlaceholder()" class="text-brand-500">
+                  <span>🎬 视频课程</span>
+                </label>
+                <label class="flex items-center justify-center gap-1.5 p-2.5 rounded-xl bg-slate-800 border border-slate-700 cursor-pointer hover:border-brand-500 text-xs font-bold text-white">
+                  <input type="radio" name="media_type" value="book" onchange="updateTypePlaceholder()" class="text-brand-500">
+                  <span>📖 电子书/图册</span>
+                </label>
+                <label class="flex items-center justify-center gap-1.5 p-2.5 rounded-xl bg-slate-800 border border-slate-700 cursor-pointer hover:border-brand-500 text-xs font-bold text-white">
+                  <input type="radio" name="media_type" value="audio" onchange="updateTypePlaceholder()" class="text-brand-500">
+                  <span>🎵 音乐/古诗朗诵</span>
+                </label>
+              </div>
+            </div>
 
-          <div class="space-y-3 text-xs sm:text-sm">
             <div>
               <label class="block text-xs font-bold text-slate-400 mb-1">系列大标题</label>
-              <input id="input-series-title" type="text" value="小学四年级数学·几何图形与测量大通关 (全8讲)" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs sm:text-sm focus:outline-none focus:border-brand-500">
+              <input id="input-series-title" type="text" value="世界经典名著·《西游记》少年精读全集 (全20讲)" class="w-full px-4 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white focus:outline-none focus:border-brand-500">
             </div>
 
             <div class="grid grid-cols-2 gap-3">
               <div>
-                <label class="block text-xs font-bold text-slate-400 mb-1">所属学科</label>
-                <select id="input-series-subject" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs sm:text-sm focus:outline-none focus:border-brand-500">
+                <label class="block text-xs font-bold text-slate-400 mb-1">所属学科 / 分类</label>
+                <select id="input-series-subject" class="w-full px-4 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white focus:outline-none focus:border-brand-500">
+                  <option value="chinese">📖 语文 / 经典名著</option>
                   <option value="math">🔢 小学数学</option>
                   <option value="biology">🧬 自然生物 / 科学</option>
-                  <option value="chinese">📖 语文素养</option>
                   <option value="history">🏛️ 历史与文明</option>
                   <option value="english">🔤 趣味英语</option>
                 </select>
               </div>
               <div>
                 <label class="block text-xs font-bold text-slate-400 mb-1">适用年级</label>
-                <select id="input-series-grade" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs sm:text-sm focus:outline-none focus:border-brand-500">
+                <select id="input-series-grade" class="w-full px-4 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white focus:outline-none focus:border-brand-500">
                   <option value="4">小学四年级</option>
                   <option value="3">小学三年级</option>
                   <option value="5">小学五年级</option>
@@ -160,307 +129,128 @@
             </div>
 
             <div>
-              <label class="block text-xs font-bold text-slate-400 mb-1">系列简介（激励小朋友的话）</label>
-              <textarea id="input-series-desc" rows="2" class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-xs text-white focus:outline-none focus:border-brand-500">跟随小拓探索三角形、平行四边形与梯形的面积奥秘，通关后解锁专属徽章！</textarea>
-            </div>
-
-            <div>
-              <label class="block text-xs font-bold text-slate-400 mb-1">自定义专辑封面图片 (可选，不选则自动套用高颜值插画)</label>
-              <input type="file" id="input-series-cover" accept="image/*" class="w-full p-2.5 rounded-xl bg-slate-800 border border-slate-700 text-xs text-slate-300">
+              <label class="block text-xs font-bold text-slate-400 mb-1">简介与鼓励寄语</label>
+              <textarea id="input-series-desc" rows="2" class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-xs text-white focus:outline-none focus:border-brand-500">跟随孙悟空师徒四人西天取经，历经九九八十一难，学习勇敢与智慧！</textarea>
             </div>
           </div>
         </div>
 
-        <!-- 右侧：多文件批量选择与上传 -->
-        <div class="col-span-1 lg:col-span-7 glass-panel rounded-2xl sm:rounded-3xl p-4 sm:p-6 flex flex-col justify-between">
+        <div class="col-span-7 glass-panel rounded-3xl p-6 flex flex-col justify-between">
           <div>
-            <h3 class="text-sm sm:text-base font-bold text-white mb-1.5">📁 批量选择视频文件 (可多选)</h3>
-            <p class="text-xs text-slate-400 mb-3">支持一次性拖入或多选 1 ~ 50 个 MP4 / MOV 视频，系统自动按序号排课</p>
+            <h3 class="text-base font-bold text-white mb-2" id="upload-box-header">📁 批量选择文件 (支持视频 MP4/MOV、电子书 PDF、音乐 MP3)</h3>
+            <p class="text-xs text-slate-400 mb-4" id="upload-box-desc">支持一次性拖入 1 ~ 100 个文件，系统将按文件名序号自动排序</p>
 
-            <div class="border-2 border-dashed border-slate-700 hover:border-brand-500 rounded-2xl p-6 sm:p-8 flex flex-col items-center justify-center text-center cursor-pointer transition bg-slate-900/40 relative">
-              <input type="file" id="batch-file-input" multiple accept="video/mp4,video/quicktime,video/webm" class="absolute inset-0 opacity-0 cursor-pointer w-full h-full" onchange="handleBatchFilesSelected(event)">
-              <span class="text-3xl sm:text-4xl mb-2 sm:mb-3">🎬</span>
-              <h4 class="text-xs sm:text-sm font-bold text-white mb-1" id="batch-file-label">点击批量选择整季视频文件 (支持多选)</h4>
-              <p class="text-[11px] sm:text-xs text-slate-400">如: 01-三角形的认识.mp4, 02-平行四边形.mp4 ...</p>
+            <div class="border-2 border-dashed border-slate-700 hover:border-brand-500 rounded-2xl p-8 flex flex-col items-center justify-center text-center cursor-pointer transition bg-slate-900/40 relative">
+              <input type="file" id="batch-file-input" multiple accept="video/*,audio/*,.pdf,.epub" class="absolute inset-0 opacity-0 cursor-pointer w-full h-full" onchange="handleBatchFilesSelected(event)">
+              <span class="text-4xl mb-3" id="upload-icon-preview">🎬</span>
+              <h4 class="text-sm font-bold text-white mb-1" id="batch-file-label">点击批量选择整套文件 (支持多选)</h4>
+              <p class="text-xs text-slate-400" id="upload-hint-example">如: 01-大闹天宫.mp4, 02-三打白骨精.mp4 ...</p>
             </div>
 
-            <!-- 文件预览列表 -->
-            <div id="selected-files-list" class="hidden mt-3 space-y-2 max-h-48 overflow-y-auto pr-1">
-              <span class="text-xs font-bold text-cyan-300">已选中的视频列表：</span>
+            <div id="selected-files-list" class="hidden mt-4 space-y-2 max-h-48 overflow-y-auto pr-2">
+              <span class="text-xs font-bold text-cyan-300">已选中的资源清单（按顺序排定）：</span>
               <div id="files-container" class="space-y-1.5 text-xs"></div>
             </div>
 
-            <div id="upload-progress-box" class="hidden mt-3 p-3.5 rounded-2xl bg-slate-950 border border-brand-500/30 text-xs font-mono space-y-1">
+            <div id="upload-progress-box" class="hidden mt-4 p-4 rounded-2xl bg-slate-950 border border-brand-500/30 text-xs font-mono space-y-1">
               <p class="text-cyan-300 font-bold flex items-center gap-2">
                 <span class="inline-block w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
-                正在批量上传并构建系列大纲与连播规划...
+                正在批量上传并排定大纲目录与连播规划...
               </p>
             </div>
           </div>
 
-          <button id="btn-submit-batch" onclick="submitBatchUpload()" class="w-full mt-4 sm:mt-6 py-3 sm:py-3.5 rounded-xl sm:rounded-2xl bg-gradient-to-r from-emerald-500 via-teal-600 to-cyan-500 text-white font-bold text-xs sm:text-sm shadow-xl shadow-emerald-500/30 hover:opacity-95 active:scale-95 transition flex items-center justify-center gap-2">
-            <span>🚀 立即批量上传视频并发布</span>
+          <button id="btn-submit-batch" onclick="submitBatchUpload()" class="w-full mt-6 py-3.5 rounded-2xl bg-gradient-to-r from-emerald-500 via-teal-600 to-cyan-500 text-white font-bold text-sm shadow-xl shadow-emerald-500/30 hover:opacity-95 transition flex items-center justify-center gap-2">
+            <span>🚀 立即批量上传并发布至小朋友的探索地图</span>
           </button>
         </div>
-
-      </div>
-
-    </section>
-
-    <!-- ================= TAB 2: 已规划的视频专辑大纲 ================= -->
-    <section id="section-series_list" class="admin-section hidden space-y-4 sm:space-y-6">
-      <div class="glass-panel rounded-2xl sm:rounded-3xl p-4 sm:p-6">
-        <h3 class="text-sm sm:text-base font-bold text-white mb-3 sm:mb-4">🗺️ 当前小朋友正在学习的系统视频规划</h3>
-        
-        <div id="series-cards-container" class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-          <!-- 动态拉取系列卡片 -->
-        </div>
       </div>
     </section>
 
-    <!-- ================= TAB 3: 书籍绘本管理与上传 ================= -->
-    <section id="section-books" class="admin-section hidden space-y-4 sm:space-y-6">
-      
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 lg:gap-8">
-        
-        <!-- 左侧：上传新书籍表单 -->
-        <div class="col-span-1 lg:col-span-5 glass-panel rounded-2xl sm:rounded-3xl p-4 sm:p-6 space-y-4">
-          <h3 class="text-sm sm:text-base font-bold text-white flex items-center gap-2">
-            <span>📖 上传新电子书 / 篇章文章</span>
-          </h3>
-
-          <div class="space-y-3 text-xs sm:text-sm">
-            <div>
-              <label class="block text-xs font-bold text-slate-400 mb-1">书籍/篇章名称 *</label>
-              <input id="input-book-title" type="text" placeholder="例如：《中国古代寓言故事精选》" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs sm:text-sm focus:outline-none focus:border-brand-500">
-            </div>
-
-            <div class="grid grid-cols-2 gap-3">
-              <div>
-                <label class="block text-xs font-bold text-slate-400 mb-1">作者/出处</label>
-                <input id="input-book-author" type="text" value="名师推荐" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs sm:text-sm focus:outline-none focus:border-brand-500">
-              </div>
-              <div>
-                <label class="block text-xs font-bold text-slate-400 mb-1">所属分类</label>
-                <select id="input-book-category" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs sm:text-sm focus:outline-none focus:border-brand-500">
-                  <option value="自然科普">🌿 自然科普</option>
-                  <option value="经典科幻">🚀 经典科幻</option>
-                  <option value="历史素养">🏛️ 历史素养</option>
-                  <option value="名著故事">📚 名著故事</option>
-                  <option value="思维启蒙">💡 思维启蒙</option>
-                </select>
-              </div>
-            </div>
-
-            <div class="grid grid-cols-2 gap-3">
-              <div>
-                <label class="block text-xs font-bold text-slate-400 mb-1">适用年级</label>
-                <select id="input-book-grade" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs sm:text-sm focus:outline-none focus:border-brand-500">
-                  <option value="4">小学四年级</option>
-                  <option value="3">小学三年级</option>
-                  <option value="5">小学五年级</option>
-                  <option value="6">小学六年级</option>
-                </select>
-              </div>
-              <div>
-                <label class="block text-xs font-bold text-slate-400 mb-1">预估阅读时间</label>
-                <input id="input-book-minutes" type="number" value="8" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs sm:text-sm focus:outline-none focus:border-brand-500">
-              </div>
-            </div>
-
-            <div>
-              <label class="block text-xs font-bold text-slate-400 mb-1">一句话推荐语/导读</label>
-              <textarea id="input-book-summary" rows="2" class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-xs text-white focus:outline-none focus:border-brand-500" placeholder="写一句吸引孩子阅读的导读语..."></textarea>
-            </div>
-
-            <div>
-              <label class="block text-xs font-bold text-slate-400 mb-1">正文内容 (支持直接粘贴纯文本或长篇故事)</label>
-              <textarea id="input-book-content" rows="4" class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-xs text-white font-serif leading-relaxed focus:outline-none focus:border-brand-500" placeholder="在此粘贴书籍章节正文内容，阅读时支持智能分段、护眼排版与自动朗读！"></textarea>
-            </div>
-
-            <div>
-              <label class="block text-xs font-bold text-slate-400 mb-1">上传电子书文件 (可选 TXT / PDF)</label>
-              <input type="file" id="input-book-file" accept=".txt,.pdf" class="w-full p-2.5 rounded-xl bg-slate-800 border border-slate-700 text-xs text-slate-300">
-            </div>
-
-            <div>
-              <label class="block text-xs font-bold text-slate-400 mb-1">自定义书籍封面图片 (可选，不选则套用精美插画)</label>
-              <input type="file" id="input-book-cover" accept="image/*" class="w-full p-2.5 rounded-xl bg-slate-800 border border-slate-700 text-xs text-slate-300">
-            </div>
-
-            <button onclick="submitBookUpload()" id="btn-submit-book" class="w-full py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-bold text-xs sm:text-sm shadow-lg shadow-cyan-500/20 active:scale-95 transition">
-              ✨ 立即发布到学生端阅览室
-            </button>
+    <section id="section-series-list" class="hidden space-y-6">
+      <div class="glass-panel rounded-3xl p-6">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-base font-bold text-white">🗺️ 当前小朋友拥有的全部资源库 (视频 · 图书 · 音乐)</h3>
+          <div class="flex gap-2 text-xs">
+            <button onclick="filterSeriesDisplay('all')" class="px-3 py-1 rounded-lg bg-brand-500/20 text-cyan-300 font-bold border border-brand-500/40">全部</button>
+            <button onclick="filterSeriesDisplay('video')" class="px-3 py-1 rounded-lg bg-slate-800 text-slate-400">视频</button>
+            <button onclick="filterSeriesDisplay('book')" class="px-3 py-1 rounded-lg bg-slate-800 text-slate-400">图书</button>
+            <button onclick="filterSeriesDisplay('audio')" class="px-3 py-1 rounded-lg bg-slate-800 text-slate-400">音频</button>
           </div>
         </div>
-
-        <!-- 右侧：已有书籍列表 -->
-        <div class="col-span-1 lg:col-span-7 glass-panel rounded-2xl sm:rounded-3xl p-4 sm:p-6 flex flex-col">
-          <div class="flex items-center justify-between mb-4">
-            <h3 class="text-sm sm:text-base font-bold text-white flex items-center gap-2">
-              <span>📚 阅览室现有藏书 (<span id="books-count-label">0</span> 本)</span>
-            </h3>
-            <button onclick="loadBooksList()" class="text-xs text-cyan-400 hover:underline">刷新列表 🔄</button>
-          </div>
-
-          <div id="admin-books-list" class="space-y-3 overflow-y-auto max-h-[600px] pr-1">
-            <!-- 动态渲染书籍 -->
-          </div>
-        </div>
-
+        <div id="series-cards-container" class="grid grid-cols-2 gap-6"></div>
       </div>
-
     </section>
-
-    <!-- ================= TAB 4: 有声音频管理与上传 ================= -->
-    <section id="section-audios" class="admin-section hidden space-y-4 sm:space-y-6">
-      
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 lg:gap-8">
-        
-        <!-- 左侧：上传音频表单 -->
-        <div class="col-span-1 lg:col-span-5 glass-panel rounded-2xl sm:rounded-3xl p-4 sm:p-6 space-y-4">
-          <h3 class="text-sm sm:text-base font-bold text-white flex items-center gap-2">
-            <span>🎧 上传有声故事 / 课文朗读</span>
-          </h3>
-
-          <div class="space-y-3 text-xs sm:text-sm">
-            <div>
-              <label class="block text-xs font-bold text-slate-400 mb-1">音频标题 *</label>
-              <input id="input-audio-title" type="text" placeholder="例如：《三国演义》少年版·草船借箭" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs sm:text-sm focus:outline-none focus:border-brand-500">
-            </div>
-
-            <div class="grid grid-cols-2 gap-3">
-              <div>
-                <label class="block text-xs font-bold text-slate-400 mb-1">主讲/主播人</label>
-                <input id="input-audio-speaker" type="text" value="小拓AI主播" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs sm:text-sm focus:outline-none focus:border-brand-500">
-              </div>
-              <div>
-                <label class="block text-xs font-bold text-slate-400 mb-1">分类专题</label>
-                <select id="input-audio-category" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs sm:text-sm focus:outline-none focus:border-brand-500">
-                  <option value="名著有声">📚 名著有声</option>
-                  <option value="宇宙科学">🌌 宇宙科学</option>
-                  <option value="国学经典">📜 国学经典</option>
-                  <option value="睡前故事">🌙 睡前探索</option>
-                  <option value="英语听力">🔤 趣味英语</option>
-                </select>
-              </div>
-            </div>
-
-            <div class="grid grid-cols-2 gap-3">
-              <div>
-                <label class="block text-xs font-bold text-slate-400 mb-1">适用年级</label>
-                <select id="input-audio-grade" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs sm:text-sm focus:outline-none focus:border-brand-500">
-                  <option value="4">小学四年级</option>
-                  <option value="3">小学三年级</option>
-                  <option value="5">小学五年级</option>
-                  <option value="6">小学六年级</option>
-                </select>
-              </div>
-              <div>
-                <label class="block text-xs font-bold text-slate-400 mb-1">时长（分钟）</label>
-                <input id="input-audio-duration" type="number" value="4" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs sm:text-sm focus:outline-none focus:border-brand-500">
-              </div>
-            </div>
-
-            <div>
-              <label class="block text-xs font-bold text-slate-400 mb-1">故事简介</label>
-              <textarea id="input-audio-desc" rows="2" class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-xs text-white focus:outline-none focus:border-brand-500" placeholder="简单介绍这个音频的故事亮点..."></textarea>
-            </div>
-
-            <div>
-              <label class="block text-xs font-bold text-slate-400 mb-1">选择音频文件 (MP3 / M4A / WAV / AAC) *</label>
-              <input type="file" id="input-audio-file" accept="audio/*" class="w-full p-2.5 rounded-xl bg-slate-800 border border-slate-700 text-xs text-slate-300">
-            </div>
-
-            <div>
-              <label class="block text-xs font-bold text-slate-400 mb-1">自定义音频封面图片 (可选，不选则套用精美插画)</label>
-              <input type="file" id="input-audio-cover" accept="image/*" class="w-full p-2.5 rounded-xl bg-slate-800 border border-slate-700 text-xs text-slate-300">
-            </div>
-
-            <button onclick="submitAudioUpload()" id="btn-submit-audio" class="w-full py-3 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-white font-bold text-xs sm:text-sm shadow-lg shadow-amber-500/20 active:scale-95 transition">
-              🎧 立即上传音频并发布
-            </button>
-          </div>
-        </div>
-
-        <!-- 右侧：已有音频列表 -->
-        <div class="col-span-1 lg:col-span-7 glass-panel rounded-2xl sm:rounded-3xl p-4 sm:p-6 flex flex-col">
-          <div class="flex items-center justify-between mb-4">
-            <h3 class="text-sm sm:text-base font-bold text-white flex items-center gap-2">
-              <span>🎵 已上传有声节目 (<span id="audios-count-label">0</span> 条)</span>
-            </h3>
-            <button onclick="loadAudiosList()" class="text-xs text-cyan-400 hover:underline">刷新列表 🔄</button>
-          </div>
-
-          <div id="admin-audios-list" class="space-y-3 overflow-y-auto max-h-[600px] pr-1">
-            <!-- 动态渲染音频 -->
-          </div>
-        </div>
-
-      </div>
-
-    </section>
-
   </main>
 
   <script>
     let selectedBatchFiles = [];
 
-    function switchAdminTab(tab) {
-      document.querySelectorAll('.admin-section').forEach(sec => sec.classList.add('hidden'));
+    function updateTypePlaceholder() {
+      const type = document.querySelector('input[name="media_type"]:checked').value;
+      const icon = document.getElementById('upload-icon-preview');
+      const label = document.getElementById('batch-file-label');
+      const example = document.getElementById('upload-hint-example');
+      const input = document.getElementById('batch-file-input');
 
-      ['video_batch', 'series_list', 'books', 'audios'].forEach(t => {
-        const btn = document.getElementById('tab-btn-' + t);
-        if (btn) {
-          btn.className = 'px-3.5 py-2 sm:px-5 sm:py-2.5 rounded-xl bg-slate-800 text-slate-400 hover:text-slate-200 font-bold text-xs sm:text-sm transition flex items-center gap-1.5 active:scale-95';
-        }
-      });
-
-      const currentSec = document.getElementById('section-' + tab);
-      const currentBtn = document.getElementById('tab-btn-' + tab);
-      if (currentSec) currentSec.classList.remove('hidden');
-      if (currentBtn) {
-        currentBtn.className = 'px-3.5 py-2 sm:px-5 sm:py-2.5 rounded-xl bg-brand-500 text-white font-bold text-xs sm:text-sm shadow-lg shadow-brand-500/30 transition flex items-center gap-1.5 active:scale-95';
+      if (type === 'book') {
+        icon.innerText = '📖';
+        label.innerText = '点击批量选择电子书 / PDF 图册';
+        example.innerText = '如: 01-第1回猴王问世.pdf, 02-第2回龙宫借宝.pdf ...';
+        input.accept = '.pdf,.epub,image/*';
+      } else if (type === 'audio') {
+        icon.innerText = '🎵';
+        label.innerText = '点击批量选择古诗词 / 音乐音频 MP3';
+        example.innerText = '如: 01-静夜思.mp3, 02-望庐山瀑布.mp3 ...';
+        input.accept = 'audio/*';
+      } else {
+        icon.innerText = '🎬';
+        label.innerText = '点击批量选择整季视频文件 (MP4 / MOV)';
+        example.innerText = '如: 01-西游记第1讲.mp4, 02-西游记第2讲.mp4 ...';
+        input.accept = 'video/*';
       }
-
-      if (tab === 'series_list') loadSeriesList();
-      if (tab === 'books') loadBooksList();
-      if (tab === 'audios') loadAudiosList();
     }
 
-    // 视频选择
+    function switchAdminTab(tab) {
+      document.getElementById('section-batch').classList.add('hidden');
+      document.getElementById('section-series-list').classList.add('hidden');
+      ['batch', 'series_list'].forEach(t => {
+        const btn = document.getElementById('tab-btn-' + t);
+        btn.className = 'px-5 py-2.5 rounded-xl bg-slate-800 text-slate-400 hover:text-slate-200 font-bold text-sm transition flex items-center gap-2';
+      });
+      document.getElementById('section-' + (tab === 'batch' ? 'batch' : 'series-list')).classList.remove('hidden');
+      document.getElementById('tab-btn-' + tab).className = 'px-5 py-2.5 rounded-xl bg-brand-500 text-white font-bold text-sm shadow-lg shadow-brand-500/30 transition flex items-center gap-2';
+      if (tab === 'series_list') loadSeriesList();
+    }
+
     function handleBatchFilesSelected(e) {
       if (e.target.files && e.target.files.length > 0) {
         selectedBatchFiles = Array.from(e.target.files);
-        document.getElementById('batch-file-label').innerHTML = `已选中 <strong class="text-emerald-400 font-bold">${selectedBatchFiles.length} 个视频文件</strong>`;
-        
+        document.getElementById('batch-file-label').innerHTML = `已选中 <strong class="text-emerald-400 font-bold">${selectedBatchFiles.length} 个资源文件</strong>`;
         const listDiv = document.getElementById('selected-files-list');
         const container = document.getElementById('files-container');
         listDiv.classList.remove('hidden');
         container.innerHTML = '';
-
         selectedBatchFiles.forEach((file, idx) => {
           const item = document.createElement('div');
-          item.className = 'p-2 rounded-lg bg-slate-800/80 border border-slate-700 flex justify-between items-center text-slate-300 gap-2';
-          item.innerHTML = `<span class="truncate"><strong>第 ${idx + 1} 讲：</strong> ${file.name}</span><span class="text-slate-500 font-mono flex-shrink-0">${Math.round(file.size / 1024 / 1024)}MB</span>`;
+          item.className = 'p-2 rounded-lg bg-slate-800/80 border border-slate-700 flex justify-between items-center text-slate-300';
+          item.innerHTML = `<span><strong>第 ${idx + 1} 讲/回：</strong> ${file.name}</span><span class="text-slate-500 font-mono">${Math.round(file.size / 1024 / 1024)}MB</span>`;
           container.appendChild(item);
         });
       }
     }
 
-    // 批量视频上传提交
     async function submitBatchUpload() {
       const title = document.getElementById('input-series-title').value;
       const subject = document.getElementById('input-series-subject').value;
       const grade = document.getElementById('input-series-grade').value;
       const desc = document.getElementById('input-series-desc').value;
-      const coverInput = document.getElementById('input-series-cover');
-
+      const mediaType = document.querySelector('input[name="media_type"]:checked').value;
       const progressBox = document.getElementById('upload-progress-box');
       const submitBtn = document.getElementById('btn-submit-batch');
 
       if (selectedBatchFiles.length === 0) {
-        alert('请至少选择 1 个视频文件上传！');
+        alert('请至少选择 1 个文件上传！');
         return;
       }
 
@@ -473,24 +263,14 @@
       formData.append('subject', subject);
       formData.append('gradeLevel', grade);
       formData.append('description', desc);
-
-      selectedBatchFiles.forEach(file => {
-        formData.append('videoFiles', file);
-      });
-
-      if (coverInput.files && coverInput.files.length > 0) {
-        formData.append('coverImage', coverInput.files[0]);
-      }
+      formData.append('mediaType', mediaType);
+      selectedBatchFiles.forEach(file => formData.append('videoFiles', file));
 
       try {
-        const resp = await fetch('/api/admin/series/batch-upload', {
-          method: 'POST',
-          body: formData,
-        });
+        const resp = await fetch('/api/admin/series/batch-upload', { method: 'POST', body: formData });
         const res = await resp.json();
-
         if (res.success) {
-          alert(`🎉 恭喜！《${title}》（共 ${selectedBatchFiles.length} 节）已成功入库！`);
+          alert(`🎉 恭喜！《${title}》（共 ${selectedBatchFiles.length} 个文件）已成功一键批量发布！\n小朋友在 iPad 端可以随时看视频、翻看电子书或听配乐诗歌朗诵！`);
           switchAdminTab('series_list');
         } else {
           alert('上传失败: ' + res.message);
@@ -504,283 +284,52 @@
       }
     }
 
-    // 视频专辑列表
+    let globalSeriesData = [];
     async function loadSeriesList() {
       const resp = await fetch('/api/series/list');
       const res = await resp.json();
+      globalSeriesData = res.data || [];
+      renderFilteredSeries(globalSeriesData);
+    }
+
+    function filterSeriesDisplay(type) {
+      if (type === 'all') {
+        renderFilteredSeries(globalSeriesData);
+      } else {
+        renderFilteredSeries(globalSeriesData.filter(s => s.mediaType === type));
+      }
+    }
+
+    function renderFilteredSeries(list) {
       const container = document.getElementById('series-cards-container');
       container.innerHTML = '';
-
-      (res.data || []).forEach(s => {
+      list.forEach(s => {
+        const typeBadge = s.mediaType === 'book' ? '📖 电子书' : s.mediaType === 'audio' ? '🎵 音乐诗歌' : '🎬 视频课程';
         const card = document.createElement('div');
-        card.className = 'glass-panel rounded-3xl p-5 space-y-3.5 border border-slate-700/60 flex flex-col justify-between group';
+        card.className = 'glass-panel rounded-3xl p-6 space-y-4 border border-slate-700/60';
         card.innerHTML = `
-          <div class="space-y-3">
-            <div class="w-full h-36 rounded-2xl overflow-hidden relative shadow-md">
-              <img src="${s.coverImage || '/uploads/assets/series_math.png'}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" alt="${s.title}">
-              <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent"></div>
-              <span class="absolute top-2.5 left-2.5 text-xs px-2.5 py-0.5 rounded-full bg-cyan-500/80 text-slate-950 font-bold backdrop-blur-md">${s.subject} · ${s.gradeLevel}年级</span>
-              <span class="absolute top-2.5 right-2.5 text-xs px-2.5 py-0.5 rounded-full bg-slate-900/80 text-emerald-400 font-bold backdrop-blur-md">${s.completedEpisodes}/${s.totalEpisodes} 讲 (${s.progressPercent}%)</span>
-            </div>
-
-            <div>
-              <h4 class="text-sm sm:text-base font-bold text-white mb-1 group-hover:text-cyan-300 transition">${s.title}</h4>
-              <p class="text-xs text-slate-400 line-clamp-2">${s.description || '系统系列规划课程'}</p>
-            </div>
-
-            <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
-              <div class="bg-gradient-to-r from-emerald-500 to-cyan-400 h-full rounded-full" style="width: ${s.progressPercent}%;"></div>
-            </div>
-
-            <div class="p-2.5 sm:p-3 rounded-2xl bg-slate-800/80 border border-slate-700/60 text-xs">
-              <span class="text-slate-400 block mb-0.5">👉 当前进度与下节课推荐：</span>
-              <span class="text-cyan-300 font-bold truncate block">${s.nextEpisode ? s.nextEpisode.title : '已全部学完！'}</span>
-            </div>
+          <div class="flex items-center justify-between">
+            <span class="text-xs px-2.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 font-bold">${typeBadge} · ${s.gradeLevel}年级</span>
+            <span class="text-xs text-slate-400 font-bold">已完成 ${s.completedEpisodes} / 共 ${s.totalEpisodes} 讲 (${s.progressPercent}%)</span>
           </div>
-
+          <div>
+            <h4 class="text-base font-bold text-white mb-1">${s.title}</h4>
+            <p class="text-xs text-slate-400 line-clamp-2">${s.description || '系统规划资源'}</p>
+          </div>
+          <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+            <div class="bg-gradient-to-r from-emerald-500 to-cyan-400 h-full rounded-full" style="width: ${s.progressPercent}%;"></div>
+          </div>
+          <div class="p-3 rounded-2xl bg-slate-800/80 border border-slate-700/60 text-xs">
+            <span class="text-slate-400 block mb-1">👉 当前进度与下节推荐：</span>
+            <span class="text-cyan-300 font-bold">${s.nextEpisode ? s.nextEpisode.title : '已全部学完！'}</span>
+          </div>
           <div class="flex justify-between items-center pt-2">
-            <span class="text-xs text-slate-500">共 ${s.totalEpisodes} 个视频</span>
-            <a href="index.html" class="px-3 py-1.5 rounded-xl bg-brand-500/20 text-cyan-300 text-xs font-bold border border-brand-500/40 hover:bg-brand-500/30 active:scale-95 transition">
-              去学习端 →
-            </a>
+            <span class="text-xs text-slate-500">共 ${s.totalEpisodes} 个文件</span>
+            <a href="index.html" class="px-3 py-1.5 rounded-xl bg-brand-500/20 text-cyan-300 text-xs font-bold border border-brand-500/40 hover:bg-brand-500/30 transition">去学生端学习 →</a>
           </div>
         `;
         container.appendChild(card);
       });
-    }
-
-    // ================= 📚 书籍管理相关 =================
-    async function loadBooksList() {
-      try {
-        const resp = await fetch('/api/books/list');
-        const res = await resp.json();
-        const container = document.getElementById('admin-books-list');
-        container.innerHTML = '';
-        const books = res.data || [];
-        document.getElementById('books-count-label').innerText = books.length;
-
-        if (books.length === 0) {
-          container.innerHTML = '<div class="text-center py-8 text-slate-500 text-xs">暂无书籍，快在左侧上传第一本吧！</div>';
-          return;
-        }
-
-        books.forEach(b => {
-          const item = document.createElement('div');
-          item.className = 'p-3.5 rounded-2xl bg-slate-800/80 border border-slate-700 flex justify-between items-center gap-3';
-          item.innerHTML = `
-            <div class="flex items-center space-x-3 truncate flex-1">
-              <img src="${b.cover_image || '/uploads/assets/book_insects.png'}" class="w-12 h-16 rounded-xl object-cover shadow flex-shrink-0" alt="Cover">
-              <div class="space-y-0.5 truncate flex-1">
-                <div class="flex items-center gap-2">
-                  <span class="text-[10px] px-2 py-0.5 rounded-full bg-blue-500/20 text-cyan-300 font-bold">${b.category}</span>
-                  <span class="text-[10px] text-slate-400 font-mono">${b.read_minutes} 分钟</span>
-                </div>
-                <h4 class="text-xs sm:text-sm font-bold text-white truncate">${b.title}</h4>
-                <p class="text-[11px] text-slate-400 truncate">${b.author} · 阅读量：${b.read_count} 次</p>
-              </div>
-            </div>
-            <button onclick="deleteBook('${b.id}')" class="px-2.5 py-1.5 rounded-xl bg-red-500/20 text-red-300 text-xs font-bold border border-red-500/30 hover:bg-red-500/30 active:scale-95 transition flex-shrink-0">
-              删除
-            </button>
-          `;
-          container.appendChild(item);
-        });
-      } catch (e) {
-        console.error('Failed to load books', e);
-      }
-    }
-
-    async function submitBookUpload() {
-      const title = document.getElementById('input-book-title').value.trim();
-      const author = document.getElementById('input-book-author').value.trim();
-      const category = document.getElementById('input-book-category').value;
-      const grade = document.getElementById('input-book-grade').value;
-      const minutes = document.getElementById('input-book-minutes').value;
-      const summary = document.getElementById('input-book-summary').value.trim();
-      const contentText = document.getElementById('input-book-content').value.trim();
-      const fileInput = document.getElementById('input-book-file');
-      const coverInput = document.getElementById('input-book-cover');
-
-      if (!title) {
-        alert('请填写书籍标题！');
-        return;
-      }
-      if (!contentText && (!fileInput.files || fileInput.files.length === 0)) {
-        alert('请在正文框填写文章内容，或选择上传书籍文件！');
-        return;
-      }
-
-      const btn = document.getElementById('btn-submit-book');
-      btn.disabled = true;
-      btn.innerText = '正在上传发布中...';
-
-      const formData = new FormData();
-      formData.append('title', title);
-      formData.append('author', author);
-      formData.append('category', category);
-      formData.append('gradeLevel', grade);
-      formData.append('readMinutes', minutes);
-      formData.append('summary', summary);
-      formData.append('contentText', contentText);
-
-      if (fileInput.files && fileInput.files.length > 0) {
-        formData.append('bookFile', fileInput.files[0]);
-      }
-      if (coverInput.files && coverInput.files.length > 0) {
-        formData.append('coverImage', coverInput.files[0]);
-      }
-
-      try {
-        const resp = await fetch('/api/admin/books/upload', {
-          method: 'POST',
-          body: formData,
-        });
-        const res = await resp.json();
-        if (res.success) {
-          alert(res.message);
-          document.getElementById('input-book-title').value = '';
-          document.getElementById('input-book-summary').value = '';
-          document.getElementById('input-book-content').value = '';
-          fileInput.value = '';
-          coverInput.value = '';
-          loadBooksList();
-        } else {
-          alert('发布失败: ' + res.message);
-        }
-      } catch (err) {
-        alert('网络请求失败: ' + err.message);
-      } finally {
-        btn.disabled = false;
-        btn.innerText = '✨ 立即发布到学生端阅览室';
-      }
-    }
-
-    async function deleteBook(id) {
-      if (!confirm('确定要删除这本书籍吗？')) return;
-      try {
-        const resp = await fetch(`/api/admin/books/${id}`, { method: 'DELETE' });
-        const res = await resp.json();
-        if (res.success) {
-          loadBooksList();
-        }
-      } catch (e) {
-        alert('删除失败');
-      }
-    }
-
-    // ================= 🎧 音频管理相关 =================
-    async function loadAudiosList() {
-      try {
-        const resp = await fetch('/api/audios/list');
-        const res = await resp.json();
-        const container = document.getElementById('admin-audios-list');
-        container.innerHTML = '';
-        const audios = res.data || [];
-        document.getElementById('audios-count-label').innerText = audios.length;
-
-        if (audios.length === 0) {
-          container.innerHTML = '<div class="text-center py-8 text-slate-500 text-xs">暂无音频，快在左侧上传第一条吧！</div>';
-          return;
-        }
-
-        audios.forEach(a => {
-          const item = document.createElement('div');
-          item.className = 'p-3.5 rounded-2xl bg-slate-800/80 border border-slate-700 flex justify-between items-center gap-3';
-          const durMin = Math.ceil(a.duration_seconds / 60);
-          item.innerHTML = `
-            <div class="flex items-center space-x-3 truncate flex-1">
-              <img src="${a.cover_image || '/uploads/assets/audio_wukong.png'}" class="w-12 h-12 rounded-xl object-cover shadow flex-shrink-0" alt="Audio Cover">
-              <div class="space-y-0.5 truncate flex-1">
-                <div class="flex items-center gap-2">
-                  <span class="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 font-bold">${a.category}</span>
-                  <span class="text-[10px] text-slate-400 font-mono">约 ${durMin} 分钟</span>
-                </div>
-                <h4 class="text-xs sm:text-sm font-bold text-white truncate">${a.title}</h4>
-                <p class="text-[11px] text-slate-400 truncate">${a.speaker} · 播放量：${a.play_count} 次</p>
-              </div>
-            </div>
-            <button onclick="deleteAudio('${a.id}')" class="px-2.5 py-1.5 rounded-xl bg-red-500/20 text-red-300 text-xs font-bold border border-red-500/30 hover:bg-red-500/30 active:scale-95 transition flex-shrink-0">
-              删除
-            </button>
-          `;
-          container.appendChild(item);
-        });
-      } catch (e) {
-        console.error('Failed to load audios', e);
-      }
-    }
-
-    async function submitAudioUpload() {
-      const title = document.getElementById('input-audio-title').value.trim();
-      const speaker = document.getElementById('input-audio-speaker').value.trim();
-      const category = document.getElementById('input-audio-category').value;
-      const grade = document.getElementById('input-audio-grade').value;
-      const duration = document.getElementById('input-audio-duration').value;
-      const desc = document.getElementById('input-audio-desc').value.trim();
-      const fileInput = document.getElementById('input-audio-file');
-      const coverInput = document.getElementById('input-audio-cover');
-
-      if (!title) {
-        alert('请填写音频标题！');
-        return;
-      }
-      if (!fileInput.files || fileInput.files.length === 0) {
-        alert('请选择音频文件！');
-        return;
-      }
-
-      const btn = document.getElementById('btn-submit-audio');
-      btn.disabled = true;
-      btn.innerText = '正在上传发布中...';
-
-      const formData = new FormData();
-      formData.append('title', title);
-      formData.append('speaker', speaker);
-      formData.append('category', category);
-      formData.append('gradeLevel', grade);
-      formData.append('durationMinutes', duration);
-      formData.append('description', desc);
-      formData.append('audioFile', fileInput.files[0]);
-
-      if (coverInput.files && coverInput.files.length > 0) {
-        formData.append('coverImage', coverInput.files[0]);
-      }
-
-      try {
-        const resp = await fetch('/api/admin/audios/upload', {
-          method: 'POST',
-          body: formData,
-        });
-        const res = await resp.json();
-        if (res.success) {
-          alert(res.message);
-          document.getElementById('input-audio-title').value = '';
-          document.getElementById('input-audio-desc').value = '';
-          fileInput.value = '';
-          coverInput.value = '';
-          loadAudiosList();
-        } else {
-          alert('上传失败: ' + res.message);
-        }
-      } catch (err) {
-        alert('网络请求失败: ' + err.message);
-      } finally {
-        btn.disabled = false;
-        btn.innerText = '🎧 立即上传音频并发布';
-      }
-    }
-
-    async function deleteAudio(id) {
-      if (!confirm('确定要删除这条音频吗？')) return;
-      try {
-        const resp = await fetch(`/api/admin/audios/${id}`, { method: 'DELETE' });
-        const res = await resp.json();
-        if (res.success) {
-          loadAudiosList();
-        }
-      } catch (e) {
-        alert('删除失败');
-      }
     }
   </script>
 </body>
