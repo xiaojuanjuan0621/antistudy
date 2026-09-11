@@ -24,97 +24,105 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(frontendDir, 'index.html'));
 });
 
-const db = new Database(path.join(dataDir, 'antistudy.db'));
+let db;
+try {
+  db = new Database(path.join(dataDir, 'antistudy.db'));
+  console.log('Database connected successfully');
+} catch (e) {
+  console.error('Database connection error:', e);
+}
 
-db.exec(`
-  CREATE TABLE IF NOT EXISTS children (
-    id TEXT PRIMARY KEY,
-    nickname TEXT NOT NULL,
-    grade_level INTEGER NOT NULL DEFAULT 4,
-    xp INTEGER NOT NULL DEFAULT 1850,
-    level INTEGER NOT NULL DEFAULT 3,
-    streak_days INTEGER NOT NULL DEFAULT 18,
-    wish_coins INTEGER NOT NULL DEFAULT 680,
-    wish_goal_title TEXT DEFAULT '《DK 青少年科学大百科》全套',
-    wish_goal_target INTEGER DEFAULT 1000,
-    wish_goal_current INTEGER DEFAULT 680
-  );
+if (db) {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS children (
+      id TEXT PRIMARY KEY,
+      nickname TEXT NOT NULL,
+      grade_level INTEGER NOT NULL DEFAULT 4,
+      xp INTEGER NOT NULL DEFAULT 1850,
+      level INTEGER NOT NULL DEFAULT 3,
+      streak_days INTEGER NOT NULL DEFAULT 18,
+      wish_coins INTEGER NOT NULL DEFAULT 680,
+      wish_goal_title TEXT DEFAULT '《DK 青少年科学大百科》全套',
+      wish_goal_target INTEGER DEFAULT 1000,
+      wish_goal_current INTEGER DEFAULT 680
+    );
 
-  CREATE TABLE IF NOT EXISTS series (
-    id TEXT PRIMARY KEY,
-    title TEXT NOT NULL,
-    subject TEXT NOT NULL,
-    grade_level INTEGER NOT NULL DEFAULT 4,
-    description TEXT,
-    cover_image TEXT,
-    total_episodes INTEGER NOT NULL DEFAULT 0,
-    created_at TEXT NOT NULL
-  );
+    CREATE TABLE IF NOT EXISTS series (
+      id TEXT PRIMARY KEY,
+      title TEXT NOT NULL,
+      subject TEXT NOT NULL,
+      grade_level INTEGER NOT NULL DEFAULT 4,
+      description TEXT,
+      cover_image TEXT,
+      total_episodes INTEGER NOT NULL DEFAULT 0,
+      created_at TEXT NOT NULL
+    );
 
-  CREATE TABLE IF NOT EXISTS courses (
-    id TEXT PRIMARY KEY,
-    series_id TEXT,
-    episode_index INTEGER NOT NULL DEFAULT 1,
-    title TEXT NOT NULL,
-    subject TEXT NOT NULL,
-    grade_level INTEGER NOT NULL,
-    video_filename TEXT,
-    video_url TEXT NOT NULL,
-    duration_seconds INTEGER NOT NULL DEFAULT 300,
-    is_interactive INTEGER NOT NULL DEFAULT 0,
-    is_published INTEGER NOT NULL DEFAULT 1,
-    ai_quality_score INTEGER DEFAULT 95,
-    card_title TEXT,
-    card_fun_fact TEXT,
-    created_at TEXT NOT NULL
-  );
+    CREATE TABLE IF NOT EXISTS courses (
+      id TEXT PRIMARY KEY,
+      series_id TEXT,
+      episode_index INTEGER NOT NULL DEFAULT 1,
+      title TEXT NOT NULL,
+      subject TEXT NOT NULL,
+      grade_level INTEGER NOT NULL,
+      video_filename TEXT,
+      video_url TEXT NOT NULL,
+      duration_seconds INTEGER NOT NULL DEFAULT 300,
+      is_interactive INTEGER NOT NULL DEFAULT 0,
+      is_published INTEGER NOT NULL DEFAULT 1,
+      ai_quality_score INTEGER DEFAULT 95,
+      card_title TEXT,
+      card_fun_fact TEXT,
+      created_at TEXT NOT NULL
+    );
 
-  CREATE TABLE IF NOT EXISTS learning_records (
-    id TEXT PRIMARY KEY,
-    child_id TEXT NOT NULL,
-    course_id TEXT NOT NULL,
-    actual_watch_seconds INTEGER NOT NULL DEFAULT 0,
-    is_completed INTEGER NOT NULL DEFAULT 0,
-    completed_at TEXT,
-    UNIQUE(child_id, course_id)
-  );
-`);
-
-// 预填默认数据
-if (!db.prepare('SELECT id FROM children WHERE id = ?').get('child_demo_01')) {
-  db.prepare(`
-    INSERT INTO children (id, nickname, grade_level, xp, level, streak_days, wish_coins, wish_goal_title, wish_goal_target, wish_goal_current)
-    VALUES ('child_demo_01', '张安泽', 4, 1850, 3, 18, 680, '《DK 青少年科学大百科》全套', 1000, 680)
-  `).run();
-
-  db.prepare(`
-    INSERT INTO series (id, title, subject, grade_level, description, cover_image, total_episodes, created_at)
-    VALUES 
-    ('series_math_g4', '小学四年级数学·分数的奥秘全集', 'math', 4, '系统梳理分数的产生、分子分母的意义与应用题。', 'https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=400', 4, ?),
-    ('series_bio_g4', '少年探索课·人体微观细胞与免疫王国', 'biology', 4, '像看动画一样探索人体微观细胞与免疫防御大战！', 'https://images.unsplash.com/photo-1530497610245-94d3c16cda28?w=400', 2, ?)
-  `).run(new Date().toISOString(), new Date().toISOString());
-
-  const insCourse = db.prepare(`
-    INSERT INTO courses (id, series_id, episode_index, title, subject, grade_level, video_filename, video_url, duration_seconds, is_interactive, is_published, created_at)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?)
+    CREATE TABLE IF NOT EXISTS learning_records (
+      id TEXT PRIMARY KEY,
+      child_id TEXT NOT NULL,
+      course_id TEXT NOT NULL,
+      actual_watch_seconds INTEGER NOT NULL DEFAULT 0,
+      is_completed INTEGER NOT NULL DEFAULT 0,
+      completed_at TEXT,
+      UNIQUE(child_id, course_id)
+    );
   `);
 
-  insCourse.run('course_math_01', 'series_math_g4', 1, '第1讲：分数的初体验（分披萨与分数的意义）', 'math', 4, '', 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4', 360, 0, new Date().toISOString());
-  insCourse.run('course_math_02', 'series_math_g4', 2, '第2讲：真分数与假分数的秘密（大于1的思考）', 'math', 4, '', 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4', 420, 0, new Date().toISOString());
-  insCourse.run('course_math_03', 'series_math_g4', 3, '第3讲：分数通分与同分母加减法', 'math', 4, '', 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4', 480, 0, new Date().toISOString());
-  insCourse.run('course_math_04', 'series_math_g4', 4, '第4讲：生活中的分数应用题大通关', 'math', 4, '', 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4', 520, 0, new Date().toISOString());
+  if (!db.prepare('SELECT id FROM children WHERE id = ?').get('child_demo_01')) {
+    db.prepare(`
+      INSERT INTO children (id, nickname, grade_level, xp, level, streak_days, wish_coins, wish_goal_title, wish_goal_target, wish_goal_current)
+      VALUES ('child_demo_01', '张安泽', 4, 1850, 3, 18, 680, '《DK 青少年科学大百科》全套', 1000, 680)
+    `).run();
 
-  insCourse.run('course_bio_01', 'series_bio_g4', 1, '第1讲：细胞城堡的司令部（认识细胞核）', 'biology', 4, '', 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4', 390, 0, new Date().toISOString());
-  insCourse.run('course_bio_02', 'series_bio_g4', 2, '第2讲：白细胞卫士出动！人体免疫防线大战', 'biology', 4, '', 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4', 450, 0, new Date().toISOString());
+    db.prepare(`
+      INSERT INTO series (id, title, subject, grade_level, description, cover_image, total_episodes, created_at)
+      VALUES 
+      ('series_math_g4', '小学四年级数学·分数的奥秘全集', 'math', 4, '系统梳理分数的产生、分子分母的意义与应用题。', 'https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=400', 4, ?),
+      ('series_bio_g4', '少年探索课·人体微观细胞与免疫王国', 'biology', 4, '像看动画一样探索人体微观细胞与免疫防御大战！', 'https://images.unsplash.com/photo-1530497610245-94d3c16cda28?w=400', 2, ?)
+    `).run(new Date().toISOString(), new Date().toISOString());
 
-  db.prepare(`
-    INSERT OR REPLACE INTO learning_records (id, child_id, course_id, actual_watch_seconds, is_completed, completed_at)
-    VALUES ('rec_01', 'child_demo_01', 'course_math_01', 360, 1, ?)
-  `).run(new Date().toISOString());
+    const insCourse = db.prepare(`
+      INSERT INTO courses (id, series_id, episode_index, title, subject, grade_level, video_filename, video_url, duration_seconds, is_interactive, is_published, created_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?)
+    `);
+
+    insCourse.run('course_math_01', 'series_math_g4', 1, '第1讲：分数的初体验（分披萨与分数的意义）', 'math', 4, '', 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4', 360, 0, new Date().toISOString());
+    insCourse.run('course_math_02', 'series_math_g4', 2, '第2讲：真分数与假分数的秘密（大于1的思考）', 'math', 4, '', 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4', 420, 0, new Date().toISOString());
+    insCourse.run('course_math_03', 'series_math_g4', 3, '第3讲：分数通分与同分母加减法', 'math', 4, '', 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4', 480, 0, new Date().toISOString());
+    insCourse.run('course_math_04', 'series_math_g4', 4, '第4讲：生活中的分数应用题大通关', 'math', 4, '', 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4', 520, 0, new Date().toISOString());
+
+    insCourse.run('course_bio_01', 'series_bio_g4', 1, '第1讲：细胞城堡的司令部（认识细胞核）', 'biology', 4, '', 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4', 390, 0, new Date().toISOString());
+    insCourse.run('course_bio_02', 'series_bio_g4', 2, '第2讲：白细胞卫士出动！人体免疫防线大战', 'biology', 4, '', 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4', 450, 0, new Date().toISOString());
+
+    db.prepare(`
+      INSERT OR REPLACE INTO learning_records (id, child_id, course_id, actual_watch_seconds, is_completed, completed_at)
+      VALUES ('rec_01', 'child_demo_01', 'course_math_01', 360, 1, ?)
+    `).run(new Date().toISOString());
+  }
 }
 
 // 接口列表
 app.get('/api/student/dashboard', (req, res) => {
+  if (!db) return res.json({ success: false, message: 'db error' });
   const child = db.prepare('SELECT * FROM children WHERE id = ?').get('child_demo_01');
   res.json({
     success: true,
@@ -138,6 +146,7 @@ app.get('/api/student/dashboard', (req, res) => {
 });
 
 app.get('/api/series/list', (req, res) => {
+  if (!db) return res.json({ success: false, data: [] });
   const allSeries = db.prepare('SELECT * FROM series ORDER BY created_at DESC').all();
   const seriesWithProgress = allSeries.map((s) => {
     const episodes = db.prepare(`
@@ -179,6 +188,7 @@ app.get('/api/series/list', (req, res) => {
 });
 
 app.get('/api/course/context/:courseId', (req, res) => {
+  if (!db) return res.status(500).json({ success: false });
   const { courseId } = req.params;
   const course = db.prepare('SELECT * FROM courses WHERE id = ?').get(courseId);
   if (!course) return res.status(404).json({ success: false, message: '未找到课程' });
@@ -217,6 +227,7 @@ app.get('/api/course/context/:courseId', (req, res) => {
 });
 
 app.post('/api/course/complete', (req, res) => {
+  if (!db) return res.status(500).json({ success: false });
   const { courseId, actualWatchDuration } = req.body;
   db.prepare(`
     INSERT OR REPLACE INTO learning_records (id, child_id, course_id, actual_watch_seconds, is_completed, completed_at)
@@ -245,6 +256,7 @@ app.post('/api/course/complete', (req, res) => {
 });
 
 app.post('/api/student/wish-goal', (req, res) => {
+  if (!db) return res.status(500).json({ success: false });
   const { title, targetCoins } = req.body;
   db.prepare('UPDATE children SET wish_goal_title = ?, wish_goal_target = ? WHERE id = ?').run(title, Number(targetCoins), 'child_demo_01');
   res.json({ success: true, message: '🎉 心愿已更新！' });
@@ -257,6 +269,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 app.post('/api/admin/series/batch-upload', upload.array('videoFiles', 100), (req, res) => {
+  if (!db) return res.status(500).json({ success: false });
   const { seriesTitle, subject, gradeLevel, description } = req.body;
   const files = req.files || [];
   const seriesId = 'series_' + Date.now();
@@ -284,5 +297,5 @@ app.post('/api/admin/series/batch-upload', upload.array('videoFiles', 100), (req
 
 const PORT = 3300;
 app.listen(PORT, '0.0.0.0', () => {
-  console.log(`[ANti Study Server] Running on http://0.0.0.0:${PORT}`);
+  console.log(`[ANti Study Server] Running on port ${PORT}`);
 });
