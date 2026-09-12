@@ -157,8 +157,11 @@
               <p class="text-xs text-slate-400" id="upload-hint-example">如: 01-大闹天宫.mp4, 01-大闹天宫.srt (支持自动匹配外挂字幕与台词) ...</p>
             </div>
 
-            <div id="selected-files-list" class="hidden mt-4 space-y-2 max-h-48 overflow-y-auto pr-2">
-              <span class="text-xs font-bold text-cyan-300">已选中的资源清单（按顺序排定）：</span>
+            <div id="selected-files-list" class="hidden mt-4 space-y-2 max-h-56 overflow-y-auto pr-2">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-cyan-300">待上传清单（可点 ✕ 移除单项，或继续选文件追加）：</span>
+                <button type="button" onclick="clearAllSelectedFiles()" class="text-[11px] text-red-400 hover:underline">清空列表</button>
+              </div>
               <div id="files-container" class="space-y-1.5 text-xs"></div>
             </div>
 
@@ -281,19 +284,68 @@
 
     function handleBatchFilesSelected(e) {
       if (e.target.files && e.target.files.length > 0) {
-        selectedBatchFiles = Array.from(e.target.files);
-        document.getElementById('batch-file-label').innerHTML = `已选中 <strong class="text-emerald-400 font-bold">${selectedBatchFiles.length} 个资源文件</strong>`;
-        const listDiv = document.getElementById('selected-files-list');
-        const container = document.getElementById('files-container');
-        listDiv.classList.remove('hidden');
-        container.innerHTML = '';
-        selectedBatchFiles.forEach((file, idx) => {
-          const item = document.createElement('div');
-          item.className = 'p-2 rounded-lg bg-slate-800/80 border border-slate-700 flex justify-between items-center text-slate-300';
-          item.innerHTML = `<span><strong>第 ${idx + 1} 讲/回：</strong> ${file.name}</span><span class="text-slate-500 font-mono">${Math.round(file.size / 1024 / 1024)}MB</span>`;
-          container.appendChild(item);
+        const newFiles = Array.from(e.target.files);
+        
+        // 增量追加文件，而不是覆盖替换
+        newFiles.forEach(nf => {
+          if (!selectedBatchFiles.some(f => f.name === nf.name && f.size === nf.size)) {
+            selectedBatchFiles.push(nf);
+          }
         });
+
+        // 重新排序
+        selectedBatchFiles.sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }));
+
+        renderSelectedFilesUI();
       }
+    }
+
+    function removeSingleSelectedFile(index) {
+      selectedBatchFiles.splice(index, 1);
+      renderSelectedFilesUI();
+    }
+
+    function clearAllSelectedFiles() {
+      selectedBatchFiles = [];
+      document.getElementById('batch-file-input').value = '';
+      renderSelectedFilesUI();
+    }
+
+    function renderSelectedFilesUI() {
+      const listDiv = document.getElementById('selected-files-list');
+      const container = document.getElementById('files-container');
+      const label = document.getElementById('batch-file-label');
+
+      if (selectedBatchFiles.length === 0) {
+        listDiv.classList.add('hidden');
+        label.innerHTML = '点击批量选择整套文件 (支持视频、音频、PDF、字幕SRT)';
+        return;
+      }
+
+      label.innerHTML = `已选择 <strong class="text-emerald-400 font-bold">${selectedBatchFiles.length} 个文件</strong> (可继续点击添加更多)`;
+      listDiv.classList.remove('hidden');
+      container.innerHTML = '';
+
+      selectedBatchFiles.forEach((file, idx) => {
+        const item = document.createElement('div');
+        const isSrt = file.name.endsWith('.srt') || file.name.endsWith('.vtt');
+        item.className = 'p-2 rounded-xl bg-slate-800/90 border border-slate-700 flex justify-between items-center text-slate-200 text-xs hover:border-slate-500 transition';
+        item.innerHTML = `
+          <div class="flex items-center space-x-2 truncate mr-2">
+            <span class="px-1.5 py-0.5 rounded text-[10px] font-bold ${isSrt ? 'bg-amber-500/20 text-amber-300' : 'bg-brand-500/20 text-cyan-300'}">
+              ${isSrt ? '字幕' : `第 ${idx + 1} 讲`}
+            </span>
+            <span class="truncate font-medium">${file.name}</span>
+          </div>
+          <div class="flex items-center space-x-3 flex-shrink-0">
+            <span class="text-slate-400 font-mono text-[11px]">${(file.size / 1024 / 1024).toFixed(1)}MB</span>
+            <button type="button" onclick="removeSingleSelectedFile(${idx})" class="w-6 h-6 rounded-lg bg-red-500/20 hover:bg-red-500/40 text-red-300 flex items-center justify-center font-bold transition" title="从列表移除">
+              ✕
+            </button>
+          </div>
+        `;
+        container.appendChild(item);
+      });
     }
 
     async function submitBatchUpload() {
