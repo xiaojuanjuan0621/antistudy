@@ -336,6 +336,15 @@ app.get('/api/series/list', (req, res) => {
   res.json({ success: true, data: seriesWithProgress });
 });
 
+// 引入本地西游记专属 108 集字幕与生词知识库 (如果存在)
+let westDatabase = null;
+const westDbPath = path.join(__dirname, 'west_database.json');
+if (fs.existsSync(westDbPath)) {
+  try {
+    westDatabase = JSON.parse(fs.readFileSync(westDbPath, 'utf8'));
+  } catch (e) {}
+}
+
 app.get('/api/course/context/:courseId', (req, res) => {
   const db = loadDB();
   const { courseId } = req.params;
@@ -348,10 +357,26 @@ app.get('/api/course/context/:courseId', (req, res) => {
   const currentIndex = allEpisodes.findIndex((ep) => ep.id === course.id);
   const nextEpisode = currentIndex < allEpisodes.length - 1 ? allEpisodes[currentIndex + 1] : null;
 
+  // 动态挂载该集专属的真实台词字幕与生词库
+  let matchedSubtitles = null;
+  let matchedVocabs = null;
+
+  if (westDatabase && (course.subject === 'english' || (series && series.subject === 'english') || /Journey to the West/i.test(course.title))) {
+    const epNum = String(course.episode_index);
+    matchedSubtitles = westDatabase.subtitles[epNum] || null;
+    matchedVocabs = westDatabase.vocabs[epNum] || null;
+  }
+
+  const enhancedCourse = {
+    ...course,
+    subtitles: matchedSubtitles,
+    vocabs: matchedVocabs
+  };
+
   res.json({
     success: true,
     data: {
-      course,
+      course: enhancedCourse,
       series,
       navigation: {
         hasNext: !!nextEpisode,

@@ -1029,6 +1029,10 @@
     }
 
     function renderSubtitlesAndPills(data) {
+      const course = data.course;
+      const series = data.series;
+      const isEnglish = (course.subject === 'english' || (series && series.subject === 'english') || (course.title && /Journey to the West|Lesson|Chapter/i.test(course.title)));
+
       // 1. 快捷选集胶囊 (1, 2, 3, 4, 5...)
       const pillsBox = document.getElementById('episodes-quick-pills');
       if (pillsBox) {
@@ -1042,8 +1046,36 @@
         });
       }
 
-      // 2. 高精度双语台词字幕表
-      currentSubtitleList = [
+      // 如果不是英语学科，隐藏英语字幕条与双语台词工具
+      const subOverlay = document.getElementById('video-overlay-subtitle');
+      const scriptPanel = document.getElementById('panel-player-script');
+      const vocabPanel = document.getElementById('panel-player-vocab');
+      const subBtn = document.getElementById('btn-sub-toggle');
+      const pointBtn = document.getElementById('btn-point-read');
+      const repBtn = document.getElementById('btn-point-read')?.nextElementSibling;
+      const shadowBtn = document.getElementById('btn-point-read')?.nextElementSibling?.nextElementSibling;
+
+      if (!isEnglish) {
+        if (subOverlay) subOverlay.classList.add('hidden');
+        if (subBtn) subBtn.classList.add('hidden');
+        if (pointBtn) pointBtn.classList.add('hidden');
+        if (repBtn) repBtn.classList.add('hidden');
+        if (shadowBtn) shadowBtn.classList.add('hidden');
+        document.getElementById('btn-pmode-vocab')?.classList.add('hidden');
+        switchPlayerMode('info');
+        return;
+      } else {
+        if (subOverlay) subOverlay.classList.remove('hidden');
+        if (subBtn) subBtn.classList.remove('hidden');
+        if (pointBtn) pointBtn.classList.remove('hidden');
+        if (repBtn) repBtn.classList.remove('hidden');
+        if (shadowBtn) shadowBtn.classList.remove('hidden');
+        document.getElementById('btn-pmode-vocab')?.classList.remove('hidden');
+        switchPlayerMode('play');
+      }
+
+      // 2. 动态匹配真实课程的字幕与生词（支持西游记108集真实原版对齐）
+      currentSubtitleList = data.course.subtitles || [
         { start: 0, end: 5, en: "Welcome to today's learning adventure!", cn: "欢迎来到今天的知识探险之旅！" },
         { start: 5, end: 15, en: "Let's explore the core concepts step by step.", cn: "让我们一步一步探索核心概念与奥秘。" },
         { start: 15, end: 35, en: "Notice how the elements interact with each other.", cn: "注意观察各个部分是如何相互作用与联系的。" },
@@ -1051,6 +1083,8 @@
         { start: 60, end: 120, en: "Practice makes perfect. Keep up the good work!", cn: "熟能生巧，继续加油，你做得很棒！" },
         { start: 120, end: 360, en: "Great job completing this milestone today!", cn: "太棒了！今天又攻克了一个关键里程碑！" }
       ];
+
+      currentVocabList = data.course.vocabs || [];
 
       const scriptList = document.getElementById('subtitles-script-list');
       if (scriptList) {
@@ -1071,9 +1105,9 @@
           sDiv.innerHTML = `
             <div class="flex items-center justify-between">
               <span class="font-bold text-white sub-en-text">${sub.en}</span>
-              <span class="text-[10px] text-slate-500 font-mono">${Math.floor(sub.start / 60)}:${String(sub.start % 60).padStart(2, '0')}</span>
+              <span class="text-[10px] text-slate-500 font-mono">${Math.floor(sub.start / 60)}:${String(Math.floor(sub.start % 60)).padStart(2, '0')}</span>
             </div>
-            <p class="text-slate-400 text-[11px] sub-cn-text">${sub.cn}</p>
+            ${sub.cn ? `<p class="text-slate-400 text-[11px] sub-cn-text">${sub.cn}</p>` : ''}
           `;
           scriptList.appendChild(sDiv);
         });
@@ -1092,7 +1126,7 @@
             const enEl = document.getElementById('sub-en');
             const cnEl = document.getElementById('sub-cn');
             if (enEl) enEl.innerText = sub.en;
-            if (cnEl) cnEl.innerText = sub.cn;
+            if (cnEl) cnEl.innerText = sub.cn || '';
 
             currentSubtitleList.forEach((_, i) => {
               const el = document.getElementById(`sub-item-${i}`);
