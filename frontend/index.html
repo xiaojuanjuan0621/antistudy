@@ -147,8 +147,8 @@
         </button>
 
         <!-- 管理后台快捷入口 -->
-        <a href="admin.html" class="flex items-center space-x-1 px-2 py-1 sm:px-3 sm:py-1.5 rounded-xl bg-indigo-600/30 hover:bg-indigo-600/50 border border-indigo-500/40 text-[11px] sm:text-xs font-bold text-indigo-200 transition">
-          <span>⚙️<span class="hidden sm:inline"> 上传</span></span>
+        <a href="admin.html" class="flex items-center space-x-1 px-2.5 py-1.5 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700 text-xs font-bold text-slate-300 transition">
+          <span>⚙️ 设置</span>
         </a>
 
         <!-- 用户名 -->
@@ -162,27 +162,11 @@
     <!-- 2. 主体区 (桌面/iPad 左侧栏 + 手机端底部栏) -->
     <main class="flex-1 flex flex-col md:flex-row overflow-hidden relative">
       
-      <!-- 桌面/平板侧边导航 (md及以上显示) -->
+      <!-- 桌面/平板侧边导航 (仅保留 地图 与 周报，其余可根据需要扩展) -->
       <nav class="hidden md:flex w-20 bg-slate-900/90 border-r border-slate-800 flex-col items-center py-5 space-y-4 select-none flex-shrink-0 z-10">
         <button onclick="switchTab('workspace')" id="nav-workspace" class="nav-item active flex flex-col items-center p-2.5 rounded-2xl text-cyan-400 bg-brand-500/15 border border-brand-500/30 transition w-14">
           <span class="text-xl mb-0.5">🗺️</span>
           <span class="text-[10px] font-bold">地图</span>
-        </button>
-        <button onclick="switchTab('interactive_video')" id="nav-video" class="nav-item flex flex-col items-center p-2.5 rounded-2xl text-slate-400 hover:text-slate-200 transition w-14">
-          <span class="text-xl mb-0.5">🎬</span>
-          <span class="text-[10px] font-bold">看视频</span>
-        </button>
-        <button onclick="switchTab('books')" id="nav-books" class="nav-item flex flex-col items-center p-2.5 rounded-2xl text-slate-400 hover:text-slate-200 transition w-14">
-          <span class="text-xl mb-0.5">📖</span>
-          <span class="text-[10px] font-bold">看书</span>
-        </button>
-        <button onclick="switchTab('audios')" id="nav-audios" class="nav-item flex flex-col items-center p-2.5 rounded-2xl text-slate-400 hover:text-slate-200 transition w-14">
-          <span class="text-xl mb-0.5">🎧</span>
-          <span class="text-[10px] font-bold">听音频</span>
-        </button>
-        <button onclick="switchTab('ai_pk')" id="nav-pk" class="nav-item flex flex-col items-center p-2.5 rounded-2xl text-slate-400 hover:text-slate-200 transition w-14">
-          <span class="text-xl mb-0.5">🤖</span>
-          <span class="text-[10px] font-bold">对战</span>
         </button>
         <button onclick="switchTab('parent')" id="nav-parent" class="nav-item flex flex-col items-center p-2.5 rounded-2xl text-slate-400 hover:text-slate-200 transition w-14">
           <span class="text-xl mb-0.5">📊</span>
@@ -197,75 +181,88 @@
         <section id="view-workspace" class="view-panel w-full h-full p-4 sm:p-6 md:p-8 overflow-y-auto">
           <div class="max-w-6xl mx-auto space-y-4 sm:space-y-6 pb-6">
             
-            <!-- 陪伴连胜小宠物互动卡 (带生动的AI生图海报底图与吉祥物) -->
-            <div class="relative overflow-hidden rounded-3xl p-5 sm:p-8 border border-brand-500/30 flex flex-col-reverse sm:flex-row items-start sm:items-center justify-between gap-4 shadow-2xl bg-slate-900">
+            <!-- 陪伴连胜小宠物互动卡 (简短亲切话术) -->
+            <div class="relative overflow-hidden rounded-3xl p-5 sm:p-7 border border-brand-500/30 flex flex-col-reverse sm:flex-row items-start sm:items-center justify-between gap-4 shadow-2xl bg-slate-900/90">
               <!-- 背景装饰图 -->
-              <img src="https://iili.io/nfESY1n.webp" class="absolute inset-0 w-full h-full object-cover opacity-25 filter blur-[1px]" alt="Banner Background">
-              <div class="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/80 to-transparent"></div>
+              <img src="https://iili.io/nfESY1n.webp" class="absolute inset-0 w-full h-full object-cover opacity-20 filter blur-[1px]" alt="Banner Background">
+              <div class="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/70 to-transparent"></div>
 
-              <div class="space-y-2.5 z-10 flex-1 w-full sm:w-auto relative">
-                <div class="inline-flex items-center flex-wrap gap-1.5 sm:space-x-2 px-3 py-1 rounded-full bg-cyan-500/20 text-cyan-300 text-xs font-bold border border-cyan-500/30 backdrop-blur-sm">
-                  <span id="pet-name">🐼 连胜伙伴 · 智多星小拓</span>
-                  <span class="text-amber-400">🔥 陪伴连胜 18 天</span>
+              <div class="space-y-2 z-10 flex-1 w-full sm:w-auto relative">
+                <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-500/20 text-cyan-300 text-xs font-bold border border-cyan-500/30">
+                  <span id="pet-name">🐼 智多星小拓</span>
+                  <span class="text-amber-400">🔥 连胜 18 天</span>
                 </div>
-                <h2 class="text-xl sm:text-3xl font-black text-white leading-snug drop-shadow-md" id="pet-bubble-text">
-                  “安泽，今天我们继续探索知识大世界吧！”
+                <h2 class="text-lg sm:text-2xl font-black text-white leading-snug drop-shadow-md" id="pet-bubble-text">
+                  “安泽，今天继续开启快乐探索吧！”
                 </h2>
-                <p class="text-xs sm:text-sm text-slate-300 max-w-xl">
-                  每天看一课视频、读一本好书或听一段故事，小拓都会为你点燃连胜火焰、增加 15 心愿币！
+                <p class="text-xs text-slate-400">
+                  完成今日学习任务，即可点燃连胜火焰、获取心愿币奖励！
                 </p>
-                <div class="pt-2 flex flex-wrap gap-2.5">
-                  <button onclick="interactWithPet()" class="px-4 py-2 rounded-xl bg-slate-800/90 hover:bg-slate-700 text-slate-200 font-bold text-xs border border-slate-700 flex items-center gap-1.5 active:scale-95 transition shadow-md">
-                    <span>🐾 摸摸小拓 / 换装</span>
-                  </button>
-                  <button onclick="switchTab('books')" class="px-4 py-2 rounded-xl bg-indigo-600/40 hover:bg-indigo-600/70 text-indigo-200 font-bold text-xs border border-indigo-500/40 flex items-center gap-1.5 active:scale-95 transition shadow-md backdrop-blur-sm">
-                    <span>📖 阅览室读好书</span>
-                  </button>
-                  <button onclick="switchTab('audios')" class="px-4 py-2 rounded-xl bg-amber-600/40 hover:bg-amber-600/70 text-amber-200 font-bold text-xs border border-amber-500/40 flex items-center gap-1.5 active:scale-95 transition shadow-md backdrop-blur-sm">
-                    <span>🎧 有声馆听故事</span>
-                  </button>
-                </div>
               </div>
 
-              <!-- 活泼跳跃的宠物形象 (AI 生图 3D 吉祥物) -->
+              <!-- 活泼跳跃的宠物形象 -->
               <div class="self-end sm:self-center z-10 flex-shrink-0 cursor-pointer pet-bounce transform hover:scale-105 active:scale-95 transition" onclick="interactWithPet()" title="点击和小宠物互动">
-                <div class="w-24 h-24 sm:w-36 sm:h-36 rounded-3xl overflow-hidden ring-4 ring-brand-500/40 shadow-2xl bg-slate-800">
+                <div class="w-20 h-20 sm:w-28 sm:h-28 rounded-2xl overflow-hidden ring-4 ring-brand-500/40 shadow-2xl bg-slate-800">
                   <img src="https://iili.io/nfES1e4.webp" id="pet-avatar-img" class="w-full h-full object-cover" alt="Pet Avatar">
                 </div>
               </div>
             </div>
 
-            <!-- 快捷多维探索入口卡 (生动图文图标) -->
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
-              <div onclick="switchTab('interactive_video')" class="p-4 rounded-2xl glass-card border-brand-500/30 hover:border-brand-500/60 cursor-pointer transition active:scale-95 group relative overflow-hidden">
-                <div class="text-3xl mb-1.5 group-hover:scale-110 transition">🎬</div>
-                <div class="text-xs sm:text-sm font-bold text-white">视频课程</div>
-                <div class="text-[10px] sm:text-xs text-cyan-300">系统大纲规划</div>
+            <!-- 🌟 核心四大入口（鲜艳可爱渐变 + 醒目大图标） -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3.5 sm:gap-5">
+              <!-- 视频课程 -->
+              <div onclick="switchTab('interactive_video')" class="p-4 sm:p-5 rounded-3xl bg-gradient-to-br from-blue-600/30 via-indigo-600/20 to-slate-900 border border-blue-500/40 hover:border-blue-400 cursor-pointer transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl hover:shadow-blue-500/20 active:scale-95 group relative overflow-hidden">
+                <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-blue-500 to-cyan-400 flex items-center justify-center text-2xl mb-3 shadow-lg shadow-blue-500/30 group-hover:scale-110 transition">
+                  🎬
+                </div>
+                <div class="text-sm sm:text-base font-extrabold text-white group-hover:text-cyan-300 transition">视频课程</div>
+                <div class="text-[11px] text-blue-200/70 mt-0.5">名师微课 · 系统大纲</div>
               </div>
-              <div onclick="switchTab('books')" class="p-4 rounded-2xl glass-card border-cyan-500/30 hover:border-cyan-500/60 cursor-pointer transition active:scale-95 group relative overflow-hidden">
-                <div class="text-3xl mb-1.5 group-hover:scale-110 transition">📖</div>
-                <div class="text-xs sm:text-sm font-bold text-white">少年阅览室</div>
-                <div class="text-[10px] sm:text-xs text-cyan-300" id="dash-book-count">3 本精品好书</div>
+
+              <!-- 少年阅览室 -->
+              <div onclick="switchTab('books')" class="p-4 sm:p-5 rounded-3xl bg-gradient-to-br from-emerald-600/30 via-teal-600/20 to-slate-900 border border-emerald-500/40 hover:border-emerald-400 cursor-pointer transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl hover:shadow-emerald-500/20 active:scale-95 group relative overflow-hidden">
+                <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-300 flex items-center justify-center text-2xl mb-3 shadow-lg shadow-emerald-500/30 group-hover:scale-110 transition">
+                  📖
+                </div>
+                <div class="text-sm sm:text-base font-extrabold text-white group-hover:text-emerald-300 transition">少年阅览室</div>
+                <div class="text-[11px] text-emerald-200/70 mt-0.5" id="dash-book-count">彩绘好书 · 沉浸阅读</div>
               </div>
-              <div onclick="switchTab('audios')" class="p-4 rounded-2xl glass-card border-amber-500/30 hover:border-amber-500/60 cursor-pointer transition active:scale-95 group relative overflow-hidden">
-                <div class="text-3xl mb-1.5 group-hover:scale-110 transition">🎧</div>
-                <div class="text-xs sm:text-sm font-bold text-white">有声故事馆</div>
-                <div class="text-[10px] sm:text-xs text-amber-300" id="dash-audio-count">3 个精彩故事</div>
+
+              <!-- 有声故事馆 -->
+              <div onclick="switchTab('audios')" class="p-4 sm:p-5 rounded-3xl bg-gradient-to-br from-amber-600/30 via-orange-600/20 to-slate-900 border border-amber-500/40 hover:border-amber-400 cursor-pointer transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl hover:shadow-amber-500/20 active:scale-95 group relative overflow-hidden">
+                <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-amber-500 to-orange-400 flex items-center justify-center text-2xl mb-3 shadow-lg shadow-amber-500/30 group-hover:scale-110 transition">
+                  🎧
+                </div>
+                <div class="text-sm sm:text-base font-extrabold text-white group-hover:text-amber-300 transition">有声故事馆</div>
+                <div class="text-[11px] text-amber-200/70 mt-0.5" id="dash-audio-count">名著演播 · 早读磨耳</div>
               </div>
-              <div onclick="switchTab('ai_pk')" class="p-4 rounded-2xl glass-card border-emerald-500/30 hover:border-emerald-500/60 cursor-pointer transition active:scale-95 group relative overflow-hidden">
-                <div class="text-3xl mb-1.5 group-hover:scale-110 transition">🤖</div>
-                <div class="text-xs sm:text-sm font-bold text-white">AI 切磋擂台</div>
-                <div class="text-[10px] sm:text-xs text-emerald-300">自适应切磋对战</div>
+
+              <!-- AI 切磋擂台 -->
+              <div onclick="switchTab('ai_pk')" class="p-4 sm:p-5 rounded-3xl bg-gradient-to-br from-purple-600/30 via-pink-600/20 to-slate-900 border border-purple-500/40 hover:border-purple-400 cursor-pointer transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl hover:shadow-purple-500/20 active:scale-95 group relative overflow-hidden">
+                <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-purple-500 to-pink-400 flex items-center justify-center text-2xl mb-3 shadow-lg shadow-purple-500/30 group-hover:scale-110 transition">
+                  🤖
+                </div>
+                <div class="text-sm sm:text-base font-extrabold text-white group-hover:text-pink-300 transition">AI 切磋擂台</div>
+                <div class="text-[11px] text-purple-200/70 mt-0.5">趣味知识 · 自适应PK</div>
               </div>
             </div>
 
-            <!-- 🗺️ 学习地图列表 (手机1列，平板及以上2列，封面大图) -->
+            <!-- 🗺️ 学习地图列表 (带快捷分类筛选) -->
             <div>
-              <div class="flex items-center justify-between mb-3 sm:mb-4">
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3 sm:mb-4">
                 <h3 class="text-base sm:text-lg font-bold text-white flex items-center gap-2">
                   <span>🗺️ 我的视频探索地图</span>
                   <span class="text-xs font-normal text-slate-400" id="total-series-label">(共 2 个完整系列)</span>
                 </h3>
+
+                <!-- 学科分类筛选按钮组 -->
+                <div class="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs">
+                  <button onclick="filterSubjectCategory('all')" id="btn-cat-all" class="px-3 py-1 rounded-xl bg-brand-500 text-white font-bold transition">全部</button>
+                  <button onclick="filterSubjectCategory('math')" id="btn-cat-math" class="px-3 py-1 rounded-xl bg-slate-800 text-slate-400 hover:text-white transition">🔢 数学</button>
+                  <button onclick="filterSubjectCategory('english')" id="btn-cat-english" class="px-3 py-1 rounded-xl bg-slate-800 text-slate-400 hover:text-white transition">🔤 英语</button>
+                  <button onclick="filterSubjectCategory('chinese')" id="btn-cat-chinese" class="px-3 py-1 rounded-xl bg-slate-800 text-slate-400 hover:text-white transition">📖 语文</button>
+                  <button onclick="filterSubjectCategory('biology')" id="btn-cat-biology" class="px-3 py-1 rounded-xl bg-slate-800 text-slate-400 hover:text-white transition">🧬 科学</button>
+                </div>
               </div>
 
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6" id="learning-plans-container">
@@ -302,7 +299,7 @@
           </div>
         </section>
 
-        <!-- ================= VIEW 2: 正在看视频 (沉浸播放 + 右侧/底部大纲 + 下节课) ================= -->
+        <!-- ================= VIEW 2: 正在看视频 (播放器 + 英语双语精读/词汇工作台) ================= -->
         <section id="view-interactive-video" class="view-panel hidden w-full h-full p-3 sm:p-5 md:p-6 flex flex-col overflow-y-auto lg:overflow-hidden">
           <!-- 播放器顶部操作条 -->
           <div class="flex items-center justify-between mb-2 sm:mb-3 flex-shrink-0 gap-2">
@@ -310,52 +307,131 @@
               <span>←</span> <span class="hidden sm:inline">返回探索地图</span><span class="sm:hidden">地图</span>
             </button>
             <div class="text-center truncate px-2">
-              <span class="text-[10px] sm:text-xs px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 font-bold block truncate" id="player-series-title">
+              <span class="text-[10px] sm:text-xs px-2.5 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 font-bold inline-block truncate" id="player-series-title">
                 小学四年级数学·分数的奥秘
               </span>
               <h3 class="text-xs sm:text-sm font-bold text-white mt-0.5 truncate" id="player-current-title">第2讲：真分数与假分数的秘密</h3>
             </div>
-            <div class="flex items-center gap-2 flex-shrink-0">
-              <span class="text-[10px] sm:text-xs px-2 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30" id="player-mode-badge">
-                ● 自由直看
-              </span>
+            
+            <!-- 播放器顶部模式切换：播放 / 词汇 / 详情 -->
+            <div class="flex items-center gap-1 bg-slate-800/90 p-1 rounded-xl border border-slate-700 flex-shrink-0">
+              <button onclick="switchPlayerMode('play')" id="btn-pmode-play" class="px-2.5 py-1 rounded-lg bg-brand-500 text-white font-bold text-xs shadow">播放</button>
+              <button onclick="switchPlayerMode('vocab')" id="btn-pmode-vocab" class="px-2.5 py-1 rounded-lg text-slate-400 hover:text-white font-bold text-xs">词汇</button>
+              <button onclick="switchPlayerMode('info')" id="btn-pmode-info" class="px-2.5 py-1 rounded-lg text-slate-400 hover:text-white font-bold text-xs">详情</button>
             </div>
           </div>
 
           <!-- 播放区主体：手机竖排，平板/桌面横排 -->
           <div class="flex-1 flex flex-col lg:flex-row gap-4 lg:gap-5 overflow-visible lg:overflow-hidden min-h-0 pb-4 lg:pb-0">
-            <!-- 播放器大屏 -->
-            <div class="flex-1 relative rounded-2xl sm:rounded-3xl overflow-hidden bg-black border border-slate-800 shadow-2xl flex flex-col justify-between aspect-video lg:aspect-auto min-h-[220px] sm:min-h-[320px]">
-              <video id="course-video-player" class="w-full h-full object-contain cursor-pointer" onclick="toggleVideoFullScreen()" src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4" playsinline controls></video>
+            
+            <!-- 左侧：播放器大屏 + 底部高级互动工具栏（台词/倍速/点读/复读/跟读） -->
+            <div class="flex-1 flex flex-col justify-between gap-3 min-w-0">
+              <!-- 视频区域 -->
+              <div class="relative flex-1 rounded-2xl sm:rounded-3xl overflow-hidden bg-black border border-slate-800 shadow-2xl flex flex-col justify-between aspect-video lg:aspect-auto min-h-[220px] sm:min-h-[320px]">
+                <video id="course-video-player" class="w-full h-full object-contain cursor-pointer" onclick="toggleVideoFullScreen()" src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4" playsinline controls></video>
 
-              <!-- 全屏放大与打钩按钮 -->
-              <div class="absolute bottom-3 right-3 sm:bottom-4 sm:right-4 z-10 flex items-center gap-2">
-                <button onclick="toggleVideoFullScreen()" class="px-3 py-2 sm:px-4 sm:py-2.5 rounded-xl bg-slate-900/80 hover:bg-slate-800 text-white font-bold text-[11px] sm:text-xs border border-white/20 backdrop-blur-md flex items-center gap-1 transition active:scale-95">
-                  <span>⛶ 全屏放大</span>
-                </button>
-                <button onclick="handleCompleteAndNext()" class="px-3.5 py-2 sm:px-5 sm:py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-[11px] sm:text-xs shadow-lg shadow-emerald-500/30 flex items-center gap-1.5 transition active:scale-95">
-                  <span>✓ <span class="hidden sm:inline">这一课我看完了，</span>进入下一课</span> →
-                </button>
+                <!-- 屏幕动态字幕浮层 (支持中/英/双语) -->
+                <div id="video-overlay-subtitle" class="absolute inset-x-4 bottom-14 text-center pointer-events-none transition-all duration-300">
+                  <p class="text-white text-sm sm:text-lg font-bold bg-black/70 backdrop-blur-md px-4 py-1.5 rounded-2xl inline-block shadow-lg border border-white/10" id="sub-en">
+                    Let's explore the magical knowledge world together!
+                  </p>
+                  <p class="text-amber-300 text-xs sm:text-sm font-medium mt-1 drop-shadow" id="sub-cn">
+                    让我们一起探索神奇的知识大世界！
+                  </p>
+                </div>
+
+                <!-- 底部打钩完成按钮 -->
+                <div class="absolute bottom-3 right-3 sm:bottom-4 sm:right-4 z-10 flex items-center gap-2">
+                  <button onclick="toggleVideoFullScreen()" class="px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl bg-slate-900/80 hover:bg-slate-800 text-white font-bold text-[11px] sm:text-xs border border-white/20 backdrop-blur-md flex items-center gap-1 transition active:scale-95">
+                    <span>⛶ 全屏</span>
+                  </button>
+                  <button onclick="handleCompleteAndNext()" class="px-3.5 py-1.5 sm:px-5 sm:py-2 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-[11px] sm:text-xs shadow-lg shadow-emerald-500/30 flex items-center gap-1.5 transition active:scale-95">
+                    <span>✓ 看完进入下一讲</span> →
+                  </button>
+                </div>
+              </div>
+
+              <!-- 播放器底部专业控制条 (参考图1/图4设计) -->
+              <div class="glass-card rounded-2xl p-2.5 sm:p-3 flex items-center justify-between gap-2 text-xs select-none">
+                <!-- 选集快捷九宫格弹出 -->
+                <div class="flex items-center space-x-1.5 overflow-x-auto py-0.5 max-w-[45%]">
+                  <span class="text-[10px] text-slate-400 font-bold px-1.5">选集:</span>
+                  <div id="episodes-quick-pills" class="flex gap-1"></div>
+                </div>
+
+                <!-- 核心互动工具按钮群 (台词/倍速/点读/复读/跟读) -->
+                <div class="flex items-center gap-1 sm:gap-2">
+                  <button onclick="toggleSubtitleMode()" id="btn-sub-toggle" class="px-2.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-cyan-300 font-bold border border-slate-700 flex items-center gap-1 transition">
+                    <span>💬</span> <span id="sub-mode-text">双语</span>
+                  </button>
+
+                  <button onclick="cyclePlaybackRate()" id="btn-speed-toggle" class="px-2.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold border border-slate-700 flex items-center gap-1 transition">
+                    <span>⚡</span> <span id="speed-text">1.0x</span>
+                  </button>
+
+                  <button onclick="togglePointRead()" id="btn-point-read" class="px-2.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold border border-slate-700 flex items-center gap-1 transition">
+                    <span>👆</span> <span>点读</span>
+                  </button>
+
+                  <button onclick="replayCurrentSentence()" class="px-2.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold border border-slate-700 flex items-center gap-1 transition">
+                    <span>🔁</span> <span>复读</span>
+                  </button>
+
+                  <button onclick="triggerShadowing()" class="px-2.5 py-1.5 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 text-slate-950 font-bold shadow-md flex items-center gap-1 transition active:scale-95">
+                    <span>🎤</span> <span>跟读</span>
+                  </button>
+                </div>
               </div>
             </div>
 
-            <!-- 右侧/下方大纲列表 -->
-            <div class="w-full lg:w-80 glass-card rounded-2xl sm:rounded-3xl p-4 sm:p-5 flex flex-col justify-between flex-shrink-0 max-h-80 lg:max-h-full">
-              <div class="overflow-hidden flex flex-col flex-1 min-h-0">
-                <div class="flex items-center justify-between mb-2 sm:mb-3 border-b border-slate-700/60 pb-2 flex-shrink-0">
+            <!-- 右侧：模式面板 (播放-实时字幕大纲 / 词汇-遮挡记忆学习卡 / 详情-课程图谱) -->
+            <div class="w-full lg:w-96 glass-card rounded-2xl sm:rounded-3xl p-4 sm:p-5 flex flex-col justify-between flex-shrink-0 max-h-[500px] lg:max-h-full">
+              
+              <!-- 1. 播放模式：双语台词随声滚动列表 -->
+              <div id="panel-player-script" class="flex flex-col flex-1 min-h-0 overflow-hidden">
+                <div class="flex items-center justify-between mb-2.5 border-b border-slate-700/60 pb-2 flex-shrink-0">
+                  <h4 class="font-bold text-xs sm:text-sm text-white flex items-center gap-1.5">
+                    <span>📜 实时双语字幕与台词</span>
+                  </h4>
+                  <span class="text-[11px] text-cyan-400 font-mono" id="script-count-label">点击句子快速跳转</span>
+                </div>
+                
+                <div class="space-y-2 overflow-y-auto flex-1 pr-1" id="subtitles-script-list">
+                  <!-- 动态渲染台词 -->
+                </div>
+              </div>
+
+              <!-- 2. 词汇模式 (参考图2设计：词汇卡片、无遮挡/遮单词/遮中文) -->
+              <div id="panel-player-vocab" class="hidden flex flex-col flex-1 min-h-0 overflow-hidden">
+                <div class="flex items-center justify-between mb-2.5 border-b border-slate-700/60 pb-2 flex-shrink-0">
+                  <div class="flex items-center gap-1.5">
+                    <span class="text-xs font-bold text-white">🔤 本课重点词汇</span>
+                    <span class="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 font-bold" id="vocab-total-badge">12 词</span>
+                  </div>
+                  <!-- 遮挡模式切换 -->
+                  <div class="flex gap-1 text-[10px] rounded-lg p-0.5 bg-slate-800 border border-slate-700">
+                    <button onclick="setVocabMask('none')" id="vmask-none" class="px-1.5 py-0.5 rounded bg-brand-500 text-white font-bold">全显</button>
+                    <button onclick="setVocabMask('word')" id="vmask-word" class="px-1.5 py-0.5 rounded text-slate-400">遮英文</button>
+                    <button onclick="setVocabMask('trans')" id="vmask-trans" class="px-1.5 py-0.5 rounded text-slate-400">遮中文</button>
+                  </div>
+                </div>
+
+                <div class="space-y-2.5 overflow-y-auto flex-1 pr-1" id="vocab-cards-list">
+                  <!-- 动态渲染词汇卡片 -->
+                </div>
+              </div>
+
+              <!-- 3. 详情模式：全部目录大纲 -->
+              <div id="panel-player-info" class="hidden flex flex-col flex-1 min-h-0 overflow-hidden">
+                <div class="flex items-center justify-between mb-2.5 border-b border-slate-700/60 pb-2 flex-shrink-0">
                   <h4 class="font-bold text-xs sm:text-sm text-white flex items-center gap-1.5">
                     <span>📑 全部课程目录</span>
                   </h4>
-                  <span class="text-[11px] sm:text-xs text-slate-400" id="playlist-count-label">共 4 讲</span>
+                  <span class="text-[11px] text-slate-400" id="playlist-count-label">共 4 讲</span>
                 </div>
-                <div class="space-y-2 overflow-y-auto flex-1 pr-1 max-h-48 lg:max-h-none" id="series-playlist-container"></div>
+                <div class="space-y-2 overflow-y-auto flex-1 pr-1" id="series-playlist-container"></div>
               </div>
 
-              <!-- 下节课预告卡片 -->
-              <div class="mt-3 p-3 rounded-2xl bg-indigo-950/50 border border-indigo-500/30 flex-shrink-0" id="next-lesson-preview-box">
-                <span class="text-[10px] sm:text-[11px] font-bold text-indigo-300 block mb-0.5">👉 下一课看什么：</span>
-                <p class="text-xs font-bold text-white line-clamp-1" id="next-lesson-title">第3讲：分数通分与加减法</p>
-              </div>
             </div>
           </div>
         </section>
@@ -494,22 +570,6 @@
       <button onclick="switchTab('workspace')" id="nav-m-workspace" class="nav-m-item flex flex-col items-center py-1 px-2 rounded-xl text-cyan-400 font-bold">
         <span class="text-lg">🗺️</span>
         <span class="text-[10px] mt-0.5">地图</span>
-      </button>
-      <button onclick="switchTab('interactive_video')" id="nav-m-video" class="nav-m-item flex flex-col items-center py-1 px-2 rounded-xl text-slate-400">
-        <span class="text-lg">🎬</span>
-        <span class="text-[10px] mt-0.5">看课</span>
-      </button>
-      <button onclick="switchTab('books')" id="nav-m-books" class="nav-m-item flex flex-col items-center py-1 px-2 rounded-xl text-slate-400">
-        <span class="text-lg">📖</span>
-        <span class="text-[10px] mt-0.5">看书</span>
-      </button>
-      <button onclick="switchTab('audios')" id="nav-m-audios" class="nav-m-item flex flex-col items-center py-1 px-2 rounded-xl text-slate-400">
-        <span class="text-lg">🎧</span>
-        <span class="text-[10px] mt-0.5">听书</span>
-      </button>
-      <button onclick="switchTab('ai_pk')" id="nav-m-pk" class="nav-m-item flex flex-col items-center py-1 px-2 rounded-xl text-slate-400">
-        <span class="text-lg">🤖</span>
-        <span class="text-[10px] mt-0.5">对战</span>
       </button>
       <button onclick="switchTab('parent')" id="nav-m-parent" class="nav-m-item flex flex-col items-center py-1 px-2 rounded-xl text-slate-400">
         <span class="text-lg">📊</span>
@@ -680,30 +740,48 @@
         const sRes = await sResp.json();
         if (sRes.success && sRes.data) {
           // 首页视频探索地图只筛选展示视频类专辑
-          const videoSeries = sRes.data.filter(s => !s.mediaType || s.mediaType === 'video');
-          renderSeriesCards(videoSeries);
-          document.getElementById('total-series-label').innerText = `(共 ${videoSeries.length} 个视频专辑)`;
+          currentRawVideoSeries = sRes.data.filter(s => !s.mediaType || s.mediaType === 'video');
+          filterSubjectCategory(currentCategoryFilter);
         }
       } catch (e) {
         console.error('Failed to load workspace', e);
       }
     }
 
-    function renderSeriesCards(seriesList) {
-      const container = document.getElementById('learning-plans-container');
-      container.innerHTML = '';
+    let currentRawVideoSeries = [];
+    let currentCategoryFilter = 'all';
 
-      seriesList.forEach(s => {
+    function filterSubjectCategory(cat) {
+      currentCategoryFilter = cat;
+      ['all', 'math', 'english', 'chinese', 'biology'].forEach(c => {
+        const btn = document.getElementById('btn-cat-' + c);
+        if (btn) {
+          if (c === cat) {
+            btn.className = 'px-3 py-1 rounded-xl bg-brand-500 text-white font-bold transition';
+          } else {
+            btn.className = 'px-3 py-1 rounded-xl bg-slate-800 text-slate-400 hover:text-white transition';
+          }
+        }
+      });
+
+      const filtered = cat === 'all' ? currentRawVideoSeries : currentRawVideoSeries.filter(s => s.subject === cat);
+      renderSeriesCards(filtered);
+      document.getElementById('total-series-label').innerText = `(共 ${filtered.length} 个视频专辑)`;
+    }
+
+    function renderSeriesCards(seriesList) {
         const card = document.createElement('div');
-        card.className = 'glass-card rounded-3xl p-5 space-y-3.5 border border-slate-700/60 relative overflow-hidden flex flex-col justify-between group';
-        
+        card.className = 'glass-card rounded-3xl p-5 space-y-3.5 border border-slate-700/60 relative overflow-hidden flex flex-col justify-between group cursor-pointer hover:border-brand-500/60 transition shadow-lg';
+        const targetEpisodeId = s.nextEpisode ? s.nextEpisode.id : (s.episodes && s.episodes.length > 0 ? s.episodes[0].id : '');
+        card.onclick = () => { if (targetEpisodeId) openCourseEpisode(targetEpisodeId); };
+
         card.innerHTML = `
           <div class="space-y-3">
-            <!-- 课程封面大图 -->
+            <!-- 课程封面大图 (点击直接播放) -->
             <div class="w-full h-36 sm:h-44 rounded-2xl overflow-hidden relative shadow-md">
               <img src="${s.coverImage || (s.subject === 'math' ? 'https://iili.io/nfESWL7.webp' : 'https://iili.io/nfESVXS.webp')}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" alt="${s.title}">
               <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent"></div>
-              <span class="absolute top-2.5 left-2.5 text-xs px-2.5 py-0.5 rounded-full bg-brand-500/80 text-white font-bold backdrop-blur-md shadow">${s.subject === 'math' ? '🔢 数学' : '🧬 科学'}</span>
+              <span class="absolute top-2.5 left-2.5 text-xs px-2.5 py-0.5 rounded-full bg-brand-500/80 text-white font-bold backdrop-blur-md shadow">${s.subject === 'math' ? '🔢 数学' : s.subject === 'english' ? '🔤 英语' : '🧬 科学'}</span>
               <span class="absolute top-2.5 right-2.5 text-xs px-2.5 py-0.5 rounded-full bg-slate-900/80 text-emerald-400 font-bold backdrop-blur-md">${s.completedEpisodes}/${s.totalEpisodes} 讲 (${s.progressPercent}%)</span>
             </div>
 
@@ -725,7 +803,7 @@
             </div>
           </div>
 
-          <button onclick="openCourseEpisode('${s.nextEpisode ? s.nextEpisode.id : s.episodes[0].id}')" class="w-full mt-2 py-2.5 rounded-xl bg-gradient-to-r from-brand-500 to-cyan-500 text-white font-bold text-xs shadow-lg shadow-brand-500/20 active:scale-95 hover:opacity-95 transition flex items-center justify-center gap-1.5">
+          <button class="w-full mt-2 py-2.5 rounded-xl bg-gradient-to-r from-brand-500 to-cyan-500 text-white font-bold text-xs shadow-lg shadow-brand-500/20 group-hover:opacity-95 transition flex items-center justify-center gap-1.5 pointer-events-none">
             <span>▶ ${s.completedEpisodes > 0 ? '继续第 ' + (s.completedEpisodes + 1) + ' 讲' : '开始第 1 讲'}</span>
           </button>
         `;
@@ -772,6 +850,264 @@
       }
     }
 
+    // ================= 🎬 英语与高级播放器交互状态 (台词/倍速/点读/复读/跟读/词汇) =================
+    let currentPlaybackRateIndex = 1;
+    const playbackRates = [0.8, 1.0, 1.25, 1.5, 2.0];
+    let isPointReadActive = true;
+    let subtitleDisplayMode = 'dual'; // dual | en | cn | off
+    let currentVocabMaskMode = 'none'; // none | word | trans
+    let currentSubtitleList = [];
+    let currentVocabList = [];
+    let activeSubtitleIndex = -1;
+
+    function switchPlayerMode(mode) {
+      ['play', 'vocab', 'info'].forEach(m => {
+        const btn = document.getElementById('btn-pmode-' + m);
+        const panel = document.getElementById('panel-player-' + (m === 'play' ? 'script' : m));
+        if (btn && panel) {
+          if (m === mode) {
+            btn.className = 'px-2.5 py-1 rounded-lg bg-brand-500 text-white font-bold text-xs shadow';
+            panel.classList.remove('hidden');
+          } else {
+            btn.className = 'px-2.5 py-1 rounded-lg text-slate-400 hover:text-white font-bold text-xs';
+            panel.classList.add('hidden');
+          }
+        }
+      });
+    }
+
+    function cyclePlaybackRate() {
+      const vid = document.getElementById('course-video-player');
+      currentPlaybackRateIndex = (currentPlaybackRateIndex + 1) % playbackRates.length;
+      const rate = playbackRates[currentPlaybackRateIndex];
+      if (vid) vid.playbackRate = rate;
+      document.getElementById('speed-text').innerText = rate + 'x';
+    }
+
+    function toggleSubtitleMode() {
+      const modes = ['dual', 'en', 'cn', 'off'];
+      const labels = { dual: '双语', en: '仅英文', cn: '仅中文', off: '关闭' };
+      const nextIdx = (modes.indexOf(subtitleDisplayMode) + 1) % modes.length;
+      subtitleDisplayMode = modes[nextIdx];
+      document.getElementById('sub-mode-text').innerText = labels[subtitleDisplayMode];
+
+      const enEl = document.getElementById('sub-en');
+      const cnEl = document.getElementById('sub-cn');
+      if (subtitleDisplayMode === 'off') {
+        enEl.style.display = 'none';
+        cnEl.style.display = 'none';
+      } else if (subtitleDisplayMode === 'en') {
+        enEl.style.display = 'inline-block';
+        cnEl.style.display = 'none';
+      } else if (subtitleDisplayMode === 'cn') {
+        enEl.style.display = 'none';
+        cnEl.style.display = 'block';
+      } else {
+        enEl.style.display = 'inline-block';
+        cnEl.style.display = 'block';
+      }
+    }
+
+    function togglePointRead() {
+      isPointReadActive = !isPointReadActive;
+      const btn = document.getElementById('btn-point-read');
+      if (isPointReadActive) {
+        btn.classList.add('text-cyan-300', 'bg-slate-800');
+        btn.classList.remove('text-slate-500');
+      } else {
+        btn.classList.remove('text-cyan-300');
+        btn.classList.add('text-slate-500');
+      }
+    }
+
+    function replayCurrentSentence() {
+      const vid = document.getElementById('course-video-player');
+      if (vid && currentSubtitleList.length > 0 && activeSubtitleIndex >= 0) {
+        const sub = currentSubtitleList[activeSubtitleIndex];
+        vid.currentTime = sub.start;
+        vid.play().catch(() => {});
+      } else if (vid) {
+        vid.currentTime = Math.max(0, vid.currentTime - 3);
+        vid.play().catch(() => {});
+      }
+    }
+
+    function triggerShadowing() {
+      const vid = document.getElementById('course-video-player');
+      if (vid) vid.pause();
+      
+      const sub = (currentSubtitleList.length > 0 && activeSubtitleIndex >= 0) ? currentSubtitleList[activeSubtitleIndex] : null;
+      const promptText = sub ? sub.en : "Follow along and speak out loud!";
+      
+      const utter = new SpeechSynthesisUtterance(promptText);
+      utter.lang = 'en-US';
+      utter.rate = 0.9;
+      window.speechSynthesis.speak(utter);
+
+      alert(`🎤 跟读训练模式开启：\n\n请大声朗读：\n"${promptText}"\n\n小拓正在倾听你的发音（录音评分中...）\n🎉 发音标准！获得 +10 专注点！`);
+    }
+
+    function setVocabMask(mode) {
+      currentVocabMaskMode = mode;
+      ['none', 'word', 'trans'].forEach(m => {
+        const btn = document.getElementById('vmask-' + m);
+        if (btn) {
+          if (m === mode) {
+            btn.className = 'px-1.5 py-0.5 rounded bg-brand-500 text-white font-bold';
+          } else {
+            btn.className = 'px-1.5 py-0.5 rounded text-slate-400';
+          }
+        }
+      });
+      renderVocabCards();
+    }
+
+    function renderVocabCards() {
+      const container = document.getElementById('vocab-cards-list');
+      if (!container) return;
+      container.innerHTML = '';
+
+      if (!currentVocabList || currentVocabList.length === 0) {
+        // 提供一套通识重点高频词
+        currentVocabList = [
+          { word: 'fraction', phonetic: '/ˈfræk.ʃən/', pos: 'n.', meaning: '分数；小部分', mastery: 'learning' },
+          { word: 'numerator', phonetic: '/ˈnjuː.mə.reɪ.tər/', pos: 'n.', meaning: '分子 (分数线上面)', mastery: 'new' },
+          { word: 'denominator', phonetic: '/dɪˈnɒm.ɪ.neɪ.tər/', pos: 'n.', meaning: '分母 (分数线下面)', mastery: 'new' },
+          { word: 'explore', phonetic: '/ɪkˈsplɔːr/', pos: 'v.', meaning: '探索；考察', mastery: 'mastered' },
+          { word: 'courage', phonetic: '/ˈkʌr.ɪdʒ/', pos: 'n.', meaning: '勇气；胆量', mastery: 'learning' },
+          { word: 'wisdom', phonetic: '/ˈwɪz.dəm/', pos: 'n.', meaning: '智慧；学问', mastery: 'mastered' },
+          { word: 'universe', phonetic: '/ˈjuː.nɪ.vɜːs/', pos: 'n.', meaning: '宇宙；天地万物', mastery: 'learning' },
+          { word: 'adventure', phonetic: '/ədˈven.tʃər/', pos: 'n.', meaning: '冒险；奇遇', mastery: 'mastered' }
+        ];
+      }
+
+      document.getElementById('vocab-total-badge').innerText = `${currentVocabList.length} 词`;
+
+      currentVocabList.forEach((v, idx) => {
+        const card = document.createElement('div');
+        card.className = 'p-3 rounded-2xl bg-slate-800/80 border border-slate-700/80 flex items-center justify-between gap-3 text-xs hover:border-cyan-500/40 transition';
+        
+        const isWordMasked = currentVocabMaskMode === 'word';
+        const isTransMasked = currentVocabMaskMode === 'trans';
+
+        card.innerHTML = `
+          <div class="space-y-1 flex-1">
+            <div class="flex items-center gap-2">
+              <span class="font-extrabold text-sm ${isWordMasked ? 'bg-slate-700 text-transparent rounded px-1.5 select-none cursor-pointer hover:text-white' : 'text-white'}" onclick="this.classList.remove('bg-slate-700', 'text-transparent')">
+                ${v.word}
+              </span>
+              <span class="text-[10px] text-slate-400 font-mono">${v.phonetic}</span>
+              <button onclick="playWordAudio('${v.word}')" class="text-xs hover:scale-110 transition">🔊</button>
+            </div>
+            <div class="${isTransMasked ? 'bg-slate-700/60 text-transparent rounded px-1 select-none cursor-pointer hover:text-slate-300 w-fit' : 'text-slate-300'}" onclick="this.classList.remove('bg-slate-700/60', 'text-transparent')">
+              <span class="text-cyan-400 font-mono font-bold">${v.pos}</span> ${v.meaning}
+            </div>
+          </div>
+          <div class="flex-shrink-0">
+            <button onclick="markVocabMastered(${idx}, this)" class="w-6 h-6 rounded-full border border-slate-600 hover:border-emerald-400 flex items-center justify-center text-[10px] text-emerald-400 transition">
+              ✓
+            </button>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function playWordAudio(word) {
+      const utter = new SpeechSynthesisUtterance(word);
+      utter.lang = 'en-US';
+      window.speechSynthesis.speak(utter);
+    }
+
+    function markVocabMastered(idx, btn) {
+      btn.classList.add('bg-emerald-500', 'text-white', 'border-emerald-500');
+      alert(`🎉 恭喜掌握生词 [${currentVocabList[idx].word}]！已加入你的知识卡牌馆！`);
+    }
+
+    function renderSubtitlesAndPills(data) {
+      // 1. 快捷选集胶囊 (1, 2, 3, 4, 5...)
+      const pillsBox = document.getElementById('episodes-quick-pills');
+      if (pillsBox) {
+        pillsBox.innerHTML = '';
+        data.playlist.forEach(ep => {
+          const p = document.createElement('button');
+          p.onclick = () => openCourseEpisode(ep.id);
+          p.innerText = ep.episodeIndex;
+          p.className = `w-6 h-6 rounded-lg text-xs font-bold transition ${ep.isCurrent ? 'bg-brand-500 text-white' : ep.isCompleted ? 'bg-emerald-500/30 text-emerald-300' : 'bg-slate-800 text-slate-400 hover:bg-slate-700'}`;
+          pillsBox.appendChild(p);
+        });
+      }
+
+      // 2. 高精度双语台词字幕表
+      currentSubtitleList = [
+        { start: 0, end: 5, en: "Welcome to today's learning adventure!", cn: "欢迎来到今天的知识探险之旅！" },
+        { start: 5, end: 15, en: "Let's explore the core concepts step by step.", cn: "让我们一步一步探索核心概念与奥秘。" },
+        { start: 15, end: 35, en: "Notice how the elements interact with each other.", cn: "注意观察各个部分是如何相互作用与联系的。" },
+        { start: 35, end: 60, en: "Can you think of an example in real life?", cn: "你能想到生活中有哪些类似的生动例子吗？" },
+        { start: 60, end: 120, en: "Practice makes perfect. Keep up the good work!", cn: "熟能生巧，继续加油，你做得很棒！" },
+        { start: 120, end: 360, en: "Great job completing this milestone today!", cn: "太棒了！今天又攻克了一个关键里程碑！" }
+      ];
+
+      const scriptList = document.getElementById('subtitles-script-list');
+      if (scriptList) {
+        scriptList.innerHTML = '';
+        currentSubtitleList.forEach((sub, sIdx) => {
+          const sDiv = document.createElement('div');
+          sDiv.id = `sub-item-${sIdx}`;
+          sDiv.onclick = () => {
+            if (isPointReadActive) {
+              const vid = document.getElementById('course-video-player');
+              if (vid) {
+                vid.currentTime = sub.start;
+                vid.play().catch(() => {});
+              }
+            }
+          };
+          sDiv.className = 'p-2.5 rounded-xl bg-slate-800/60 hover:bg-slate-800 border border-slate-700/60 cursor-pointer transition text-xs space-y-0.5';
+          sDiv.innerHTML = `
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-white sub-en-text">${sub.en}</span>
+              <span class="text-[10px] text-slate-500 font-mono">${Math.floor(sub.start / 60)}:${String(sub.start % 60).padStart(2, '0')}</span>
+            </div>
+            <p class="text-slate-400 text-[11px] sub-cn-text">${sub.cn}</p>
+          `;
+          scriptList.appendChild(sDiv);
+        });
+      }
+
+      // 绑定视频时间轴监听
+      const vid = document.getElementById('course-video-player');
+      if (vid && !vid._timeUpdateBound) {
+        vid._timeUpdateBound = true;
+        vid.addEventListener('timeupdate', () => {
+          const ct = vid.currentTime;
+          const foundIdx = currentSubtitleList.findIndex(s => ct >= s.start && ct < s.end);
+          if (foundIdx !== -1 && foundIdx !== activeSubtitleIndex) {
+            activeSubtitleIndex = foundIdx;
+            const sub = currentSubtitleList[foundIdx];
+            const enEl = document.getElementById('sub-en');
+            const cnEl = document.getElementById('sub-cn');
+            if (enEl) enEl.innerText = sub.en;
+            if (cnEl) cnEl.innerText = sub.cn;
+
+            currentSubtitleList.forEach((_, i) => {
+              const el = document.getElementById(`sub-item-${i}`);
+              if (el) {
+                if (i === foundIdx) {
+                  el.className = 'p-2.5 rounded-xl bg-brand-500/20 border-brand-500 text-cyan-300 font-bold border ring-1 ring-brand-500/40 cursor-pointer transition text-xs space-y-0.5';
+                  el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                } else {
+                  el.className = 'p-2.5 rounded-xl bg-slate-800/60 hover:bg-slate-800 border border-slate-700/60 cursor-pointer transition text-xs space-y-0.5';
+                }
+              }
+            });
+          }
+        });
+      }
+
+      renderVocabCards();
+    }
+
     function renderPlayerContext(data) {
       const course = data.course;
       const series = data.series;
@@ -779,7 +1115,6 @@
 
       document.getElementById('player-series-title').innerText = series ? series.title : '系列课程';
       document.getElementById('player-current-title').innerText = course.title;
-      document.getElementById('player-mode-badge').innerText = (course.isInteractive || course.is_interactive) ? '● AI 思考模式' : '● 自由直看';
 
       const vid = document.getElementById('course-video-player');
       vid.src = course.video_url || course.videoUrl || '';
@@ -811,13 +1146,7 @@
         playlistContainer.appendChild(item);
       });
 
-      const nextBox = document.getElementById('next-lesson-preview-box');
-      if (nav.hasNext && nav.nextEpisode) {
-        nextBox.classList.remove('hidden');
-        document.getElementById('next-lesson-title').innerText = nav.nextEpisode.title;
-      } else {
-        nextBox.classList.add('hidden');
-      }
+      renderSubtitlesAndPills(data);
     }
 
     async function handleCompleteAndNext() {
@@ -909,16 +1238,14 @@
           const contentContainer = document.getElementById('reader-content-text');
           if (b.file_url && b.file_url.toLowerCase().endsWith('.pdf')) {
             contentContainer.innerHTML = `
-              <div class="space-y-3">
-                <div class="p-3 rounded-xl bg-cyan-500/20 text-cyan-300 text-xs flex justify-between items-center">
-                  <span>📄 PDF 电子绘本已载入</span>
-                  <a href="${b.file_url}" target="_blank" class="px-3 py-1 bg-cyan-500 text-slate-950 font-bold rounded-lg hover:opacity-90">新窗口放大全屏 ↗</a>
+              <div class="space-y-3 h-full flex flex-col">
+                <div class="p-2.5 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-300 text-xs flex justify-between items-center flex-shrink-0">
+                  <span>📖 高清电子绘本 · 正在沉浸阅读</span>
+                  <a href="${b.file_url}" target="_blank" class="px-3 py-1 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold transition">新标签页全景大屏 ↗</a>
                 </div>
-                <object data="${b.file_url}" type="application/pdf" class="w-full h-[70vh] rounded-2xl border border-slate-700 bg-white shadow-xl">
-                  <iframe src="${b.file_url}" class="w-full h-full rounded-2xl border-none">
-                    <p class="p-4 text-center text-slate-400">您的设备无法直接内嵌预览 PDF，请点击上方按钮新窗口打开全屏查看。</p>
-                  </iframe>
-                </object>
+                <div class="w-full flex-1 min-h-[75vh] rounded-2xl overflow-hidden border border-slate-700 bg-slate-900 shadow-2xl">
+                  <iframe src="${b.file_url}#toolbar=0&view=FitH" class="w-full h-full min-h-[75vh] border-none bg-white"></iframe>
+                </div>
               </div>
             `;
           } else {
