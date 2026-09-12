@@ -382,6 +382,14 @@ app.get('/api/course/context/:courseId', (req, res) => {
     }
   }
 
+  // 兜底确保中文翻译非空
+  if (matchedSubtitles) {
+    matchedSubtitles = matchedSubtitles.map(s => ({
+      ...s,
+      cn: s.cn || '【点击跟读模仿纯正美音发音，提升口语听力】'
+    }));
+  }
+
   const enhancedCourse = {
     ...course,
     subtitles: matchedSubtitles,
