@@ -179,11 +179,18 @@
               <div id="files-container" class="space-y-1.5 text-xs"></div>
             </div>
 
-            <div id="upload-progress-box" class="hidden mt-4 p-4 rounded-2xl bg-slate-950 border border-brand-500/30 text-xs font-mono space-y-1">
+            <div id="upload-progress-box" class="hidden mt-4 p-4 rounded-2xl bg-slate-950 border border-brand-500/30 text-xs font-mono space-y-2">
               <p class="text-cyan-300 font-bold flex items-center gap-2">
-                <span class="inline-block w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
-                正在批量上传并排定大纲目录与连播规划...
+                <span class="inline-block w-2.5 h-2.5 rounded-full bg-cyan-400 animate-ping"></span>
+                <span id="upload-status-hint">正在高速上传文件...</span>
               </p>
+              <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+                <div id="upload-progress-bar" class="bg-gradient-to-r from-brand-500 to-emerald-400 h-full rounded-full transition-all duration-300" style="width: 0%;"></div>
+              </div>
+              <div class="flex justify-between text-[11px] text-slate-400">
+                <span id="upload-speed-text">正在准备传输...</span>
+                <span id="upload-pct-text" class="font-bold text-cyan-300">0%</span>
+              </div>
             </div>
           </div>
 
@@ -416,7 +423,7 @@
       });
     }
 
-    async function submitBatchUpload() {
+    function submitBatchUpload() {
       const selectedSeriesId = document.getElementById('select-target-series').value;
       const title = document.getElementById('input-series-title').value;
       const subject = document.getElementById('input-series-subject').value;
@@ -425,6 +432,10 @@
       const mediaType = document.querySelector('input[name="media_type"]:checked').value;
       const progressBox = document.getElementById('upload-progress-box');
       const submitBtn = document.getElementById('btn-submit-batch');
+      const progressBar = document.getElementById('upload-progress-bar');
+      const pctText = document.getElementById('upload-pct-text');
+      const speedText = document.getElementById('upload-speed-text');
+      const statusHint = document.getElementById('upload-status-hint');
 
       if (selectedBatchFiles.length === 0) {
         alert('请至少选择 1 个文件上传！');
@@ -434,6 +445,9 @@
       progressBox.classList.remove('hidden');
       submitBtn.disabled = true;
       submitBtn.classList.add('opacity-50');
+      progressBar.style.width = '0%';
+      pctText.innerText = '0%';
+      statusHint.innerText = '正在高速传输中...';
 
       const formData = new FormData();
       formData.append('seriesId', selectedSeriesId);
@@ -443,7 +457,6 @@
       formData.append('description', desc);
       formData.append('mediaType', mediaType);
       
-      // 将原文件名列表转为 JSON 发送，100% 避免 multipart header 编码丢失导致中文乱码
       const fileNamesList = selectedBatchFiles.map(f => f.name);
       formData.append('fileNamesJson', JSON.stringify(fileNamesList));
 
@@ -451,26 +464,55 @@
         formData.append('videoFiles', file);
       });
 
-      try {
-        const resp = await fetch('/api/admin/series/batch-upload', { method: 'POST', body: formData });
-        const res = await resp.json();
-        if (res.success) {
-          alert(res.message);
-          selectedBatchFiles = [];
-          document.getElementById('batch-file-input').value = '';
-          document.getElementById('selected-files-list').classList.add('hidden');
-          document.getElementById('batch-file-label').innerHTML = '点击批量选择整套文件 (支持多选)';
-          switchAdminTab('series_list');
-        } else {
-          alert('上传失败: ' + res.message);
+      const xhr = new XMLHttpRequest();
+      const startTime = Date.now();
+
+      xhr.upload.onprogress = function(e) {
+        if (e.lengthComputable) {
+          const percent = Math.round((e.loaded / e.total) * 100);
+          progressBar.style.width = percent + '%';
+          pctText.innerText = percent + '%';
+          
+          const elapsedSec = (Date.now() - startTime) / 1000;
+          if (elapsedSec > 0) {
+            const speedMB = (e.loaded / 1024 / 1024 / elapsedSec).toFixed(1);
+            speedText.innerText = `已传输 ${(e.loaded/1024/1024).toFixed(1)}MB / ${(e.total/1024/1024).toFixed(1)}MB (${speedMB} MB/s)`;
+          }
         }
-      } catch (err) {
-        alert('网络请求失败: ' + err.message);
-      } finally {
+      };
+
+      xhr.onload = function() {
         progressBox.classList.add('hidden');
         submitBtn.disabled = false;
         submitBtn.classList.remove('opacity-50');
-      }
+
+        try {
+          const res = JSON.parse(xhr.responseText);
+          if (xhr.status === 200 && res.success) {
+            alert(res.message);
+            selectedBatchFiles = [];
+            document.getElementById('batch-file-input').value = '';
+            document.getElementById('folder-input').value = '';
+            document.getElementById('selected-files-list').classList.add('hidden');
+            document.getElementById('batch-file-label').innerHTML = '点击选择或直接将整个文件夹/文件拖拽到这里';
+            switchAdminTab('series_list');
+          } else {
+            alert('上传失败: ' + (res.message || xhr.statusText));
+          }
+        } catch (e) {
+          alert('解析响应失败: ' + xhr.responseText.slice(0, 100));
+        }
+      };
+
+      xhr.onerror = function() {
+        progressBox.classList.add('hidden');
+        submitBtn.disabled = false;
+        submitBtn.classList.remove('opacity-50');
+        alert('上传发生网络错误，请检查网络连接！');
+      };
+
+      xhr.open('POST', '/api/admin/series/batch-upload', true);
+      xhr.send(formData);
     }
 
     let globalSeriesData = [];

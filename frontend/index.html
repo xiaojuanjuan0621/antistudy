@@ -359,7 +359,7 @@
                   <div id="episodes-quick-pills" class="flex gap-1"></div>
                 </div>
 
-                <!-- 核心互动工具按钮群 (台词/倍速/点读/复读/跟读) -->
+                <!-- 核心互动工具按钮群 (台词/倍速/复读/跟读) -->
                 <div class="flex items-center gap-1 sm:gap-2">
                   <button onclick="toggleSubtitleMode()" id="btn-sub-toggle" class="px-2.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-cyan-300 font-bold border border-slate-700 flex items-center gap-1 transition">
                     <span>💬</span> <span id="sub-mode-text">双语</span>
@@ -369,15 +369,11 @@
                     <span>⚡</span> <span id="speed-text">1.0x</span>
                   </button>
 
-                  <button onclick="togglePointRead()" id="btn-point-read" class="px-2.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold border border-slate-700 flex items-center gap-1 transition">
-                    <span>👆</span> <span>点读</span>
-                  </button>
-
-                  <button onclick="replayCurrentSentence()" class="px-2.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold border border-slate-700 flex items-center gap-1 transition">
+                  <button onclick="replayCurrentSentence()" id="btn-replay-sent" class="px-2.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold border border-slate-700 flex items-center gap-1 transition">
                     <span>🔁</span> <span>复读</span>
                   </button>
 
-                  <button onclick="triggerShadowing()" class="px-2.5 py-1.5 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 text-slate-950 font-bold shadow-md flex items-center gap-1 transition active:scale-95">
+                  <button onclick="triggerShadowing()" id="btn-shadow-sent" class="px-2.5 py-1.5 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 text-slate-950 font-bold shadow-md flex items-center gap-1 transition active:scale-95">
                     <span>🎤</span> <span>跟读</span>
                   </button>
                 </div>
@@ -1071,17 +1067,13 @@
 
       // 如果不是英语学科，隐藏英语字幕条与双语台词工具
       const subOverlay = document.getElementById('video-overlay-subtitle');
-      const scriptPanel = document.getElementById('panel-player-script');
-      const vocabPanel = document.getElementById('panel-player-vocab');
       const subBtn = document.getElementById('btn-sub-toggle');
-      const pointBtn = document.getElementById('btn-point-read');
-      const repBtn = document.getElementById('btn-point-read')?.nextElementSibling;
-      const shadowBtn = document.getElementById('btn-point-read')?.nextElementSibling?.nextElementSibling;
+      const repBtn = document.getElementById('btn-replay-sent');
+      const shadowBtn = document.getElementById('btn-shadow-sent');
 
       if (!isEnglish) {
         if (subOverlay) subOverlay.classList.add('hidden');
         if (subBtn) subBtn.classList.add('hidden');
-        if (pointBtn) pointBtn.classList.add('hidden');
         if (repBtn) repBtn.classList.add('hidden');
         if (shadowBtn) shadowBtn.classList.add('hidden');
         document.getElementById('btn-pmode-vocab')?.classList.add('hidden');
@@ -1090,7 +1082,6 @@
       } else {
         if (subOverlay) subOverlay.classList.remove('hidden');
         if (subBtn) subBtn.classList.remove('hidden');
-        if (pointBtn) pointBtn.classList.remove('hidden');
         if (repBtn) repBtn.classList.remove('hidden');
         if (shadowBtn) shadowBtn.classList.remove('hidden');
         document.getElementById('btn-pmode-vocab')?.classList.remove('hidden');
@@ -1154,12 +1145,10 @@
           const sDiv = document.createElement('div');
           sDiv.id = `sub-item-${sIdx}`;
           sDiv.onclick = () => {
-            if (isPointReadActive) {
-              const vid = document.getElementById('course-video-player');
-              if (vid) {
-                vid.currentTime = sub.start;
-                vid.play().catch(() => {});
-              }
+            const vid = document.getElementById('course-video-player');
+            if (vid) {
+              vid.currentTime = sub.start;
+              vid.play().catch(() => {});
             }
           };
           sDiv.className = 'p-2.5 rounded-xl bg-slate-800/60 hover:bg-slate-800 border border-slate-700/60 cursor-pointer transition text-xs space-y-0.5';
