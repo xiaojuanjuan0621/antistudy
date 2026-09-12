@@ -514,9 +514,15 @@
               </div>
             </div>
 
-            <!-- 音频列表 -->
+            <!-- 音频列表 (支持按名称顺序/倒序切换) -->
             <div>
-              <h3 class="text-sm sm:text-base font-bold text-white mb-3">🎵 精彩有声节目</h3>
+              <div class="flex items-center justify-between mb-3">
+                <h3 class="text-sm sm:text-base font-bold text-white">🎵 精彩有声节目</h3>
+                <div class="flex items-center gap-1.5 text-xs">
+                  <button onclick="toggleAudioSort('asc')" id="btn-asort-asc" class="px-2.5 py-1 rounded-lg bg-amber-500 text-slate-950 font-bold transition">正序 (1 → 100)</button>
+                  <button onclick="toggleAudioSort('desc')" id="btn-asort-desc" class="px-2.5 py-1 rounded-lg bg-slate-800 text-slate-400 hover:text-white transition">倒序 (最新在前)</button>
+                </div>
+              </div>
               <div class="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4" id="audios-cards-container">
                 <!-- 动态渲染音频卡片 -->
               </div>
@@ -1001,15 +1007,15 @@
               <span class="font-extrabold text-sm ${isWordMasked ? 'bg-slate-700 text-transparent rounded px-1.5 select-none cursor-pointer hover:text-white' : 'text-white'}" onclick="this.classList.remove('bg-slate-700', 'text-transparent')">
                 ${v.word}
               </span>
-              <span class="text-[10px] text-slate-400 font-mono">${v.phonetic}</span>
-              <button onclick="playWordAudio('${v.word}')" class="text-xs hover:scale-110 transition">🔊</button>
+              ${v.phonetic ? `<span class="text-[10px] text-slate-400 font-mono">${v.phonetic}</span>` : ''}
+              <button onclick="playWordAudio('${v.word}')" class="text-xs hover:scale-110 transition" title="点击朗读">🔊</button>
             </div>
             <div class="${isTransMasked ? 'bg-slate-700/60 text-transparent rounded px-1 select-none cursor-pointer hover:text-slate-300 w-fit' : 'text-slate-300'}" onclick="this.classList.remove('bg-slate-700/60', 'text-transparent')">
-              <span class="text-cyan-400 font-mono font-bold">${v.pos}</span> ${v.meaning}
+              ${v.pos && v.pos !== '重点词汇' ? `<span class="text-cyan-400 font-mono font-bold">${v.pos}</span> ` : ''}${v.meaning}
             </div>
           </div>
           <div class="flex-shrink-0">
-            <button onclick="markVocabMastered(${idx}, this)" class="w-6 h-6 rounded-full border border-slate-600 hover:border-emerald-400 flex items-center justify-center text-[10px] text-emerald-400 transition">
+            <button onclick="markVocabMastered(${idx}, this)" class="w-6 h-6 rounded-full border border-slate-600 hover:border-emerald-400 flex items-center justify-center text-[10px] text-emerald-400 transition" title="标记已掌握">
               ✓
             </button>
           </div>
@@ -1365,50 +1371,82 @@
     }
 
     // ================= 🎧 有声故事馆与播放器逻辑 =================
+    let currentAudiosList = [];
+    let currentAudioSortMode = 'asc'; // 'asc': 正序(001, 002), 'desc': 倒序
+
+    function toggleAudioSort(mode) {
+      currentAudioSortMode = mode;
+      const ascBtn = document.getElementById('btn-asort-asc');
+      const descBtn = document.getElementById('btn-asort-desc');
+      if (mode === 'asc') {
+        ascBtn.className = 'px-2.5 py-1 rounded-lg bg-amber-500 text-slate-950 font-bold transition';
+        descBtn.className = 'px-2.5 py-1 rounded-lg bg-slate-800 text-slate-400 hover:text-white transition';
+      } else {
+        descBtn.className = 'px-2.5 py-1 rounded-lg bg-amber-500 text-slate-950 font-bold transition';
+        ascBtn.className = 'px-2.5 py-1 rounded-lg bg-slate-800 text-slate-400 hover:text-white transition';
+      }
+      renderAudiosCards();
+    }
+
     async function loadAudiosData() {
       try {
         const resp = await fetch('/api/audios/list');
         const res = await resp.json();
-        const container = document.getElementById('audios-cards-container');
-        container.innerHTML = '';
-        const audios = res.data || [];
+        currentAudiosList = res.data || [];
 
-        if (audios.length > 0 && !currentPlayingAudioId) {
-          prepareAudioHero(audios[0]);
+        if (currentAudiosList.length > 0 && !currentPlayingAudioId) {
+          // 默认加载第一首
+          const sorted = [...currentAudiosList].sort((a, b) => a.title.localeCompare(b.title, undefined, { numeric: true }));
+          prepareAudioHero(sorted[0]);
         }
 
-        audios.forEach((a) => {
-          const item = document.createElement('div');
-          item.className = `p-3.5 sm:p-4 rounded-3xl glass-card border border-slate-700/60 hover:border-amber-500/50 cursor-pointer transition flex items-center justify-between gap-3 group ${
-            currentPlayingAudioId === a.id ? 'ring-2 ring-amber-500/60 bg-amber-500/10' : ''
-          }`;
-          const durMin = Math.ceil(a.duration_seconds / 60);
-
-          item.innerHTML = `
-            <div class="flex items-center space-x-3.5 truncate">
-              <!-- 音频封面图 -->
-              <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl overflow-hidden flex-shrink-0 shadow-md ring-1 ring-white/10 group-hover:scale-105 transition">
-                <img src="${a.cover_image || 'https://iili.io/nfESB0g.webp'}" class="w-full h-full object-cover" alt="${a.title}">
-              </div>
-              <div class="space-y-0.5 truncate">
-                <div class="flex items-center gap-2">
-                  <span class="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 font-bold">${a.category}</span>
-                  <span class="text-[10px] text-slate-400 font-mono">约 ${durMin} 分钟</span>
-                </div>
-                <h4 class="text-xs sm:text-sm font-bold text-white truncate group-hover:text-amber-300 transition">${a.title}</h4>
-                <p class="text-[10px] text-slate-400 truncate">${a.speaker} · ${a.play_count} 次播放</p>
-              </div>
-            </div>
-
-            <button onclick="playAudioTrack('${a.id}')" class="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:opacity-90 text-slate-950 font-bold text-xs flex-shrink-0 active:scale-95 transition shadow">
-              ▶ 播放
-            </button>
-          `;
-          container.appendChild(item);
-        });
+        renderAudiosCards();
       } catch (e) {
         console.error('Failed to load audios', e);
       }
+    }
+
+    function renderAudiosCards() {
+      const container = document.getElementById('audios-cards-container');
+      if (!container) return;
+      container.innerHTML = '';
+
+      let list = [...currentAudiosList];
+      if (currentAudioSortMode === 'asc') {
+        list.sort((a, b) => a.title.localeCompare(b.title, undefined, { numeric: true }));
+      } else {
+        list.sort((a, b) => b.title.localeCompare(a.title, undefined, { numeric: true }));
+      }
+
+      list.forEach((a) => {
+        const item = document.createElement('div');
+        item.className = `p-3.5 sm:p-4 rounded-3xl glass-card border border-slate-700/60 hover:border-amber-500/50 cursor-pointer transition flex items-center justify-between gap-3 group ${
+          currentPlayingAudioId === a.id ? 'ring-2 ring-amber-500/60 bg-amber-500/10' : ''
+        }`;
+        const durMin = Math.ceil(a.duration_seconds / 60);
+
+        item.innerHTML = `
+          <div class="flex items-center space-x-3.5 truncate">
+            <!-- 音频封面图 -->
+            <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl overflow-hidden flex-shrink-0 shadow-md ring-1 ring-white/10 group-hover:scale-105 transition">
+              <img src="${a.cover_image || 'https://iili.io/nfESB0g.webp'}" class="w-full h-full object-cover" alt="${a.title}">
+            </div>
+            <div class="space-y-0.5 truncate">
+              <div class="flex items-center gap-2">
+                <span class="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 font-bold">${a.category}</span>
+                <span class="text-[10px] text-slate-400 font-mono">约 ${durMin} 分钟</span>
+              </div>
+              <h4 class="text-xs sm:text-sm font-bold text-white truncate group-hover:text-amber-300 transition">${a.title}</h4>
+              <p class="text-[10px] text-slate-400 truncate">${a.speaker} · ${a.play_count} 次播放</p>
+            </div>
+          </div>
+
+          <button onclick="playAudioTrack('${a.id}')" class="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:opacity-90 text-slate-950 font-bold text-xs flex-shrink-0 active:scale-95 transition shadow">
+            ▶ 播放
+          </button>
+        `;
+        container.appendChild(item);
+      });
     }
 
     function prepareAudioHero(audio) {

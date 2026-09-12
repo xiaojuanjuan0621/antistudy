@@ -296,6 +296,24 @@
         // 重新排序
         selectedBatchFiles.sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }));
 
+        // 智能自动提取系列大标题：如果是新建系列且用户未修改标题，自动根据文件夹名或公共文件前缀命名
+        const titleInput = document.getElementById('input-series-title');
+        const targetSelect = document.getElementById('select-target-series');
+        if (targetSelect.value === 'new' && selectedBatchFiles.length > 0) {
+          const firstFile = selectedBatchFiles[0];
+          // 如果文件有 webkitRelativePath，取根目录名
+          if (firstFile.webkitRelativePath) {
+            const folderName = firstFile.webkitRelativePath.split('/')[0];
+            if (folderName) titleInput.value = folderName;
+          } else {
+            // 提取公共前缀或文件名主体（去除数字和扩展名）
+            let autoName = firstFile.name.replace(/\.[^/.]+$/, '').replace(/^[0-9\s._\-第讲回集]+/, '').replace(/[0-9\s._\-第讲回集]+$/, '');
+            if (autoName.trim()) {
+              titleInput.value = autoName.trim();
+            }
+          }
+        }
+
         renderSelectedFilesUI();
       }
     }
