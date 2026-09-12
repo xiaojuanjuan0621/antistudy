@@ -147,14 +147,28 @@
 
         <div class="col-span-7 glass-panel rounded-3xl p-6 flex flex-col justify-between">
           <div>
-            <h3 class="text-base font-bold text-white mb-2" id="upload-box-header">📁 批量选择文件 (支持视频 MP4/MOV、电子书 PDF、音乐 MP3)</h3>
-            <p class="text-xs text-slate-400 mb-4" id="upload-box-desc">支持一次性拖入 1 ~ 100 个文件，系统将按文件名序号自动排序</p>
+            <div class="flex items-center justify-between mb-2">
+              <h3 class="text-base font-bold text-white" id="upload-box-header">📁 批量上传 / 文件夹上传</h3>
+              <div class="flex items-center gap-2">
+                <button type="button" onclick="triggerFolderSelect()" class="px-3 py-1.5 rounded-xl bg-indigo-600/30 hover:bg-indigo-600/60 border border-indigo-500/40 text-indigo-200 text-xs font-bold transition flex items-center gap-1.5">
+                  <span>📂 选整个文件夹</span>
+                </button>
+                <button type="button" onclick="triggerFileSelect()" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 text-xs font-bold transition flex items-center gap-1.5">
+                  <span>📄 选多个文件</span>
+                </button>
+              </div>
+            </div>
+            <p class="text-xs text-slate-400 mb-4" id="upload-box-desc">支持直接拖入/选择整套文件夹，系统自动提取【文件夹名】作为系列大标题！</p>
 
-            <div class="border-2 border-dashed border-slate-700 hover:border-brand-500 rounded-2xl p-8 flex flex-col items-center justify-center text-center cursor-pointer transition bg-slate-900/40 relative">
+            <div id="drop-zone" class="border-2 border-dashed border-slate-700 hover:border-brand-500 rounded-2xl p-8 flex flex-col items-center justify-center text-center cursor-pointer transition bg-slate-900/40 relative">
+              <!-- 多文件选择 input -->
               <input type="file" id="batch-file-input" multiple accept="video/*,audio/*,.pdf,.epub,.srt,.vtt,.json" class="absolute inset-0 opacity-0 cursor-pointer w-full h-full" onchange="handleBatchFilesSelected(event)">
-              <span class="text-4xl mb-3" id="upload-icon-preview">🎬</span>
-              <h4 class="text-sm font-bold text-white mb-1" id="batch-file-label">点击批量选择整套文件 (支持视频、音频、PDF、字幕SRT)</h4>
-              <p class="text-xs text-slate-400" id="upload-hint-example">如: 01-大闹天宫.mp4, 01-大闹天宫.srt (支持自动匹配外挂字幕与台词) ...</p>
+              <!-- 文件夹选择 input (独立隐藏) -->
+              <input type="file" id="folder-input" webkitdirectory directory multiple class="hidden" onchange="handleFolderSelected(event)">
+              
+              <span class="text-4xl mb-3" id="upload-icon-preview">📂</span>
+              <h4 class="text-sm font-bold text-white mb-1" id="batch-file-label">点击选择或直接将整个文件夹/文件拖拽到这里</h4>
+              <p class="text-xs text-slate-400" id="upload-hint-example">支持如《西游记》、《新课标阅读》等整套文件夹，自动按文件夹命名并排好讲数！</p>
             </div>
 
             <div id="selected-files-list" class="hidden mt-4 space-y-2 max-h-56 overflow-y-auto pr-2">
@@ -280,6 +294,42 @@
       document.getElementById('tab-btn-' + tab).className = 'px-5 py-2.5 rounded-xl bg-brand-500 text-white font-bold text-sm shadow-lg shadow-brand-500/30 transition flex items-center gap-2';
       if (tab === 'series_list') loadSeriesList();
       if (tab === 'batch') loadSeriesForSelect();
+    }
+
+    function triggerFolderSelect() {
+      document.getElementById('folder-input').click();
+    }
+
+    function triggerFileSelect() {
+      document.getElementById('batch-file-input').click();
+    }
+
+    function handleFolderSelected(e) {
+      if (e.target.files && e.target.files.length > 0) {
+        const newFiles = Array.from(e.target.files);
+        
+        // 增量追加文件
+        newFiles.forEach(nf => {
+          if (!selectedBatchFiles.some(f => f.name === nf.name && f.size === nf.size)) {
+            selectedBatchFiles.push(nf);
+          }
+        });
+
+        // 重新排序
+        selectedBatchFiles.sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }));
+
+        // 自动提取文件夹名称为系列大标题
+        const titleInput = document.getElementById('input-series-title');
+        const firstFile = newFiles[0];
+        if (firstFile.webkitRelativePath) {
+          const parts = firstFile.webkitRelativePath.split('/');
+          if (parts.length > 1 && parts[0]) {
+            titleInput.value = parts[0];
+          }
+        }
+
+        renderSelectedFilesUI();
+      }
     }
 
     function handleBatchFilesSelected(e) {
