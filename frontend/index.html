@@ -1325,19 +1325,20 @@
           
           const contentContainer = document.getElementById('reader-content-text');
           if (b.file_url && b.file_url.toLowerCase().endsWith('.pdf')) {
+            // 使用内嵌 PDF 专用的安全双层预览机制
             contentContainer.innerHTML = `
               <div class="space-y-3 h-full flex flex-col">
                 <div class="p-3 rounded-2xl bg-cyan-500/15 border border-cyan-500/30 text-cyan-200 text-xs flex justify-between items-center flex-shrink-0 shadow-lg">
                   <div class="flex items-center gap-2">
                     <span class="text-base">📖</span>
-                    <span><strong>${b.title}</strong> · PDF 电子图册已就绪</span>
+                    <span><strong>${b.title}</strong> · 高清电子图册已就绪</span>
                   </div>
                   <a href="${b.file_url}" target="_blank" class="px-4 py-1.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:opacity-95 text-white font-bold transition shadow-md active:scale-95 flex items-center gap-1">
                     <span>新窗口全景阅读</span> ↗
                   </a>
                 </div>
                 <div class="w-full flex-1 min-h-[75vh] rounded-3xl overflow-hidden border border-slate-700/80 bg-slate-900 shadow-2xl relative">
-                  <embed src="${b.file_url}" type="application/pdf" class="w-full h-full min-h-[75vh] border-none bg-slate-800" />
+                  <iframe src="${b.file_url}#toolbar=0" class="w-full h-full min-h-[75vh] border-none bg-white"></iframe>
                 </div>
               </div>
             `;

@@ -457,7 +457,18 @@ app.post('/api/student/wish-goal', (req, res) => {
 // ==================== 📖 书籍/绘本相关 API ====================
 app.get('/api/books/list', (req, res) => {
   const db = loadDB();
-  const books = (db.books || []).map(b => ({
+  // 过滤掉本地物理文件不存在的失效旧记录
+  const validBooks = (db.books || []).filter(b => {
+    if (!b.file_url) return true;
+    if (b.file_url.startsWith('http://') || b.file_url.startsWith('https://')) return true;
+    if (b.file_url.startsWith('/uploads/')) {
+      const fn = path.basename(b.file_url);
+      return fs.existsSync(path.join(uploadsDir, fn));
+    }
+    return true;
+  });
+
+  const books = validBooks.map(b => ({
     ...b,
     is_completed: db.records && db.records[b.id] && db.records[b.id].is_completed === 1 ? 1 : 0
   }));

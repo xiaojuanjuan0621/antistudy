@@ -312,11 +312,16 @@
     }
 
     function triggerFolderSelect() {
-      document.getElementById('folder-input').click();
+      // 重置以确保每次选择相同文件夹也能触发
+      const input = document.getElementById('folder-input');
+      input.value = '';
+      input.click();
     }
 
     function triggerFileSelect() {
-      document.getElementById('batch-file-input').click();
+      const input = document.getElementById('batch-file-input');
+      input.value = '';
+      input.click();
     }
 
     function handleFolderSelected(e) {
