@@ -151,10 +151,10 @@
             <p class="text-xs text-slate-400 mb-4" id="upload-box-desc">支持一次性拖入 1 ~ 100 个文件，系统将按文件名序号自动排序</p>
 
             <div class="border-2 border-dashed border-slate-700 hover:border-brand-500 rounded-2xl p-8 flex flex-col items-center justify-center text-center cursor-pointer transition bg-slate-900/40 relative">
-              <input type="file" id="batch-file-input" multiple accept="video/*,audio/*,.pdf,.epub" class="absolute inset-0 opacity-0 cursor-pointer w-full h-full" onchange="handleBatchFilesSelected(event)">
+              <input type="file" id="batch-file-input" multiple accept="video/*,audio/*,.pdf,.epub,.srt,.vtt,.json" class="absolute inset-0 opacity-0 cursor-pointer w-full h-full" onchange="handleBatchFilesSelected(event)">
               <span class="text-4xl mb-3" id="upload-icon-preview">🎬</span>
-              <h4 class="text-sm font-bold text-white mb-1" id="batch-file-label">点击批量选择整套文件 (支持多选)</h4>
-              <p class="text-xs text-slate-400" id="upload-hint-example">如: 01-大闹天宫.mp4, 02-三打白骨精.mp4 ...</p>
+              <h4 class="text-sm font-bold text-white mb-1" id="batch-file-label">点击批量选择整套文件 (支持视频、音频、PDF、字幕SRT)</h4>
+              <p class="text-xs text-slate-400" id="upload-hint-example">如: 01-大闹天宫.mp4, 01-大闹天宫.srt (支持自动匹配外挂字幕与台词) ...</p>
             </div>
 
             <div id="selected-files-list" class="hidden mt-4 space-y-2 max-h-48 overflow-y-auto pr-2">

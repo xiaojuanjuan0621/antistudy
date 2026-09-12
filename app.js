@@ -361,10 +361,22 @@ app.get('/api/course/context/:courseId', (req, res) => {
   let matchedSubtitles = null;
   let matchedVocabs = null;
 
-  if (westDatabase && (course.subject === 'english' || (series && series.subject === 'english') || /Journey to the West/i.test(course.title))) {
-    const epNum = String(course.episode_index);
-    matchedSubtitles = westDatabase.subtitles[epNum] || null;
-    matchedVocabs = westDatabase.vocabs[epNum] || null;
+  if (westDatabase && (course.subject === 'english' || (series && series.subject === 'english') || /Journey to the West|西游记/i.test(course.title) || (series && /Journey to the West|西游记/i.test(series.title)))) {
+    // 提取集数，无论是第1讲还是 001 格式
+    let epNum = String(course.episode_index);
+    const m = (course.title || '').match(/(\d+)/);
+    if (m && m[1]) {
+      const parsed = parseInt(m[1], 10);
+      if (parsed > 0 && parsed <= 108) {
+        epNum = String(parsed);
+      }
+    }
+    if (westDatabase.subtitles && westDatabase.subtitles[epNum]) {
+      matchedSubtitles = westDatabase.subtitles[epNum];
+    }
+    if (westDatabase.vocabs && westDatabase.vocabs[epNum]) {
+      matchedVocabs = westDatabase.vocabs[epNum];
+    }
   }
 
   const enhancedCourse = {
@@ -580,8 +592,12 @@ app.post('/api/admin/series/batch-upload', upload.array('videoFiles', 100), (req
   const existingEpisodes = db.courses.filter(c => c.series_id === seriesId);
   let startIdx = existingEpisodes.length;
 
+  // 区分并解析同时上传的字幕文件 (.srt / .vtt)
+  const subtitleFiles = files.filter(f => f.originalname.endsWith('.srt') || f.originalname.endsWith('.vtt'));
+  const mediaFiles = files.filter(f => !f.originalname.endsWith('.srt') && !f.originalname.endsWith('.vtt'));
+
   // 保持文件和传递进来的原文件名准确对应
-  const mappedFiles = files.map((file, idx) => {
+  const mappedFiles = mediaFiles.map((file, idx) => {
     let name = originalNamesList[idx] || file.originalname;
     try {
       if (name === file.originalname) {
@@ -601,17 +617,42 @@ app.post('/api/admin/series/batch-upload', upload.array('videoFiles', 100), (req
     const prefix = detectedType === 'book' ? '第' + epIdx + '回：' : detectedType === 'audio' ? '第' + epIdx + '首：' : '第' + epIdx + '讲：';
     if (!epTitle.startsWith('第')) epTitle = `${prefix}${epTitle}`;
 
+    // 尝试匹配同名或序号相同的 SRT 字幕
+    let customSubtitles = null;
+    const matchedSrt = subtitleFiles.find(sf => path.parse(sf.originalname).name === path.parse(rawFilename).name || sf.originalname.includes(String(epIdx)));
+    if (matchedSrt) {
+      try {
+        const srtContent = fs.readFileSync(path.join(uploadsDir, matchedSrt.filename), 'utf8');
+        // 解析标准 SRT 格式
+        customSubtitles = [];
+        const blocks = srtContent.trim().split(/\n\s*\n/);
+        blocks.forEach(blk => {
+          const lines = blk.trim().split('\n');
+          if (lines.length >= 3) {
+            const timeMatch = lines[1].match(/(\d+):(\d+):(\d+)[,\.](\d+)\s*-->\s*(\d+):(\d+):(\d+)[,\.](\d+)/);
+            if (timeMatch) {
+              const start = parseInt(timeMatch[1])*3600 + parseInt(timeMatch[2])*60 + parseInt(timeMatch[3]) + parseInt(timeMatch[4])/1000;
+              const end = parseInt(timeMatch[5])*3600 + parseInt(timeMatch[6])*60 + parseInt(timeMatch[7]) + parseInt(timeMatch[8])/1000;
+              const text = lines.slice(2).join(' ');
+              customSubtitles.push({ start: Math.round(start*10)/10, end: Math.round(end*10)/10, en: text, cn: '' });
+            }
+          }
+        });
+      } catch (e) {}
+    }
+
     db.courses.push({
       id: `item_${seriesId}_${epIdx}_${Date.now()}_${i}`,
       series_id: seriesId,
       episode_index: epIdx,
       title: epTitle,
-      subject: subject || 'chinese',
+      subject: subject || targetSeries.subject || 'chinese',
       media_type: detectedType,
       grade_level: Number(gradeLevel) || 4,
       video_filename: f.filename,
       video_url: `/uploads/${f.filename}`,
       duration_seconds: detectedType === 'audio' ? 180 : 300,
+      subtitles: customSubtitles,
       is_interactive: 0,
       is_published: 1,
       created_at: new Date().toISOString()
