@@ -338,11 +338,14 @@ app.get('/api/series/list', (req, res) => {
 
 // 引入本地西游记专属 108 集字幕与生词知识库 (如果存在)
 let westDatabase = null;
-const westDbPath = path.join(__dirname, 'west_database.json');
-if (fs.existsSync(westDbPath)) {
-  try {
-    westDatabase = JSON.parse(fs.readFileSync(westDbPath, 'utf8'));
-  } catch (e) {}
+try {
+  if (fs.existsSync(path.join(__dirname, 'west_data.js'))) {
+    westDatabase = require('./west_data.js');
+  } else if (fs.existsSync(path.join(__dirname, 'west_database.json'))) {
+    westDatabase = JSON.parse(fs.readFileSync(path.join(__dirname, 'west_database.json'), 'utf8'));
+  }
+} catch (e) {
+  console.log('West data optional load notice:', e.message);
 }
 
 app.get('/api/course/context/:courseId', (req, res) => {
