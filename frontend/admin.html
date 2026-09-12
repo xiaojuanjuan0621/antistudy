@@ -160,15 +160,23 @@
             </div>
             <p class="text-xs text-slate-400 mb-4" id="upload-box-desc">支持直接拖入/选择整套文件夹，系统自动提取【文件夹名】作为系列大标题！</p>
 
-            <div id="drop-zone" class="border-2 border-dashed border-slate-700 hover:border-brand-500 rounded-2xl p-8 flex flex-col items-center justify-center text-center cursor-pointer transition bg-slate-900/40 relative">
+            <div id="drop-zone" class="border-2 border-dashed border-slate-700 hover:border-brand-500 rounded-2xl p-8 flex flex-col items-center justify-center text-center transition bg-slate-900/40 relative">
               <!-- 多文件选择 input -->
-              <input type="file" id="batch-file-input" multiple accept="video/*,audio/*,.pdf,.epub,.srt,.vtt,.json" class="absolute inset-0 opacity-0 cursor-pointer w-full h-full" onchange="handleBatchFilesSelected(event)">
-              <!-- 文件夹选择 input (独立隐藏) -->
+              <input type="file" id="batch-file-input" multiple accept="video/*,audio/*,.pdf,.epub,.srt,.vtt,.json" class="hidden" onchange="handleBatchFilesSelected(event)">
+              <!-- 文件夹选择 input -->
               <input type="file" id="folder-input" webkitdirectory directory multiple class="hidden" onchange="handleFolderSelected(event)">
               
               <span class="text-4xl mb-3" id="upload-icon-preview">📂</span>
-              <h4 class="text-sm font-bold text-white mb-1" id="batch-file-label">点击选择或直接将整个文件夹/文件拖拽到这里</h4>
-              <p class="text-xs text-slate-400" id="upload-hint-example">支持如《西游记》、《新课标阅读》等整套文件夹，自动按文件夹命名并排好讲数！</p>
+              <h4 class="text-sm font-bold text-white mb-2" id="batch-file-label">选择上传方式或将文件夹拖拽至此</h4>
+              <div class="flex gap-3 mt-1">
+                <button type="button" onclick="triggerFolderSelect()" class="px-4 py-2 rounded-xl bg-gradient-to-r from-indigo-600 to-brand-600 hover:opacity-90 text-white text-xs font-bold shadow-lg transition flex items-center gap-1.5 active:scale-95">
+                  <span>📂 选取整套文件夹</span>
+                </button>
+                <button type="button" onclick="triggerFileSelect()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 text-xs font-bold transition flex items-center gap-1.5 active:scale-95">
+                  <span>📄 选择单/多个文件</span>
+                </button>
+              </div>
+              <p class="text-[11px] text-slate-400 mt-3" id="upload-hint-example">支持如《西游记》、《新课标阅读》等整套文件夹，自动按文件夹命名并排好讲数！</p>
             </div>
 
             <div id="selected-files-list" class="hidden mt-4 space-y-2 max-h-56 overflow-y-auto pr-2">
@@ -602,6 +610,30 @@
       select.value = seriesId;
       handleSeriesSelectChange();
     }
+
+    // 绑定拖拽上传
+    const dropZone = document.getElementById('drop-zone');
+    ['dragenter', 'dragover'].forEach(eventName => {
+      dropZone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZone.classList.add('border-brand-500', 'bg-brand-500/10');
+      }, false);
+    });
+    ['dragleave', 'drop'].forEach(eventName => {
+      dropZone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZone.classList.remove('border-brand-500', 'bg-brand-500/10');
+      }, false);
+    });
+    dropZone.addEventListener('drop', (e) => {
+      const dt = e.dataTransfer;
+      const files = dt.files;
+      if (files && files.length > 0) {
+        handleBatchFilesSelected({ target: { files } });
+      }
+    });
 
     window.addEventListener('DOMContentLoaded', () => {
       loadSeriesForSelect();
