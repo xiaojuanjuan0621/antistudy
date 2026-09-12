@@ -770,6 +770,10 @@
     }
 
     function renderSeriesCards(seriesList) {
+      const container = document.getElementById('learning-plans-container');
+      container.innerHTML = '';
+
+      seriesList.forEach(s => {
         const card = document.createElement('div');
         card.className = 'glass-card rounded-3xl p-5 space-y-3.5 border border-slate-700/60 relative overflow-hidden flex flex-col justify-between group cursor-pointer hover:border-brand-500/60 transition shadow-lg';
         const targetEpisodeId = s.nextEpisode ? s.nextEpisode.id : (s.episodes && s.episodes.length > 0 ? s.episodes[0].id : '');
