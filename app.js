@@ -713,12 +713,12 @@ app.post('/api/admin/series/batch-upload', upload.array('videoFiles', 100), (req
   res.json({ success: true, message: `🎉 成功上传/追加至《${seriesTitle}》（新增 ${files.length} 个文件，当前共 ${targetSeries.total_episodes} 讲/回）！` });
 });
 
-// ==================== 🗑️ 删除系列/专辑 API ====================
+// ==================== 🗑️ 删除系列/专辑 API (彻底物理删除磁盘文件 + 数据库清除) ====================
 app.delete('/api/admin/series/:id', (req, res) => {
   const db = loadDB();
   const seriesId = req.params.id;
 
-  // 1. 删除系列中的所有课程/章节文件
+  // 1. 物理删除该系列下所有的视频/音频/PDF/字幕实体文件
   const toDeleteCourses = (db.courses || []).filter(c => c.series_id === seriesId);
   toDeleteCourses.forEach(c => {
     if (c.video_filename) {
@@ -727,15 +727,44 @@ app.delete('/api/admin/series/:id', (req, res) => {
         try { fs.unlinkSync(p); } catch (e) {}
       }
     }
+    if (c.video_url && c.video_url.startsWith('/uploads/')) {
+      const p = path.join(__dirname, c.video_url);
+      if (fs.existsSync(p)) {
+        try { fs.unlinkSync(p); } catch (e) {}
+      }
+    }
   });
 
+  // 2. 物理删除关联的图书文件
+  const toDeleteBooks = (db.books || []).filter(b => b.series_id === seriesId);
+  toDeleteBooks.forEach(b => {
+    if (b.file_url && b.file_url.startsWith('/uploads/')) {
+      const p = path.join(__dirname, b.file_url);
+      if (fs.existsSync(p)) {
+        try { fs.unlinkSync(p); } catch (e) {}
+      }
+    }
+  });
+
+  // 3. 物理删除关联的音频文件
+  const toDeleteAudios = (db.audios || []).filter(a => a.series_id === seriesId);
+  toDeleteAudios.forEach(a => {
+    if (a.audio_url && a.audio_url.startsWith('/uploads/')) {
+      const p = path.join(__dirname, a.audio_url);
+      if (fs.existsSync(p)) {
+        try { fs.unlinkSync(p); } catch (e) {}
+      }
+    }
+  });
+
+  // 4. 清理数据库索引
   db.series = (db.series || []).filter(s => s.id !== seriesId);
   db.courses = (db.courses || []).filter(c => c.series_id !== seriesId);
   db.books = (db.books || []).filter(b => b.series_id !== seriesId && b.id !== seriesId);
   db.audios = (db.audios || []).filter(a => a.series_id !== seriesId && a.id !== seriesId);
 
   saveDB(db);
-  res.json({ success: true, message: '🎉 系列专辑及关联资料已全部删除！' });
+  res.json({ success: true, message: '🎉 系列专辑及关联的视频/音频/PDF磁盘物理文件已全部彻底清除！' });
 });
 
 // ==================== 🗑️ 删除单本图书 API ====================
