@@ -619,7 +619,7 @@
 
         <!-- ================= VIEW 7: 📁 时空档案局 · 跨学科知识剧本杀 ================= -->
         <section id="view-cases" class="view-panel hidden w-full h-full p-3 sm:p-5 md:p-6 overflow-y-auto">
-          <div class="max-w-7xl mx-auto space-y-4 pb-6">
+          <div class="max-w-7xl mx-auto space-y-4 pb-8">
 
             <!-- 1. 特勤调查官头部状态栏 -->
             <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-4 rounded-2xl bg-slate-900/90 border border-cyan-500/30 shadow-xl">
@@ -629,11 +629,11 @@
                 </div>
                 <div>
                   <div class="flex items-center gap-2">
-                    <span class="text-sm font-black text-white">时空档案局 · 特勤侦破中心</span>
+                    <span class="text-sm font-black text-white">时空档案局 · 知识侦探与分级靶场</span>
                     <span class="px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 text-[10px] font-bold border border-cyan-500/30">CHRONO AGENCY</span>
                   </div>
                   <div class="text-xs text-slate-400 mt-0.5">
-                    特勤调查官：<span class="text-cyan-300 font-bold">张安泽</span> · 三级调查官 (Lv.3) | 今日目标：破解跨学科案卷
+                    特勤调查官：<span class="text-cyan-300 font-bold">张安泽</span> (Lv.3) | 小学4~5年级语数英（课内考点+课外奥数培优）
                   </div>
                 </div>
               </div>
@@ -642,208 +642,339 @@
               <div class="flex items-center space-x-2 self-stretch sm:self-auto justify-between sm:justify-end text-xs">
                 <div class="px-3 py-1.5 rounded-xl bg-slate-800/90 border border-slate-700 flex items-center space-x-1.5">
                   <span class="text-amber-400 font-bold">🔥 18 天</span>
-                  <span class="text-slate-400 text-[11px]">破案连胜</span>
+                  <span class="text-slate-400 text-[11px]">连胜天数</span>
                 </div>
                 <div class="px-3 py-1.5 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center space-x-1.5">
                   <span>💰</span>
                   <span class="text-amber-300 font-bold" id="case-coins-badge">680</span>
                   <span class="text-[10px] text-amber-400/80">心愿币</span>
                 </div>
-                <button onclick="resetCaseDeduction()" class="px-3 py-1.5 rounded-xl bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-500/30 text-cyan-300 text-[11px] font-bold transition">
-                  🔄 重温案卷
-                </button>
               </div>
             </div>
 
-            <!-- 2. 主战区：左侧案卷与三联知识卡 + 右侧审讯对峙终端 -->
-            <div class="grid grid-cols-1 xl:grid-cols-12 gap-4 sm:gap-5">
+            <!-- 2. 模式切换器：[🕵️ 破案主线剧本杀] VS [⚡ 分级学科靶场 (52题专项特训)] -->
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-3 p-2.5 rounded-2xl bg-slate-900 border border-slate-800 shadow-md">
+              <div class="flex items-center gap-2 w-full sm:w-auto">
+                <button onclick="switchCaseMode('story')" id="btn-mode-story" class="flex-1 sm:flex-initial px-4 py-2 rounded-xl text-xs sm:text-sm font-black bg-cyan-500 text-slate-950 shadow-lg shadow-cyan-500/25 transition flex items-center justify-center gap-1.5">
+                  <span>🕵️ 案卷破案主线</span>
+                  <span class="px-1.5 py-0.5 rounded-md bg-slate-950/20 text-slate-900 text-[10px] font-bold">6 大侦破剧本</span>
+                </button>
+                <button onclick="switchCaseMode('arena')" id="btn-mode-arena" class="flex-1 sm:flex-initial px-4 py-2 rounded-xl text-xs sm:text-sm font-black bg-slate-800 text-slate-300 hover:text-white border border-slate-700 hover:border-amber-400/50 transition flex items-center justify-center gap-1.5">
+                  <span>⚡ 分级真题特训靶场</span>
+                  <span class="px-1.5 py-0.5 rounded-md bg-amber-500/20 text-amber-300 text-[10px] font-bold">52 题课内外特训</span>
+                </button>
+              </div>
+              <div class="text-[11px] text-slate-400 px-2 flex items-center gap-1.5">
+                <span class="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span>智能诊断：全面对标人教/部编课标与高频奥数模型</span>
+              </div>
+            </div>
 
-              <!-- 左侧大区 (xl: 7 列): 案卷背景与三联体系知识卡 -->
-              <div class="xl:col-span-7 space-y-4">
-
-                <!-- 案卷卷宗详情卡 -->
-                <div class="p-4 sm:p-5 rounded-3xl bg-slate-900/90 border border-slate-800 shadow-xl relative overflow-hidden">
-                  <div class="absolute top-0 right-0 w-64 h-64 bg-cyan-500/5 rounded-full blur-3xl pointer-events-none"></div>
-                  
-                  <div class="flex items-center justify-between mb-2">
-                    <div class="flex items-center gap-2">
-                      <span class="px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 text-[10px] font-extrabold border border-cyan-500/30">CASE #042</span>
-                      <span class="px-2 py-0.5 rounded bg-purple-500/20 text-purple-300 text-[10px] font-extrabold border border-purple-500/30">小升初与初中高难度</span>
-                    </div>
-                    <span class="text-xs text-amber-400 font-bold flex items-center gap-1">
-                      <span>🏆 破案悬赏：</span>
-                      <span>+50 心愿币</span>
-                    </span>
-                  </div>
-
-                  <h3 class="text-lg sm:text-xl font-black text-white flex items-center gap-2">
-                    <span>当日案卷：宋代粮仓失窃与沉银谜案</span>
-                  </h3>
-
-                  <p class="text-xs sm:text-sm text-slate-300 mt-2 leading-relaxed">
-                    北宋元祐年间，常平仓三千石官粮自下游开阳码头起运，抵达汴京时却空空如也。押粮官声称突发恶浪导致货船破损沉底；但搜查官发现漕运账本涂改隐晦，甚至打捞到了高密度白银！请调查官研读以下三门科学情报，识破嫌疑人伪证！
-                  </p>
+            <!-- ================= MODE A: 案卷破案主线容器 ================= -->
+            <div id="case-story-container" class="space-y-4">
+              <!-- 年级分级与案卷快速切换器 -->
+              <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-3 p-3.5 rounded-2xl bg-slate-900/90 border border-slate-800 shadow-lg">
+                <!-- 分级筛选标签 -->
+                <div class="flex items-center gap-1.5 flex-wrap">
+                  <span class="text-xs font-black text-slate-400 mr-1 flex items-center gap-1">
+                    <span>🎯</span>
+                    <span>学段分级：</span>
+                  </span>
+                  <button onclick="filterChronoCases('all')" id="btn-grade-all" class="px-2.5 py-1 rounded-xl text-xs font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 transition">
+                    全部案卷 (6)
+                  </button>
+                  <button onclick="filterChronoCases('g4')" id="btn-grade-g4" class="px-2.5 py-1 rounded-xl text-xs font-bold bg-slate-800 text-slate-400 hover:text-white border border-slate-700 transition">
+                    🌱 四年级专项 (2)
+                  </button>
+                  <button onclick="filterChronoCases('g5')" id="btn-grade-g5" class="px-2.5 py-1 rounded-xl text-xs font-bold bg-slate-800 text-slate-400 hover:text-white border border-slate-700 transition">
+                    🚀 五年级高阶 (2)
+                  </button>
+                  <button onclick="filterChronoCases('bridge')" id="btn-grade-bridge" class="px-2.5 py-1 rounded-xl text-xs font-bold bg-slate-800 text-slate-400 hover:text-white border border-slate-700 transition">
+                    ⚔️ 小升初实战 (2)
+                  </button>
                 </div>
 
-                <!-- 三张体系化知识卡 (连通母树与破案武器) -->
-                <div>
-                  <div class="flex items-center justify-between mb-2 px-1">
-                    <span class="text-xs font-black text-slate-300 flex items-center gap-1.5">
-                      <span>🧬 破案核心科学情报 (点击卡片研读 5 层思维模型)</span>
-                    </span>
-                    <span class="text-[11px] text-cyan-400">已连结知识母树 3 个节点</span>
-                  </div>
-
-                  <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-                    
-                    <!-- 卡片 1: 数学/小升初模型 -->
-                    <div onclick="openKnowledgeModal('math')" class="p-4 rounded-2xl bg-gradient-to-b from-cyan-950/60 to-slate-900 border border-cyan-500/40 hover:border-cyan-300 cursor-pointer transition-all duration-300 transform hover:-translate-y-1 shadow-lg shadow-cyan-950/30 group relative">
-                      <div class="flex items-center justify-between text-xs mb-2">
-                        <span class="px-1.5 py-0.5 rounded bg-cyan-500/20 text-cyan-300 font-bold text-[10px]">🧮 数学 · 代数</span>
-                        <span class="text-cyan-400 group-hover:translate-x-1 transition text-xs">➔</span>
-                      </div>
-                      <h4 class="text-sm font-black text-white group-hover:text-cyan-200 transition">流水行船方程模型</h4>
-                      <p class="text-[11px] text-slate-300 mt-1 line-clamp-2">
-                        相对运动时空法则：顺流=船速+水速，逆流=船速-水速。
-                      </p>
-                      <div class="mt-2.5 pt-2 border-t border-cyan-500/20 flex items-center justify-between text-[10px]">
-                        <span class="text-cyan-400 font-bold">小升初必考模型</span>
-                        <span class="text-slate-400">研读模型 🔍</span>
-                      </div>
-                    </div>
-
-                    <!-- 卡片 2: 语文/文言衔接 -->
-                    <div onclick="openKnowledgeModal('chinese')" class="p-4 rounded-2xl bg-gradient-to-b from-indigo-950/60 to-slate-900 border border-indigo-500/40 hover:border-indigo-300 cursor-pointer transition-all duration-300 transform hover:-translate-y-1 shadow-lg shadow-indigo-950/30 group relative">
-                      <div class="flex items-center justify-between text-xs mb-2">
-                        <span class="px-1.5 py-0.5 rounded bg-indigo-500/20 text-indigo-300 font-bold text-[10px]">📜 语文 · 文言</span>
-                        <span class="text-indigo-400 group-hover:translate-x-1 transition text-xs">➔</span>
-                      </div>
-                      <h4 class="text-sm font-black text-white group-hover:text-indigo-200 transition">文言虚词「而」与「其」</h4>
-                      <p class="text-[11px] text-slate-300 mt-1 line-clamp-2">
-                        字阵破译：“抵汴而止，吏其私籴之”中的隐晦转折与偷换词性。
-                      </p>
-                      <div class="mt-2.5 pt-2 border-t border-indigo-500/20 flex items-center justify-between text-[10px]">
-                        <span class="text-indigo-300 font-bold">初中文言断层通关</span>
-                        <span class="text-slate-400">研读模型 🔍</span>
-                      </div>
-                    </div>
-
-                    <!-- 卡片 3: 科学/物理浮力 -->
-                    <div onclick="openKnowledgeModal('physics')" class="p-4 rounded-2xl bg-gradient-to-b from-emerald-950/60 to-slate-900 border border-emerald-500/40 hover:border-emerald-300 cursor-pointer transition-all duration-300 transform hover:-translate-y-1 shadow-lg shadow-emerald-950/30 group relative">
-                      <div class="flex items-center justify-between text-xs mb-2">
-                        <span class="px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold text-[10px]">🔬 物理 · 浮力</span>
-                        <span class="text-emerald-400 group-hover:translate-x-1 transition text-xs">➔</span>
-                      </div>
-                      <h4 class="text-sm font-black text-white group-hover:text-emerald-200 transition">浮力平衡与密度探究</h4>
-                      <p class="text-[11px] text-slate-300 mt-1 line-clamp-2">
-                        阿基米德浮力定律：木质沉船为何无法漂浮？暗格藏高密度白银！
-                      </p>
-                      <div class="mt-2.5 pt-2 border-t border-emerald-500/20 flex items-center justify-between text-[10px]">
-                        <span class="text-emerald-300 font-bold">初中物理核心实验</span>
-                        <span class="text-slate-400">研读模型 🔍</span>
-                      </div>
-                    </div>
-
-                  </div>
+                <!-- 案卷快速选择下拉框 -->
+                <div class="flex items-center gap-2 w-full md:w-auto">
+                  <span class="text-xs text-slate-400 font-bold hidden sm:inline">选择案卷：</span>
+                  <select id="case-select-dropdown" onchange="switchChronoCase(this.value)" class="w-full md:w-72 px-3 py-1.5 rounded-xl bg-slate-800 border border-cyan-500/30 text-white text-xs font-bold focus:outline-none focus:border-cyan-400 cursor-pointer shadow">
+                    <!-- 动态填充 -->
+                  </select>
                 </div>
-
-                <!-- 搜证线索物证抽屉 -->
-                <div class="p-4 rounded-2xl bg-slate-900/60 border border-slate-800 text-xs">
-                  <div class="text-slate-400 font-bold mb-2 flex items-center justify-between">
-                    <span>🗂️ 现场证物清单 (随审讯进度逐一解锁)</span>
-                    <span id="clue-unlocked-count" class="text-cyan-400">线索破译：0 / 3</span>
-                  </div>
-                  <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                    <div id="clue-tag-0" class="p-2 rounded-xl bg-slate-800/80 border border-slate-700 text-slate-300 flex items-center space-x-2">
-                      <span>⏱️</span>
-                      <span class="truncate">证物A：水文与码头航行刻漏</span>
-                    </div>
-                    <div id="clue-tag-1" class="p-2 rounded-xl bg-slate-800/80 border border-slate-700 text-slate-500 flex items-center space-x-2">
-                      <span>📜</span>
-                      <span class="truncate">证物B：涂改的汴京漕运密账</span>
-                    </div>
-                    <div id="clue-tag-2" class="p-2 rounded-xl bg-slate-800/80 border border-slate-700 text-slate-500 flex items-center space-x-2">
-                      <span>⚓</span>
-                      <span class="truncate">证物C：沉船龙骨夹层打捞报告</span>
-                    </div>
-                  </div>
-                </div>
-
               </div>
 
-              <!-- 右侧大区 (xl: 5 列): 嫌疑人审讯与线索演绎终端 -->
-              <div class="xl:col-span-5 flex flex-col">
-                <div class="p-4 sm:p-5 rounded-3xl bg-slate-900 border border-cyan-500/40 shadow-2xl flex-1 flex flex-col justify-between space-y-4 relative">
-                  
-                  <!-- 审讯终端头部 -->
-                  <div>
-                    <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-                      <div class="flex items-center space-x-2.5">
-                        <div class="w-10 h-10 rounded-full bg-slate-800 border-2 border-red-500/50 flex items-center justify-center text-xl flex-shrink-0" id="suspect-avatar">
-                          🧔🏻‍♂️
-                        </div>
-                        <div>
-                          <div class="text-xs font-bold text-white flex items-center gap-1.5">
-                            <span>嫌疑人：押运官 钱某</span>
-                            <span id="suspect-mood-badge" class="px-1.5 py-0.2 rounded bg-red-500/20 text-red-300 text-[10px] font-bold">顽固抗辩中</span>
-                          </div>
-                          <div class="text-[11px] text-slate-400">破案对峙第 <span id="current-round-text" class="text-cyan-300 font-bold">1</span> / 3 关</div>
-                        </div>
-                      </div>
+              <!-- 主战区：左侧案卷与三联知识卡 + 右侧审讯对峙终端 -->
+              <div class="grid grid-cols-1 xl:grid-cols-12 gap-4 sm:gap-5">
 
-                      <!-- 心理防线血条 -->
-                      <div class="text-right">
-                        <div class="text-[10px] text-slate-400">心理防线</div>
-                        <div class="w-24 h-2 bg-slate-800 rounded-full overflow-hidden mt-1 border border-slate-700">
-                          <div id="suspect-hp-bar" class="h-full bg-gradient-to-r from-red-500 to-amber-400 transition-all duration-500" style="width: 100%;"></div>
-                        </div>
+                <!-- 左侧大区 (xl: 7 列): 案卷背景与三联体系知识卡 -->
+                <div class="xl:col-span-7 space-y-4">
+
+                  <!-- 案卷卷宗详情卡 -->
+                  <div class="p-4 sm:p-5 rounded-3xl bg-slate-900/90 border border-slate-800 shadow-xl relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-64 h-64 bg-cyan-500/5 rounded-full blur-3xl pointer-events-none"></div>
+                    
+                    <div class="flex items-center justify-between mb-2">
+                      <div class="flex items-center gap-2 flex-wrap">
+                        <span id="case-badge-id" class="px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 text-[10px] font-extrabold border border-cyan-500/30">CASE #014</span>
+                        <span id="case-badge-grade" class="px-2 py-0.5 rounded bg-purple-500/20 text-purple-300 text-[10px] font-extrabold border border-purple-500/30">四年级专项</span>
+                        <span id="case-badge-curricular" class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 text-[10px] font-extrabold border border-emerald-500/30">课内巩固 + 课外延伸</span>
                       </div>
+                      <span id="case-reward-text" class="text-xs text-amber-400 font-bold flex items-center gap-1">
+                        <span>🏆 破案悬赏：</span>
+                        <span>+40 心愿币</span>
+                      </span>
                     </div>
 
-                    <!-- 进度环形或指示器 -->
-                    <div class="mt-3 flex items-center justify-between text-[11px] text-slate-400 bg-slate-950/60 p-2.5 rounded-xl border border-slate-800/80">
-                      <span>破译进度：<strong id="deduction-progress-num" class="text-cyan-400">0%</strong></span>
-                      <div class="flex gap-1.5">
-                        <span id="step-dot-0" class="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse"></span>
-                        <span id="step-dot-1" class="w-2.5 h-2.5 rounded-full bg-slate-700"></span>
-                        <span id="step-dot-2" class="w-2.5 h-2.5 rounded-full bg-slate-700"></span>
-                      </div>
-                    </div>
-                  </div>
+                    <h3 id="case-title-text" class="text-lg sm:text-xl font-black text-white flex items-center gap-2">
+                      <span>当日案卷：皇家太药房的称重疑案</span>
+                    </h3>
 
-                  <!-- 嫌疑人辩护对白区 -->
-                  <div class="p-3.5 rounded-2xl bg-slate-950/80 border border-slate-800 text-xs relative">
-                    <span class="absolute -top-2.5 left-4 px-2 py-0.5 rounded bg-slate-800 text-[10px] font-bold text-slate-300">嫌疑人供词</span>
-                    <p class="text-slate-200 mt-1 italic leading-relaxed" id="suspect-statement">
-                      “大人明鉴！我们从下游开阳码头逆流到汴京，全程 36 公里，江水逆流凶猛，我们拼命划船足足航行了 2.5 小时！途中根本没有停靠，怎么可能私自倒卖粮食啊？！”
+                    <p id="case-desc-text" class="text-xs sm:text-sm text-slate-300 mt-2 leading-relaxed">
+                      大内太药房进贡的百宝金创散被查出份量短缺！御药总管声称是捣药研磨自然损耗。调查官安泽调取药方配比、古诗成语暗语与番商口供，发现药房竟在偷偷克扣名贵沉香！
                     </p>
                   </div>
 
-                  <!-- 调查官提问与选项对决区 -->
-                  <div class="space-y-2.5 flex-1">
-                    <div class="text-xs font-bold text-cyan-300 flex items-center gap-1.5">
-                      <span>🎯 调查官安泽，请指出其证词中的破绽：</span>
+                  <!-- 三张体系化知识卡 (动态按年级与学科渲染) -->
+                  <div>
+                    <div class="flex items-center justify-between mb-2 px-1">
+                      <span class="text-xs font-black text-slate-300 flex items-center gap-1.5">
+                        <span>🧬 破案核心科学情报 (点击卡片研读 5 层思维模型)</span>
+                      </span>
+                      <span class="text-[11px] text-cyan-400" id="case-knowledge-connected-text">已连结四年级语数英 3 个核心课内外考点</span>
                     </div>
 
-                    <!-- 题目题干说明 -->
-                    <div class="text-[11px] text-slate-300 bg-slate-800/50 p-2.5 rounded-xl border border-slate-700/60" id="question-desc">
-                      已知两码头相距 36 公里，粮船在静水速度为 15 km/h，逆流水速为 3 km/h。嫌疑人声称逆水耗时 2.5 小时，他的破绽是：
-                    </div>
-
-                    <!-- 选项列表 -->
-                    <div class="space-y-2 pt-1" id="options-container">
-                      <!-- 动态填充 -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3" id="cards-container">
+                      <!-- 动态填充 3 张体系卡 -->
                     </div>
                   </div>
 
-                  <!-- 即时反馈区域 (答对破绽识破 / 答错耳机战术提示) -->
-                  <div id="feedback-box" class="hidden p-3 rounded-2xl text-xs border transition-all">
-                    <!-- 动态反馈 -->
+                  <!-- 搜证线索物证抽屉 -->
+                  <div class="p-4 rounded-2xl bg-slate-900/60 border border-slate-800 text-xs">
+                    <div class="text-slate-400 font-bold mb-2 flex items-center justify-between">
+                      <span>🗂️ 现场证物清单 (随审讯进度逐一解锁)</span>
+                      <span id="clue-unlocked-count" class="text-cyan-400">线索破译：0 / 3</span>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2" id="clues-container">
+                      <!-- 动态填充 3 条证物 -->
+                    </div>
                   </div>
 
                 </div>
+
+                <!-- 右侧大区 (xl: 5 列): 嫌疑人审讯与线索演绎终端 -->
+                <div class="xl:col-span-5 flex flex-col">
+                  <div class="p-4 sm:p-5 rounded-3xl bg-slate-900 border border-cyan-500/40 shadow-2xl flex-1 flex flex-col justify-between space-y-4 relative">
+                    
+                    <!-- 审讯终端头部 -->
+                    <div>
+                      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                        <div class="flex items-center space-x-2.5">
+                          <div class="w-10 h-10 rounded-full bg-slate-800 border-2 border-red-500/50 flex items-center justify-center text-xl flex-shrink-0" id="suspect-avatar">
+                            👨🏻‍⚕️
+                          </div>
+                          <div>
+                            <div class="text-xs font-bold text-white flex items-center gap-1.5">
+                              <span id="suspect-name-title">嫌疑人：掌库 孙管事</span>
+                            </div>
+                            <div class="text-[11px] text-slate-400 mt-0.5 flex items-center gap-2">
+                              <span>心理状态：<span class="text-amber-400 font-bold" id="suspect-mood">极力辩解中</span></span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <!-- 嫌疑人防线心理值 -->
+                        <div class="w-28 text-right">
+                          <div class="flex items-center justify-between text-[10px] text-slate-400 mb-1">
+                            <span>心理防线</span>
+                            <span class="text-red-400 font-bold" id="deduction-progress-num">100%</span>
+                          </div>
+                          <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+                            <div id="suspect-hp-bar" class="bg-gradient-to-r from-red-500 to-amber-400 h-full rounded-full transition-all duration-500" style="width: 100%;"></div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- 审讯对峙现场对话气泡 -->
+                      <div class="mt-4 p-3.5 rounded-2xl bg-slate-950/70 border border-slate-800">
+                        <div class="flex items-start space-x-2.5">
+                          <span class="text-xs px-2 py-0.5 rounded bg-red-500/20 text-red-300 font-bold flex-shrink-0">嫌疑人口供</span>
+                          <p class="text-xs sm:text-sm text-slate-200 leading-relaxed font-serif italic" id="suspect-statement">
+                            “大人明察！小人按照药方每包 25 克配制，足足配了 44 包！捣药损耗了 150 克，药材总数分毫没少啊！”
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- 安泽的质询选择区 -->
+                    <div class="space-y-2.5 flex-1 flex flex-col justify-end">
+                      <div class="flex items-center justify-between">
+                        <span class="text-xs font-black text-cyan-300 flex items-center gap-1.5">
+                          <span>⚖️ 特勤调查官安泽 · 破绽质询</span>
+                          <span class="text-[10px] px-1.5 py-0.2 rounded bg-cyan-500/20 text-cyan-300 font-mono">ROUND <span id="current-round-text">1</span>/3</span>
+                        </span>
+                        <span class="text-[10px] text-slate-400">选择正确科学定理戳穿伪证</span>
+                      </div>
+
+                      <div class="text-xs text-slate-300 font-medium" id="question-desc">
+                        安泽运用四年级乘法分配律与简算，当场核算药材总理论重量与实重差距：
+                      </div>
+
+                      <!-- 选项按钮组 (A / B / C) -->
+                      <div class="space-y-2" id="deduction-options">
+                        <!-- 动态渲染选项 -->
+                      </div>
+
+                      <!-- 实时判词反馈气泡 -->
+                      <div id="deduction-feedback" class="hidden p-3 rounded-xl border text-xs leading-relaxed transition-all duration-300">
+                        <!-- 动态反馈 -->
+                      </div>
+                    </div>
+
+                    <!-- 底部破案操作栏 -->
+                    <div class="pt-2 border-t border-slate-800 flex items-center justify-between">
+                      <button onclick="resetCaseDeduction()" class="text-[11px] text-slate-500 hover:text-slate-300 transition">
+                        重置本轮案卷
+                      </button>
+                      <button id="btn-next-round" onclick="advanceNextChronoRound()" class="hidden px-4 py-2 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-bold text-xs shadow-md shadow-cyan-500/20 active:scale-95 transition">
+                        下一步搜证质询 ➔
+                      </button>
+                    </div>
+
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- ================= MODE B: 分级真题特训靶场容器 ================= -->
+            <div id="case-arena-container" class="hidden space-y-4">
+
+              <!-- 靶场顶部多维组合过滤器 -->
+              <div class="p-4 rounded-2xl bg-slate-900 border border-slate-800 space-y-3 shadow-lg">
+                <!-- 1. 年级筛选 -->
+                <div class="flex items-center gap-2 flex-wrap text-xs">
+                  <span class="font-black text-slate-400 w-16 flex-shrink-0">🎯 年级：</span>
+                  <button onclick="filterArenaBy('grade', 'all')" id="btn-arena-g-all" class="px-3 py-1 rounded-xl font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40 transition">全部年级 (52)</button>
+                  <button onclick="filterArenaBy('grade', 'g4')" id="btn-arena-g-g4" class="px-3 py-1 rounded-xl font-bold bg-slate-800 text-slate-400 hover:text-white border border-slate-700 transition">🌱 四年级 (24)</button>
+                  <button onclick="filterArenaBy('grade', 'g5')" id="btn-arena-g-g5" class="px-3 py-1 rounded-xl font-bold bg-slate-800 text-slate-400 hover:text-white border border-slate-700 transition">🚀 五年级 (24)</button>
+                  <button onclick="filterArenaBy('grade', 'bridge')" id="btn-arena-g-bridge" class="px-3 py-1 rounded-xl font-bold bg-slate-800 text-slate-400 hover:text-white border border-slate-700 transition">⚔️ 小升初 (4)</button>
+                </div>
+
+                <!-- 2. 学科筛选 -->
+                <div class="flex items-center gap-2 flex-wrap text-xs">
+                  <span class="font-black text-slate-400 w-16 flex-shrink-0">📚 学科：</span>
+                  <button onclick="filterArenaBy('subject', 'all')" id="btn-arena-s-all" class="px-3 py-1 rounded-xl font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 transition">全部学科</button>
+                  <button onclick="filterArenaBy('subject', 'chinese')" id="btn-arena-s-chinese" class="px-3 py-1 rounded-xl font-bold bg-slate-800 text-slate-400 hover:text-white border border-slate-700 transition">📖 大语文</button>
+                  <button onclick="filterArenaBy('subject', 'math')" id="btn-arena-s-math" class="px-3 py-1 rounded-xl font-bold bg-slate-800 text-slate-400 hover:text-white border border-slate-700 transition">📐 数学思维</button>
+                  <button onclick="filterArenaBy('subject', 'english')" id="btn-arena-s-english" class="px-3 py-1 rounded-xl font-bold bg-slate-800 text-slate-400 hover:text-white border border-slate-700 transition">🔤 核心英语</button>
+                  <button onclick="filterArenaBy('subject', 'cross')" id="btn-arena-s-cross" class="px-3 py-1 rounded-xl font-bold bg-slate-800 text-slate-400 hover:text-white border border-slate-700 transition">🧬 跨学科科学</button>
+                </div>
+
+                <!-- 3. 课内 vs 课外筛选 -->
+                <div class="flex items-center gap-2 flex-wrap text-xs">
+                  <span class="font-black text-slate-400 w-16 flex-shrink-0">🏷️ 体系：</span>
+                  <button onclick="filterArenaBy('scope', 'all')" id="btn-arena-sc-all" class="px-3 py-1 rounded-xl font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/40 transition">全部范围</button>
+                  <button onclick="filterArenaBy('scope', 'in')" id="btn-arena-sc-in" class="px-3 py-1 rounded-xl font-bold bg-slate-800 text-slate-400 hover:text-white border border-slate-700 transition">📘 课内核心考点</button>
+                  <button onclick="filterArenaBy('scope', 'out')" id="btn-arena-sc-out" class="px-3 py-1 rounded-xl font-bold bg-slate-800 text-slate-400 hover:text-white border border-slate-700 transition">🚀 课外培优奥数</button>
+                </div>
               </div>
 
+              <!-- 靶场主答题区 (左侧核心答题卡 + 右侧题号导航与战绩) -->
+              <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+
+                <!-- 核心做题工作台 (lg: 8列) -->
+                <div class="lg:col-span-8 space-y-4">
+                  <div class="p-5 rounded-3xl bg-slate-900 border border-amber-500/30 shadow-2xl relative">
+                    
+                    <!-- 题目标签栏 -->
+                    <div class="flex items-center justify-between gap-2 flex-wrap pb-3 border-b border-slate-800">
+                      <div class="flex items-center gap-2">
+                        <span id="arena-badge-grade" class="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 text-[10px] font-bold border border-amber-500/30">四年级</span>
+                        <span id="arena-badge-subject" class="px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 text-[10px] font-bold border border-cyan-500/30">数学</span>
+                        <span id="arena-badge-scope" class="px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 text-[10px] font-bold border border-indigo-500/30">课内考点</span>
+                        <span id="arena-badge-topic" class="text-xs text-slate-300 font-bold">乘法分配律与简便计算</span>
+                      </div>
+                      <span class="text-xs font-mono text-amber-400 font-bold" id="arena-progress-indicator">
+                        第 1 / 52 题
+                      </span>
+                    </div>
+
+                    <!-- 题目主干文字 -->
+                    <div class="py-4">
+                      <h3 class="text-sm sm:text-base font-bold text-white leading-relaxed" id="arena-question-text">
+                        计算 125 × 32 × 25 时，下列最简便的拆分与运算路径是：
+                      </h3>
+                    </div>
+
+                    <!-- 4 个可交互选项 -->
+                    <div class="space-y-2.5" id="arena-options-container">
+                      <!-- 动态填充选项 -->
+                    </div>
+
+                    <!-- 答题后名师深度母树解析浮层 (默认折叠，答完展开) -->
+                    <div id="arena-analysis-box" class="hidden mt-4 p-4 rounded-2xl bg-slate-950/80 border border-slate-800 text-xs leading-relaxed space-y-2">
+                      <div class="font-bold text-amber-300 flex items-center justify-between">
+                        <span>💡 名师体系深度解析</span>
+                        <span id="arena-verdict-tag" class="text-[10px] px-2 py-0.5 rounded font-black">回答正确</span>
+                      </div>
+                      <p class="text-slate-300 whitespace-pre-line" id="arena-analysis-content">
+                        解析内容加载中...
+                      </p>
+                    </div>
+
+                    <!-- 底部切题操作栏 -->
+                    <div class="mt-5 pt-3 border-t border-slate-800 flex items-center justify-between">
+                      <button onclick="prevArenaQuestion()" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-xs font-bold transition flex items-center gap-1">
+                        <span>⬅️ 上一题</span>
+                      </button>
+                      <button onclick="randomArenaQuestion()" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-cyan-300 text-xs font-bold transition flex items-center gap-1">
+                        <span>🎲 随机抽题</span>
+                      </button>
+                      <button onclick="nextArenaQuestion()" class="px-4 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-400 text-slate-950 font-black text-xs shadow-lg shadow-amber-500/25 active:scale-95 transition flex items-center gap-1">
+                        <span>下一题 ➔</span>
+                      </button>
+                    </div>
+
+                  </div>
+                </div>
+
+                <!-- 右侧题号矩阵与战况 (lg: 4列) -->
+                <div class="lg:col-span-4 space-y-3">
+                  <!-- 战况仪表盘 -->
+                  <div class="p-4 rounded-2xl bg-slate-900 border border-slate-800 shadow-lg space-y-3 text-xs">
+                    <div class="font-bold text-white flex items-center justify-between">
+                      <span>📊 今日特训战绩</span>
+                      <span class="text-amber-400 font-mono" id="arena-stat-coins">+0 币已入账</span>
+                    </div>
+                    <div class="grid grid-cols-3 gap-2 text-center">
+                      <div class="p-2 rounded-xl bg-slate-800/80">
+                        <div class="text-slate-400 text-[10px]">已答题数</div>
+                        <div class="text-sm font-black text-white mt-0.5" id="arena-stat-answered">0 / 52</div>
+                      </div>
+                      <div class="p-2 rounded-xl bg-slate-800/80">
+                        <div class="text-slate-400 text-[10px]">正确率</div>
+                        <div class="text-sm font-black text-emerald-400 mt-0.5" id="arena-stat-accuracy">100%</div>
+                      </div>
+                      <div class="p-2 rounded-xl bg-slate-800/80">
+                        <div class="text-slate-400 text-[10px]">连对记录</div>
+                        <div class="text-sm font-black text-amber-400 mt-0.5" id="arena-stat-streak">🔥 0</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- 题号矩阵速查表 -->
+                  <div class="p-4 rounded-2xl bg-slate-900 border border-slate-800 shadow-lg text-xs space-y-2.5">
+                    <div class="flex items-center justify-between text-slate-400 font-bold">
+                      <span>🗂️ 题号速查矩阵</span>
+                      <span class="text-[10px] text-slate-500">点击题号快速跳转</span>
+                    </div>
+                    <div class="grid grid-cols-6 sm:grid-cols-8 lg:grid-cols-6 gap-1.5 max-h-64 overflow-y-auto pr-1" id="arena-matrix-container">
+                      <!-- 动态填充 1~52 题号按钮 -->
+                    </div>
+                  </div>
+                </div>
+
+              </div>
             </div>
 
           </div>
@@ -1986,96 +2117,175 @@
       }
     }
 
-    // ==================== 📁 时空档案局 · 跨学科剧本杀引擎 ====================
-    const CHRONO_CASE_KNOWLEDGE = {
-      math: {
-        icon: '🧮',
-        subject: '小升初必考模型 · 数学代数',
-        title: '流水行船与代数方程模型',
-        layers: [
-          { tag: '🏷️ 知识母树坐标', content: '数学思维母树 > 运动与方程模型 > 小升初经典：流水行船与相对运动' },
-          { tag: '🎯 第一性原理 / 底层规律', content: '运动是相对的！在流动的参照系中，物体的真实运动速度 = 自身机械做功速度 叠加 介质流动速度（同向则相加提速，反向则抵消阻碍）。' },
-          { tag: '🧠 核心推演与方程模型', content: '• 顺流速度 = 船速 + 水速 (v_顺 = v_船 + v_水)\n• 逆流速度 = 船速 - 水速 (v_逆 = v_船 - v_水)\n👉 【思维大招】：两式相加÷2 即为船速；两式相减÷2 即为水速！\n无须死背公式，设船速为 x，水速为 v，列出一元一次方程轻松破局！' },
-          { tag: '⚔️ 剧本杀案卷应用 · 破案实战', content: '【案卷应用】：嫌疑人谎称 36 公里逆水航行只用了 2.5 小时。根据测得静水船速 15 km/h，水速 3 km/h，算出逆水速度仅为 12 km/h。全程实际耗时为 36 ÷ 12 = 3 小时！多出的半小时正是靠岸私自倒卖官粮的时间！' },
-          { tag: '🔗 前后知识锚点', content: '⬅️ 前置基石：匀速直线运动速度、路程与时间关系 (S = v × t)\n➡️ 延伸思考：如果换成在商场相向而行的自动扶梯上行走，相对速度该如何建模？' }
-        ]
-      },
-      chinese: {
-        icon: '📜',
-        subject: '初中文言断层通关 · 大语文',
-        title: '文言虚词通关矩阵之「而」与「其」',
-        layers: [
-          { tag: '🏷️ 知识母树坐标', content: '大语文知识母树 > 文言语法图谱 > 12 核心虚词与词类活用' },
-          { tag: '🎯 第一性原理 / 底层规律', content: '文言文言简意深。虚词是古代汉语的“语法立交桥”，不直接表达具象事物，却精准决定句子逻辑转折、动作承接以及动作主使者的指代归属！' },
-          { tag: '🧠 核心推演与语法矩阵', content: '• 虚词「而」：表顺承（学而时习之）、表转折（青取之于蓝而青于蓝）、表修饰（杂然而前陈者）。本案中“抵汴而止”暗含转折与未达终点。\n• 虚词「其」：常作人称代词（他/他们）、指示代词（那/其中），在此处指代当事人本身。\n• 关键实词「籴」：买入粮食（相对的「粜」为卖出粮食）。' },
-          { tag: '⚔️ 剧本杀案卷应用 · 破案实战', content: '【案卷应用】：账本原文被狡猾涂改为“抵汴而止，吏其私籴之”。押粮官企图将“籴”辩解为官府正常开仓，并妄图推诿给汴京粮吏。调查官安泽一针见血指出“其”正指示钱某本人，“私籴”坐实了其未进港前即私下变卖官粮换取白银的铁证！' },
-          { tag: '🔗 前后知识锚点', content: '⬅️ 前置基石：文言单音节词向现代双音节词的语义演变\n➡️ 延伸思考：初中文言文中常见的“宾语前置”与“使动用法”有哪些识别规律？' }
-        ]
-      },
-      physics: {
-        icon: '🔬',
-        subject: '初中物理核心实验 · 科学探究',
-        title: '浮力平衡与密度实验探究',
-        layers: [
-          { tag: '🏷️ 知识母树坐标', content: '自然科学母树 > 初中力学系统 > 浮力与阿基米德原理' },
-          { tag: '🎯 第一性原理 / 底层规律', content: '阿基米德浮力定律：浸在液体中的物体受到向上的浮力，其大小等于物体排开液体所受的重力 (F_浮 = ρ_液 · g · V_排)。物体的沉浮完全取决于重力与浮力的对抗。' },
-          { tag: '🧠 核心推演与受力平衡模型', content: '• 漂浮条件：物体平均密度小于水 (ρ_物 < ρ_水) 时，浮力等于重力，必定漂浮。\n• 松木材质密度通常在 0.6~0.8 g/cm³，水的密度为 1.0 g/cm³，木质船只即便浸水，木材本身仍具正浮力。\n• 白银的密度高达 10.49 g/cm³！若非暗格熔铸了大量沉重金属，木质货船残骸断然不可能深陷泥沙毫无浮意！' },
-          { tag: '⚔️ 剧本杀案卷应用 · 破案实战', content: '【案卷应用】：沉船残片打捞表明，木船残体沉底极深，完全违反了普通木材浮力规律。调查官安泽据此断定船底夹层有超高密度重物，指引水鬼打捞队凿开龙骨，当场起获了浇铸成龙骨形状的 800 两纯银！' },
-          { tag: '🔗 前后知识锚点', content: '⬅️ 前置基石：质量、体积与密度公式 (ρ = m / V)\n➡️ 延伸思考：现代潜水艇是如何利用水舱充排水改变自身重力来实现下潜与上浮的？' }
-        ]
-      }
-    };
+    // ==================== 📁 时空档案局 · 分级跨学科剧本杀与知识题库引擎 ====================
+    const CHRONO_CASES_DB = {"g4_01": {"id": "g4_01", "grade": "g4", "caseIdDisplay": "CASE #014", "gradeDisplay": "四年级 · 语数英专项", "curricularDisplay": "课内四则规律 × 课外差倍神话", "title": "皇家太药房的称重疑案", "rewardText": "+40 心愿币", "rewardCoins": 40, "rewardXp": 80, "secretCard": "《神农百草·千金方》机密图鉴", "desc": "大内太药房进贡的百宝金创散被查出份量短缺！御药总管声称是捣药研磨自然损耗。调查官安泽调取药方配比、古诗成语暗语与番商口供，发现药房竟在偷偷克扣名贵沉香！", "connectedText": "已连结四年级语数英 3 个核心课内外考点", "suspect": {"name": "掌库 孙管事", "avatar": "👨🏻‍⚕️", "mood": "极力辩解中"}, "clues": [{"icon": "⚖️", "title": "证物A：药房双向青铜天平与砝码"}, {"icon": "📜", "title": "证物B：苏轼《西林壁》药柜暗语条"}, {"icon": "💊", "title": "证物C：西域番商进贡药材清单英文密信"}], "knowledge": {"math": {"icon": "🧮", "subject": "四年级数学 · 课内简便运算 × 课外差倍模型", "title": "乘法分配律与差倍天平", "layers": [{"tag": "🏷️ 知识母树坐标", "content": "四年级数学思维 > 运算定律与模型 > 乘法分配律与奥数差倍"}, {"tag": "🎯 第一性原理 / 底层规律", "content": "整体可拆分与等量代换：a × (b + c) = a × b + a × c。差量除以倍数差即为单一基准量：较小数 = 差 ÷ (倍数 - 1)。"}, {"tag": "🧠 核心推演与方程模型", "content": "• 课内简算：25 × 44 = 25 × (40 + 4) = 25 × 40 + 25 × 4 = 1000 + 100 = 1100 克。\n• 课外差倍：甲堆药材比乙堆多 40 克，且甲是乙的 3 倍。乙 = 40 ÷ (3 - 1) = 20 克，甲 = 60 克。"}, {"tag": "⚔️ 剧本杀案卷应用 · 破案实战", "content": "【案卷应用】：孙管事账本记录配制 44 包金创散，每包 25 克，应耗药 1100 克。但他狡辩研磨损耗了 150 克。安泽利用差倍算得甲乙两堆总计仅 80 克，与理论总重差出整整 120 克，识破其私吞药料后伪造损耗的谎言！"}, {"tag": "🔗 前后知识锚点", "content": "⬅️ 前置：三位数乘两位数笔算\n➡️ 延伸思考：如果两组数据已知和与倍数（和倍问题），如何推算各自数值？"}]}, "chinese": {"icon": "📜", "subject": "四年级大语文 · 课内《题西林壁》× 课外度量衡成语", "title": "《题西林壁》多维视角与古代度量衡考据", "layers": [{"tag": "🏷️ 知识母树坐标", "content": "四年级大语文 > 古诗文哲思 > 观察视角与度量衡成语考据"}, {"tag": "🎯 第一性原理 / 底层规律", "content": "“横看成岭侧成峰，远近高低各不同。”所处位置不同，看到的景象各异；古代度量衡体系：24 铢为一两，16 两为一斤，成语往往严谨暗藏法度！"}, {"tag": "🧠 核心推演与文学赏析", "content": "• 课内名作：苏轼《题西林壁》揭示哲理——要想看清事物全貌，必须跳出局部，克服主观盲区。\n• 课外成语考据：“锱铢必较”中，6 铢为一锱，4 锱为一两（24 铢）。古代一斤等于 16 两（半斤八两即来源于此）。"}, {"tag": "⚔️ 剧本杀案卷应用 · 破案实战", "content": "【案卷应用】：孙管事辩称“损耗不过两锱而已，大人何必锱铢必较”。安泽指出两锱不过十二铢（半两不到），而实缺高达八两（半斤）！且依据“借岭看峰”诗意，安泽从药柜背面死角暗格当场搜出了藏匿的沉香！"}, {"tag": "🔗 前后知识锚点", "content": "⬅️ 前置：古诗借景抒情手法\n➡️ 延伸思考：五年级说明文中常见的“列数字”与“作比较”如何增强论证力？"}]}, "english": {"icon": "🇬🇧", "subject": "四年级英语 · 课内现在进行时 × 课外医药动植物词族", "title": "现在进行时态 (be doing) 与行为真伪辨析", "layers": [{"tag": "🏷️ 知识母树坐标", "content": "四年级英语语法 > 核心时态网络 > 现在进行时与动词-ing变换"}, {"tag": "🎯 第一性原理 / 底层规律", "content": "描述此刻正在进行的动作：主语 + am/is/are + verb-ing。动词加-ing规则：一般直接加、去e加ing、重读闭音节双写加ing。"}, {"tag": "🧠 核心推演与语法结构", "content": "• 结构公式：He is weighing the herbs right now. (他此刻正在称草药)\n• 易错双写：run -> running, stop -> stopping, put -> putting.\n• 词族拓展：herbs (草药), balance (天平), weigh (称重), secret (秘密)。"}, {"tag": "⚔️ 剧本杀案卷应用 · 破案实战", "content": "【案卷应用】：番商密信中写道：“Look! The manager is putting the expensive herbs into his own pocket!” 此刻正在进行的动作证据确凿，嫌疑人关于“从未碰过药材”的辩词彻底崩溃！"}, {"tag": "🔗 前后知识锚点", "content": "⬅️ 前置：一般现在时与人称代词单复数\n➡️ 延伸思考：五年级即将接触的一般将来时 (will / be going to) 与现在进行时有什么时间轴区别？"}]}}, "rounds": [{"round": 1, "suspectStatement": "“大人明察！小人按照药方每包 25 克配制，足足配了 44 包！捣药损耗了 150 克，药材总数分毫没少啊！”", "questionDesc": "安泽运用四年级乘法分配律与简算，当场核算药材总理论重量与实重差距：", "options": [{"text": "A. 25 × 44 = 25 × (40 + 4) = 1100 克。扣除 150 克也应有 950 克，但实测仅 830 克，虚报了 120 克！", "correct": true}, {"text": "B. 25 × 44 只能列竖式死算，没有更快的简便运算方法。", "correct": false}, {"text": "C. 损耗 150 克很正常，药材总重量完全符合规范。", "correct": false}], "correctFeedback": "💥 破绽识破！CRITICAL HIT！安泽巧妙运用乘法分配律：25 × 44 = 25 × 40 + 25 × 4 = 1100 克！两相核对，药房实际短缺高达 120 克名贵沉香！", "hintFeedback": "🤔 战术耳机提示：安泽，回想【乘法分配律】：把 44 拆成 40 + 4，先算 25 × 40 = 1000，再算 25 × 4 = 100，两者相加是多少？"}, {"round": 2, "suspectStatement": "“大人何必锱铢必较？不过是几铢几锱的小损耗，况且这药房四面透亮，我能把药藏在哪里？！”", "questionDesc": "安泽依据《题西林壁》“远近高低各不同”的观察视界与古代度量衡典故指出：", "options": [{"text": "A. 古代 6 铢为一锱，24 铢为一两，两锱微不足道，而账面短缺达半斤（8两）！藏药之处正是站在门前看不到的药柜背面死角！", "correct": true}, {"text": "B. “锱铢必较”是指只算铜钱不算银两，跟药材重量毫无关系。", "correct": false}, {"text": "C. 药柜四面都是镜子，绝不可能有视觉盲区。", "correct": false}], "correctFeedback": "💥 破绽识破！CRITICAL HIT！安泽点破古代度量衡法则与视觉盲区：搜查官直扑药柜后方死角暗格，当场起获了私藏的半斤特级沉香！", "hintFeedback": "🤔 战术耳机提示：安泽，回想苏轼诗句“不识庐山真面目，只缘身在此山中”，站在药房正中看四周容易被表象遮蔽，必须变换角度从侧面和背面排查！"}, {"round": 3, "suspectStatement": "“番商口供是诬告！他说我偷药，但我中午一直在偏房睡觉，从未碰过药柜！”", "questionDesc": "安泽翻译番商英文供词，敏锐抓出关于现在进行时态 (be doing) 的目击证词破绽：", "options": [{"text": "A. 证词明确记录：“Look! He is putting the expensive herbs into his bag!”（现在进行时证明其当时正在行窃！）", "correct": true}, {"text": "B. 英文中 is putting 表示昨天已经做完的事，不能代表正在发生。", "correct": false}, {"text": "C. put 的现在分词拼写是 puting，证词拼写有错故无效。", "correct": false}], "correctFeedback": "💥 绝杀识破！CASE CRACKED！现在进行时行为确凿，且 put 双写 t 加 -ing 语法精准！孙管事当场哑口无言，伏地认罪！", "hintFeedback": "🤔 战术耳机提示：安泽，现在进行时结构是 be + 动词-ing，表示“此刻正在做某事”。番商用了“Look! He is putting...”，正是当场目击了正在发生的盗窃！"}]}, "g4_02": {"id": "g4_02", "grade": "g4", "caseIdDisplay": "CASE #018", "gradeDisplay": "四年级 · 培优进阶", "curricularDisplay": "课外奥数鸡兔同笼 × 神话字词考据 × 过去时态", "title": "古城夜宴飞花令与鸡兔机关", "rewardText": "+42 心愿币", "rewardCoins": 42, "rewardXp": 85, "secretCard": "《千家诗·飞花密令》特种探案图谱", "desc": "古城上元夜宴，藏宝库重达百两的鎏金神兽机关锁被动了手脚！嫌疑人坚称当时在庭院参加飞花令背诵神话诗篇，且机关只有答对“35头94足”的鸡兔同笼铜人方能开启。调查官安泽运用奥数假设法与文言词源当场破局！", "connectedText": "已连结四年级奥数假设法、文言字源与动词过去时", "suspect": {"name": "宴席执事 崔掌事", "avatar": "🧮", "mood": "故弄玄虚"}, "clues": [{"icon": "🐓", "title": "证物A：铜人机关上的鸡兔刻度齿轮"}, {"icon": "📜", "title": "证物B：飞花令诗帖与《精卫填海》注解"}, {"icon": "🇬🇧", "title": "证物C：洋人商使遗落的日记残页（过去时）"}], "knowledge": {"math": {"icon": "🧮", "subject": "四年级奥数 · 经典假设法模型", "title": "鸡兔同笼假设思维与极端代换", "layers": [{"tag": "🏷️ 知识母树坐标", "content": "四年级奥数高频考点 > 代换与极值 > 鸡兔同笼问题"}, {"tag": "🎯 第一性原理 / 底层规律", "content": "先假设全为一种对象，再根据与总特征的差值，通过每对对象的属性差进行逐一替换！"}, {"tag": "🧠 核心推演与方程模型", "content": "• 假设全是鸡：35 只全是鸡，脚数应为 35 × 2 = 70 只。\n• 实际有 94 只脚，少了 94 - 70 = 24 只脚。\n• 每把一只鸡换成兔，就多出 4 - 2 = 2 只脚。\n• 兔的只数 = 24 ÷ 2 = 12 只！鸡的只数 = 35 - 12 = 23 只！"}, {"tag": "⚔️ 剧本杀案卷应用 · 破案实战", "content": "【案卷应用】：铜人机关锁设置的转盘密码正是兔的数量！崔掌事佯装解不开机关，安泽用假设法 10 秒解出兔为 12 只，发现转盘上早已留有其指纹磨损的痕迹，正是他早前转动开启了暗门！"}, {"tag": "🔗 前后知识锚点", "content": "⬅️ 前置：表内乘除法与混合运算\n➡️ 延伸思考：在初中代数中，如果设鸡为 x、兔为 y，列出二元一次方程组如何求解？"}]}, "chinese": {"icon": "📜", "subject": "四年级大语文 · 文言字词古今异义与神话源流", "title": "文言实词本义与远古神话精神", "layers": [{"tag": "🏷️ 知识母树坐标", "content": "四年级大语文 > 文言实词与文学源流 > 古今异义考据"}, {"tag": "🎯 第一性原理 / 底层规律", "content": "文言文单音节词多于双音节词；古今异义词词义随时代演变，不可望文生义。"}, {"tag": "🧠 核心推演与文学赏析", "content": "• 《精卫填海》：“炎帝之少女，名曰女娃。”少女古义为“小女儿”，今义为年轻未婚女子。\n• 先民神话：“夸父逐日”、“大禹治水”、“精卫填海”体现了中华民族顽强改造自然的抗争精神，而非迷信盲从。"}, {"tag": "⚔️ 剧本杀案卷应用 · 破案实战", "content": "【案卷应用】：崔掌事在飞花令诗帖中将“炎帝之少女”生硬解释为“年轻侍女”，企图伪造不在场诗局；安泽当场纠正其古今异义的文盲式伪证，证实该诗帖系其仓促抄录伪造！"}, {"tag": "🔗 前后知识锚点", "content": "⬅️ 前置：部编版四年级上第四单元神话单元\n➡️ 延伸思考：五年级《杨氏之子》中的“家禽”古今异义又有何不同？"}]}, "english": {"icon": "🇬🇧", "subject": "四年级英语 · 课外进阶一般过去时", "title": "一般过去时动词不规则变化辨析", "layers": [{"tag": "🏷️ 知识母树坐标", "content": "四年级英语语法 > 核心时态网络 > 一般过去时与不规则动词"}, {"tag": "🎯 第一性原理 / 底层规律", "content": "表示过去某一特定时间发生的动作或状态：主语 + 动词过去式 (did) + 过去时间状语 (yesterday, last night)。"}, {"tag": "🧠 核心推演与语法结构", "content": "• 规则变化：加 -ed (watch -> watched, play -> played)。\n• 不规则高频：see -> saw, buy -> bought, break -> broke, steal -> stole。\n• 时间辨识：He saw the suspect entering the warehouse last night."}, {"tag": "⚔️ 剧本杀案卷应用 · 破案实战", "content": "【案卷应用】：洋人使节残页记载：“Someone broke into the room and stole the golden statue at 9 PM yesterday.” 动词 broke 与 stole 明确证明盗窃发生在昨晚 9 点，直接粉碎了崔掌事的深夜不在场证明！"}, {"tag": "🔗 前后知识锚点", "content": "⬅️ 前置：一般现在时动词单三形式\n➡️ 延伸思考：五年级过去进行时 (was/were doing) 与一般过去时在时间精度上有何差异？"}]}}, "rounds": [{"round": 1, "suspectStatement": "“那铜人机关极其精密，总共 35 头、94 只脚，我这辈子都算不明白怎么可能有凡人能打开它！”", "questionDesc": "安泽运用四年级奥数经典的【假设法】，当场秒杀鸡兔同笼，推算出兔子的只数：", "options": [{"text": "A. 假设全是鸡则有 70 只脚，少了 24 只脚。每把一只鸡换成兔增加 2 只脚，故兔有 24 ÷ 2 = 12 只！机关转盘上只有 12 处磨损！", "correct": true}, {"text": "B. 35 头 94 只脚无解，一定是题目出错了。", "correct": false}, {"text": "C. 随便转动转盘 35 次即可解开。", "correct": false}], "correctFeedback": "💥 破绽识破！CRITICAL HIT！假设法秒杀：兔 = (94 - 35×2) ÷ (4-2) = 12 只！铜人锁刻度 12 上清清楚楚印着嫌疑人刚才留下的朱砂指印！", "hintFeedback": "🤔 战术耳机提示：假设全是鸡，35 × 2 = 70 只脚，比实际的 94 只脚少了 24 只脚。把一只鸡换成一只兔多 2 只脚，24 ÷ 2 = ？"}, {"round": 2, "suspectStatement": "“我当时在亭中作诗！诗帖上写得清清楚楚：‘精卫乃神话侍女’，这可是千年雅韵！”", "questionDesc": "安泽指出《精卫填海》文言实词的古今异义，当场戳穿其伪造不在场证明的破绽：", "options": [{"text": "A. 《山海经》原文‘炎帝之少女’中的‘少女’古义为‘小女儿’，绝非侍女！此诗帖漏洞百出，系其情急之下拼凑的假墨宝！", "correct": true}, {"text": "B. ‘少女’古今意思完全相同，毫无区别。", "correct": false}, {"text": "C. 精卫填海只是一只鸟，跟炎帝没有任何血缘联系。", "correct": false}], "correctFeedback": "💥 破绽识破！CRITICAL HIT！安泽精准指出古今异义考点，嫌疑人附庸风雅却露陷大破绽，诗帖墨迹未干被当场查扣！", "hintFeedback": "🤔 战术耳机提示：四年级文言文考点中，‘少女’是典型的古今异义词，古代指‘小女儿’，嫌疑人望文生义反露马脚！"}, {"round": 3, "suspectStatement": "“洋人商使写的日记里提到‘steal’，那明明是‘散步’的意思，怎么能赖到我头上！”", "questionDesc": "安泽精准翻译英语一般过去时不规则动词 broke 与 stole 的关键作案记录：", "options": [{"text": "A. 日记原文：“Someone broke the lock and stole the statue.” broke 是 break（打破）的过去式，stole 是 steal（偷窃）的过去式，铁证如山！", "correct": true}, {"text": "B. stole 是 walk 的过去式，确实是散步的意思。", "correct": false}, {"text": "C. 动词过去式后面必须都加 -ed，stole 没有加 -ed 属于拼写无效。", "correct": false}], "correctFeedback": "💥 绝杀识破！CASE CRACKED！不规则动词过去式精准锁定破锁与行窃时间，赃物当场在崔掌事袖袍暗袋中起获！", "hintFeedback": "🤔 战术耳机提示：steal 的过去式是不规则变化 stole，break 的过去式是 broke，这是昨晚 9 点作案的确凿实证！"}]}, "g5_01": {"id": "g5_01", "grade": "g5", "caseIdDisplay": "CASE #025", "gradeDisplay": "五年级 · 高阶思维", "curricularDisplay": "课内多边形割补 × 课外相遇奥数与文言", "title": "江南织造府的密室几何图", "rewardText": "+45 心愿币", "rewardCoins": 45, "rewardXp": 90, "secretCard": "《天工开物·云锦织造图》机密档案", "desc": "江南织造府呈献给内廷的云锦凤袍设计图在组合多边形回廊密室失踪！守卫辩称机关是在两名巡更人相遇时自动闭锁，不可能有人中途穿行。调查官安泽运用多边形割补面积与相遇追及模型勘验现场！", "connectedText": "已连结五年级语数英 3 个核心课内外考点", "suspect": {"name": "织造督工 魏某", "avatar": "🧐", "mood": "胸有成竹冷笑"}, "clues": [{"icon": "📐", "title": "证物A：回廊梯形与三角形平面图纸"}, {"icon": "📜", "title": "证物B：《杨氏之子》式机敏回信竹简"}, {"icon": "✉️", "title": "证物C：截获的将来时与比较级英文暗信"}], "knowledge": {"math": {"icon": "🧮", "subject": "五年级数学 · 课内多边形割补 × 课外相遇问题", "title": "组合图形割补转化与相遇时空模型", "layers": [{"tag": "🏷️ 知识母树坐标", "content": "五年级数学思维 > 几何与代数综合 > 组合图形面积与相遇行程"}, {"tag": "🎯 第一性原理 / 底层规律", "content": "图形的守恒性：无论如何切割平移，面积总和不变；相向运动法则：两地距离 = 速度和 × 相遇时间 (S = (v1 + v2) × t)。"}, {"tag": "🧠 核心推演与方程模型", "content": "• 割补面积：将梯形与不规则多边形分割为标准长方形与三角形，或用“大框减多余”方法求面积。\n• 相遇计算：甲速 50 m/min，乙速 40 m/min，相向而行，全长 360 米，相遇时间 t = 360 ÷ (50 + 40) = 4 分钟。"}, {"tag": "⚔️ 剧本杀案卷应用 · 破案实战", "content": "【案卷应用】：魏某声称两名巡夜人相遇只用了 2 分钟，因此密室在两分钟内就已闭锁。安泽通过多边形回廊割补算出真实周长为 360 米，算得相遇必须耗时 4 分钟！多出来的 2 分钟正是他打开暗门盗取图纸的作案时间！"}, {"tag": "🔗 前后知识锚点", "content": "⬅️ 前置：长方形、正方形、平行四边形面积公式\n➡️ 延伸思考：如果两名巡更人不是相向而行，而是同向追及，速度差模型该如何列式？"}]}, "chinese": {"icon": "📜", "subject": "五年级大语文 · 课内《杨氏之子》× 课外说明手法鉴赏", "title": "《杨氏之子》语言机锋与说明文逻辑剖析", "layers": [{"tag": "🏷️ 知识母树坐标", "content": "五年级大语文 > 文言智趣与实用文体 > 语言机锋与说明方法"}, {"tag": "🎯 第一性原理 / 底层规律", "content": "文言机智问答讲究“以子之矛攻子之盾”；说明文讲究客观严密，善用“列数字、作比较、打比方”增强说服力。"}, {"tag": "🧠 核心推演与名篇赏析", "content": "• 课内名篇：《杨氏之子》孔君平指杨梅曰“此是君家果”，杨氏子应声答曰“未闻孔雀是夫子家禽”。利用姓氏与事物的巧妙联想幽默反击。\n• 说明手法：列数字（确凿数据）、作比较（突出特征）、打比方（生动形象）。"}, {"tag": "⚔️ 剧本杀案卷应用 · 破案实战", "content": "【案卷应用】：魏督工借《杨氏之子》狡辩：“此图乃官家物，小的姓魏，‘魏’者‘危’也，安敢触碰危险之物？”安泽当即应声反击：“既知姓魏非危，尔字‘守诚’，未闻‘守诚’者专事盗窃！”巧借其言语破其伪装！"}, {"tag": "🔗 前后知识锚点", "content": "⬅️ 前置：四下寓言故事的寓意提炼\n➡️ 延伸思考：初中文言文中的反诘语气词与修辞色彩如何辨别？"}]}, "english": {"icon": "🇬🇧", "subject": "五年级英语 · 课内将来时 (will) × 课外形容词比较级最高级", "title": "一般将来时态与比较级逻辑密函破译", "layers": [{"tag": "🏷️ 知识母树坐标", "content": "五年级英语语法 > 核心时态网络 > 一般将来时与比较级最高级"}, {"tag": "🎯 第一性原理 / 底层规律", "content": "表达将来要发生的动作：will + 动词原形 / be going to + 动词原形。形容词比较级：两者对比加 -er 或 more；三者以上最高级加 -est 或 most。"}, {"tag": "🧠 核心推演与语法结构", "content": "• 句型公式：The north gate will be safer than the south gate tomorrow.\n• 易错变化：safe -> safer, fast -> faster, dangerous -> more dangerous."}, {"tag": "⚔️ 剧本杀案卷应用 · 破案实战", "content": "【案卷应用】：暗信截获：“I will take the design map to the pier tomorrow. The water route is faster than the land route.” 明确揭示了其盗取图纸后将于明日走水路转移的计划！"}, {"tag": "🔗 前后知识锚点", "content": "⬅️ 前置：一般现在时与现在进行时\n➡️ 延伸思考：现在完成时 (have/has + 过去分词) 如何表达动作对现在的影响？"}]}}, "rounds": [{"round": 1, "suspectStatement": "“两名巡更人相向巡逻，回廊只有 180 米，他们 2 分钟就碰头了，机关立刻上锁，我哪有时间打开密室？！”", "questionDesc": "安泽运用五年级多边形割补法重新丈量回廊图形，并结合相遇行程模型核算：", "options": [{"text": "A. 真实回廊全长是 360 米，两守卫速度和为 90 m/min，相遇实际需要 4 分钟！多出来的 2 分钟正是盗图时间！", "correct": true}, {"text": "B. 无论周长多少，守卫说 2 分钟相遇就一定是 2 分钟。", "correct": false}, {"text": "C. 相遇时间应该用两地距离除以两人的速度差来计算。", "correct": false}], "correctFeedback": "💥 破绽识破！CRITICAL HIT！安泽割补面积还原全长 360 米：360 ÷ (50 + 40) = 4 分钟！魏督工虚报时间掩盖了整整 2 分钟的盗窃间隙！", "hintFeedback": "🤔 战术耳机提示：安泽，相向而行的相遇问题公式是：路程 ÷ 速度和 = 相遇时间。回廊全长 360 米，守卫速度和是 50 + 40 = 90，360 ÷ 90 等于多少？"}, {"round": 2, "suspectStatement": "“大人何必难为我？《杨氏之子》尚知以名论物，小人姓魏，取图岂非‘自找危险’？我绝不敢触碰国宝！”", "questionDesc": "安泽运用《杨氏之子》以子之矛攻子之盾的言语艺术与反驳逻辑：", "options": [{"text": "A. “既知姓魏非危，尔字‘守诚’，未闻守诚之人行不义盗窃之事！”以其言语逻辑精准反制其伪善抗辩！", "correct": true}, {"text": "B. 古代文言文的机智问答只是玩文字游戏，不能用作断案回应。", "correct": false}, {"text": "C. 附和其言论，承认姓魏确实不适合看管图纸。", "correct": false}], "correctFeedback": "💥 破绽识破！CRITICAL HIT！安泽巧妙引用其表字“守诚”以子之矛攻子之盾，魏督工辞穷面赤，心理防线骤降！", "hintFeedback": "🤔 战术耳机提示：回想《杨氏之子》杨氏小儿如何利用孔君平的“孔”姓秒回孔雀，安泽同样抓住嫌疑人自己的言语漏洞漂亮回击！"}, {"round": 3, "suspectStatement": "“截获的洋文信件根本不是我的，我连信里写什么时间、去哪里都看不懂！”", "questionDesc": "安泽当场剖析信中一般将来时 will 与形容词比较级 faster 的内容：", "options": [{"text": "A. 信中明确写着：“I will take the map tomorrow. The boat is faster than the horse.”连转移工具与时间都彻底交代了！", "correct": true}, {"text": "B. will 在英语中只表示意愿，绝不代表将要发生的时间。", "correct": false}, {"text": "C. faster 是最高级，代表世界上最慢的速度。", "correct": false}], "correctFeedback": "💥 绝杀识破！CASE CRACKED！将来时与比较级彻底锁定作案证据与销赃路线，蛙人当场在官船码头将图纸截获缴回！", "hintFeedback": "🤔 战术耳机提示：will + 动词原形表示明天将要进行的动作，faster than 表示水路比陆路更快，铁证如山！"}]}, "g5_02": {"id": "g5_02", "grade": "g5", "caseIdDisplay": "CASE #029", "gradeDisplay": "五年级 · 课外拔高", "curricularDisplay": "课外奥数行程追及 × 文言虚词‘之’ × 过去进行时", "title": "丝路古道行商与莫高密信", "rewardText": "+48 心愿币", "rewardCoins": 48, "rewardXp": 95, "secretCard": "《敦煌遗书·丝路密记》珍藏绝密图谱", "desc": "河西走廊驿站发生通关文牒调包案！嫌疑商驼队队长声称慢驼队比快马先走 2 小时，快马绝不可能在沙暴前追及。且截获的莫高窟暗记中屡现文言虚词‘之’与英文过去进行时。调查官安泽运用时空追及模型与文言深度阅读攻破防线！", "connectedText": "已连结五年级追及行程、文言虚词与过去进行时", "suspect": {"name": "商队领班 康驼师", "avatar": "🐫", "mood": "狡诈推诿"}, "clues": [{"icon": "🐎", "title": "证物A：驿站快马与驼队出发登记沙漏"}, {"icon": "📜", "title": "证物B：莫高窟古卷残片（含文言虚词‘之’）"}, {"icon": "🔍", "title": "证物C：丝路洋客密记（过去进行时场景）"}], "knowledge": {"math": {"icon": "🧮", "subject": "五年级奥数 · 同向追及行程模型", "title": "追及距离与时空速度差模型", "layers": [{"tag": "🏷️ 知识母树坐标", "content": "五年级数学思维 > 行程专项 > 同向追及问题"}, {"tag": "🎯 第一性原理 / 底层规律", "content": "同向运动追及核心公式：追及路程 = 速度差 × 追及时间 (S_差 = (v_快 - v_慢) × t)。"}, {"tag": "🧠 核心推演与方程模型", "content": "• 驼队速度 15 km/h，快马速度 35 km/h。驼队先走 2 小时，先行路程 = 15 × 2 = 30 km。\n• 速度差 = 35 - 15 = 20 km/h。\n• 追及所需时间 = 30 ÷ 20 = 1.5 小时！在沙暴来临前（2小时后）完全能够追上！"}, {"tag": "⚔️ 剧本杀案卷应用 · 破案实战", "content": "【案卷应用】：康驼师借口‘先走两小时快马追不上’抗拒审查。安泽列出追及方程算出只需 1.5 小时即可在白石岭追及，当场证实通关文牒就是在白石岭被其秘密调换！"}, {"tag": "🔗 前后知识锚点", "content": "⬅️ 前置：五年级相遇问题 (路程 ÷ 速度和)\n➡️ 延伸思考：若快马中途在绿洲休息 20 分钟，追及时间又当如何修正？"}]}, "chinese": {"icon": "📜", "subject": "五年级大语文 · 文言文高频虚词“之”的辨析", "title": "文言虚词“之”的四重宇宙与句读", "layers": [{"tag": "🏷️ 知识母树坐标", "content": "五年级大语文 > 文言虚词体系 > “之”字的用法与意义"}, {"tag": "🎯 第一性原理 / 底层规律", "content": "“之”字四种高频用法：①代词（代人或物）；②结构助词（相当于“的”）；③动词（往、到...去）；④宾语前置或主谓之间取消句子独立性。"}, {"tag": "🧠 核心推演与名篇赏析", "content": "• 代词：“思援弓缴而射之”（射它，大雁）。\n• 助词：“杨氏之子”（杨家的孩子）。\n• 动词：“送孟浩然之广陵”（到广陵去）。\n• 课外寓言：“郑人有欲买履者，先自度其足，而置之其坐。”（之代指量好的尺码）。"}, {"tag": "⚔️ 剧本杀案卷应用 · 破案实战", "content": "【案卷应用】：暗记密令写着“得牒，速走敦煌之玉门”。康驼师辩称“之”是“的东西”，意思是“敦煌的东西在玉门”。安泽当场断正：“此处‘之’为动词，释为‘往、前往’，全句是‘拿到文牒速从敦煌赶往玉门’！”"}, {"tag": "🔗 前后知识锚点", "content": "⬅️ 前置：《杨氏之子》中的助词“之”\n➡️ 延伸思考：六下文言文《学弈》中一句话出现 6 个“之”字，分别代表什么含义？"}]}, "english": {"icon": "🇬🇧", "subject": "五年级英语 · 课外拔高过去进行时", "title": "过去进行时态 (was/were doing) 场景还原则", "layers": [{"tag": "🏷️ 知识母树坐标", "content": "五年级英语语法 > 核心时态网络 > 过去进行时态与时间状语从句"}, {"tag": "🎯 第一性原理 / 底层规律", "content": "表示过去某一特定时刻或时间段正在发生的动作：主语 + was/were + verb-ing。"}, {"tag": "🧠 核心推演与语法结构", "content": "• 常用结构：When the rain started, what were you doing?\n• 例句推演：I was sleeping at 8 PM yesterday. (昨天晚上8点我正在睡觉)\n• 易混对比：一般过去时表达动作完成，过去进行时强调当时正在进行！"}, {"tag": "⚔️ 剧本杀案卷应用 · 破案实战", "content": "【案卷应用】：丝路目击日记中写道：“At 8 PM yesterday, the camel driver was hiding the red box under the stone.” 证明嫌犯在昨晚 8 点正在藏匿装有文牒的红木匣，谎言立碎！"}, {"tag": "🔗 前后知识锚点", "content": "⬅️ 前置：四年级现在进行时 (is/are doing)\n➡️ 延伸思考：将来进行时 (will be doing) 又该如何表达？"}]}}, "rounds": [{"round": 1, "suspectStatement": "“驼队慢悠悠先走了两小时，快马出发时天色已晚，绝不可能在沙暴发生前追上我们！”", "questionDesc": "安泽运用五年级奥数【同向追及模型】，当场计算快马追及驼队的精确时间：", "options": [{"text": "A. 驼队先行 15 × 2 = 30 km，速度差为 35 - 15 = 20 km/h，追及时间 = 30 ÷ 20 = 1.5 小时！完全能在 2 小时后的沙暴前追及！", "correct": true}, {"text": "B. 速度差应该用 35 + 15 = 50 km/h 来计算。", "correct": false}, {"text": "C. 慢车先走两小时，无论速度多快都永远追不上。", "correct": false}], "correctFeedback": "💥 破绽识破！CRITICAL HIT！追及公式秒出：追及路程 ÷ 速度差 = 30 ÷ 20 = 1.5 小时！刚好在白石岭与调包点完全吻合！", "hintFeedback": "🤔 战术耳机提示：追及问题的关键是：先行距离 ÷ 速度差 = 追及时间。15 × 2 = 30，35 - 15 = 20，30 ÷ 20 等于多少小时？"}, {"round": 2, "suspectStatement": "“密信中‘敦煌之玉门’，‘之’明明是‘的’的意思，我是去买敦煌特产，不是去玉门关！”", "questionDesc": "安泽当场剖析文言虚词“之”的四种用法，指出该句中“之”的真正实义：", "options": [{"text": "A. 此处‘之’充当动词，意为‘到、往……去’，如李白名句‘送孟浩然之广陵’！全句意为‘速从敦煌前往玉门’！", "correct": true}, {"text": "B. ‘之’在文言文中只有助词‘的’这一个意思，没有其他任何解释。", "correct": false}, {"text": "C. 此处‘之’是通假字，通‘芝麻’的‘芝’。", "correct": false}], "correctFeedback": "💥 破绽识破！CRITICAL HIT！文言动词‘之’铁证如山，直指嫌犯意图越过玉门关潜逃出境的叛国图谋！", "hintFeedback": "🤔 战术耳机提示：想想小学古诗《黄鹤楼送孟浩然之广陵》，诗题中的‘之’正是‘往、前往’的动词用法！"}, {"round": 3, "suspectStatement": "“昨晚 8 点我早就睡下了，洋人凭什么说看到我干了什么？！”", "questionDesc": "安泽指出洋人日记中过去进行时 (was doing) 的目击证词：", "options": [{"text": "A. 日记写道：“At 8 PM, he was hiding the red box under the stone.” 过去进行时精准记录其正藏匿红木匣的犯罪瞬间！", "correct": true}, {"text": "B. was hiding 表示他将在明天藏匿，不是昨晚发生的事。", "correct": false}, {"text": "C. 过去进行时只能用于疑问句，陈述句无效。", "correct": false}], "correctFeedback": "💥 绝杀识破！CASE CRACKED！骑兵连夜奔赴白石岭巨石之下，果然当场掘出了被掉包的朝廷八百里加急通关文牒！", "hintFeedback": "🤔 战术耳机提示：was hiding 是过去进行时，表示‘昨天晚上8点这个特定时刻正在做某事’，抵赖无效！"}]}, "bridge_01": {"id": "bridge_01", "grade": "bridge", "caseIdDisplay": "CASE #042", "gradeDisplay": "小升初与初中高难度", "curricularDisplay": "流水行船方程 × 文言虚词「而/其」× 浮力定律", "title": "宋代漕运沉银与粮仓失窃案", "rewardText": "+50 心愿币", "rewardCoins": 50, "rewardXp": 100, "secretCard": "《宋代水利枢纽与漕运机密图谱》", "desc": "北宋元祐年间，常平仓三千石官粮自下游开阳码头起运，抵达汴京时却空空如也。押粮官声称突发恶浪导致货船破损沉底；但搜查官发现漕运账本涂改隐晦，甚至打捞到了高密度白银！请调查官研读以下三门科学情报，识破嫌疑人伪证！", "connectedText": "已连结小升初数学方程、文言深度阅读与初中物理先修", "suspect": {"name": "押运官 钱某", "avatar": "🧔🏻‍♂️", "mood": "神色慌张辩解中"}, "clues": [{"icon": "🚢", "title": "证物A：水损货船吃水线与船舱泥沙"}, {"icon": "📜", "title": "证物B：押运官随身日记（含文言虚词）"}, {"icon": "⚖️", "title": "证物C：从河底打捞起的沉重密封木箱"}], "knowledge": {"math": {"icon": "📐", "subject": "数学思维 · 流水行船与二元一次方程", "title": "流水行船时空模型与方程求解", "layers": [{"tag": "🏷️ 知识母树坐标", "content": "小学奥数拓展 > 行程时空模型 > 流水行船与初中方程先修"}, {"tag": "🎯 第一性原理 / 底层规律", "content": "速度矢量的叠加性：顺水航行时船速与水速方向相同（顺水速度 = 船速 + 水速）；逆水航行时方向相反（逆水速度 = 船速 - 水速）。"}, {"tag": "🧠 核心推演与方程模型", "content": "• 顺水速度 v_顺 = v_船 + v_水\n• 逆水速度 v_逆 = v_船 - v_水\n• 关键公式推导：两式相加得：v_船 = (v_顺 + v_逆) ÷ 2；两式相减得：v_水 = (v_顺 - v_逆) ÷ 2。"}, {"tag": "⚔️ 剧本杀案卷应用 · 破案实战", "content": "【案卷应用】：钱大人辩称从下游开阳码头逆流而上到汴京 120 华里耗费了 30 个时辰（逆水时速仅 4 里/时），声称是水流湍急。然而根据官驿同期记录，同等平底货船顺水时速为 12 里/时。由此计算得：静水船速 = (12 + 4) ÷ 2 = 8 里/时，水流时速 = (12 - 4) ÷ 2 = 4 里/时。以其船体性能，逆行 120 华里只需 120 ÷ 4 = 30 个时辰看起来成立，但他声称中途遭遇恶浪抛粮抢险耗费了 10 个时辰——若扣除抛粮停泊的 10 个时辰，实际逆行仅 20 个时辰，时速高达 6 里/时，逆水速度不可能超越其物理极限！这证明所谓‘停泊抛粮抢险’纯属捏造！"}, {"tag": "🔗 前后知识锚点", "content": "⬅️ 前置：相遇与追及问题（两物体相对运动）\n➡️ 延伸思考：初中物理中的相对速度概念与高中矢量合成分解。"}]}, "chinese": {"icon": "📖", "subject": "大语文 · 高频文言虚词「而」「其」辨析", "title": "高频文言虚词「而」「其」通假与句式逻辑", "layers": [{"tag": "🏷️ 知识母树坐标", "content": "小升初与中考文言文核心考点 > 常见 18 个文言虚词与阅读推断"}, {"tag": "🎯 第一性原理 / 底层规律", "content": "文言虚词无固定单一含义，需‘字不离词、词不离句’，根据上下文逻辑关系（顺承、转折、修饰、因果）判定词义。"}, {"tag": "🧠 核心推演与文学赏析", "content": "• 「而」的常见用法：\n  ① 顺承关系：“温故而知新”（接着、然后）\n  ② 转折关系：“舟已行矣，而剑不行”（然而、却）\n  ③ 修饰关系：“临溪而渔”（表状态伴随）\n• 「其」的常见用法：人称代词（他的/他们的）、指示代词（那/其中）、语气副词（难道/大概）。"}, {"tag": "⚔️ 剧本杀案卷应用 · 破案实战", "content": "【案卷应用】：账本上记录：“开阳发运，风平波静，及至落星湾，浪涌舟裂，而粮未沉，弃之以保全船。” 钱大人辩解称‘而’字是承接上文，表示粮食顺理成章被水浸泡沉入江中。安泽当场反驳：“‘舟裂，而粮未沉’中，‘而’字分明是转折关系（船身裂开，‘然而’粮食却并没有沉没）！既然粮食没沉，你为何下令弃粮？分明是在落星湾早已私自将粮食转运卸空，随后故意凿船伪造沉粮现场！”"}, {"tag": "🔗 前后知识锚点", "content": "⬅️ 前置：文言文基本句读与常见实词积累\n➡️ 延伸思考：初中必背《岳阳楼记》中“登斯楼也，则有去国怀乡……”中的“则”字具有怎样的连词转折与因果效应？"}]}, "physics": {"icon": "🧬", "subject": "科学素养 · 浮力阿基米德原理与密度平衡", "title": "阿基米德浮力定律与物质密度鉴别", "layers": [{"tag": "🏷️ 知识母树坐标", "content": "小升初跨学科先修 > 初中八年级物理核心 > 密度计算与浮力综合应用"}, {"tag": "🎯 第一性原理 / 底层规律", "content": "阿基米德原理：浸在液体中的物体受到的浮力，大小等于它排开的液体受到的重力 (F_浮 = ρ_液 × g × V_排)。物体的沉浮条件取决于自身的平均密度与液体密度的相对关系。"}, {"tag": "🧠 核心推演与实验探究", "content": "• 浮力公式：F_浮 = ρ_液 × g × V_排\n• 密度公式：ρ = m ÷ V\n• 沉浮法则：ρ_物 < ρ_液 时上浮；ρ_物 = ρ_液 时悬浮；ρ_物 > ρ_液 时下沉。\n• 水的密度约为 1.0 g/cm³，白银密度高达 10.5 g/cm³，干燥稻谷密度仅约 0.6~0.7 g/cm³。"}, {"tag": "⚔️ 剧本杀案卷应用 · 破案实战", "content": "【案卷应用】：从江底打捞起贴有‘稻谷官仓’封条的沉重木箱。钱大人声称箱内装的是吸水后沉入江底的稻谷。安泽当场揭穿：“正常稻谷密度仅 0.65 g/cm³，即使浸水饱和，其混合密度也绝不超过 1.1 g/cm³；而打捞出体积 1 立方尺的木箱，实测重量高达 100 余斤（计算密度超过 2.5 g/cm³），里面分明藏有重金属！撬开木箱后，果然在下层起获了涂有防锈蜡的官银五千两！”"}, {"tag": "🔗 前后知识锚点", "content": "⬅️ 前置：质量与体积的基本测量\n➡️ 延伸思考：如果将这只箱子置于水银（密度 13.6 g/cm³）中，它会下沉还是漂浮？"}]}}, "rounds": [{"round": 1, "suspectStatement": "“大人啊！从开阳到汴京整整 120 华里，逆水行舟艰难万分，我们花了整整 30 个时辰！中途遇到大风浪，为了保全船工性命，小人无奈才弃粮保船，绝无私吞啊！”", "questionDesc": "张安泽调取水运时空数据并核算流水行船方程，当场识破其航程伪证：", "options": [{"text": "A. 若扣除其声称弃粮停靠抢险的 10 个时辰，实际逆行仅 20 个时辰，逆流时速达 6 里/时，超越了逆水物理极值！说明其抢险停靠纯属虚构！", "correct": true}, {"text": "B. 流水行船中，逆水时速一定比顺水时速快，他的时间说得过去。", "correct": false}, {"text": "C. 顺水速度等于静水船速减去水流速度，计算毫无破绽。", "correct": false}], "correctFeedback": "💥 破绽识破！CRITICAL HIT！安泽运用流水行船方程精准戳穿航程虚构：嫌疑人若真遭遇狂风大浪抛粮抢险 10 个时辰，剩余时间根本不可能抵达汴京！", "hintFeedback": "🤔 战术耳机提示：安泽，回想【流水行船原理】：静水船速 = (顺水速 + 逆水速) / 2。若停靠 10 时辰，实际航行仅 20 时辰，逆水速度 6 里/时远超该船物理极限！"}, {"round": 2, "suspectStatement": "“账簿记录‘舟裂而粮未沉’，‘而’字就是顺理成章之意，说明船裂了之后粮食跟着泡水坏掉了，小人句句属实！”", "questionDesc": "张安泽依据大语文高频文言虚词「而」的核心用法展开质询：", "options": [{"text": "A. ‘而’字在此处表【转折关系】（然而），意为‘船体开裂，然而粮食并未沉没’！粮食既未沉，为何仓房空空？分明提前转运私吞！", "correct": true}, {"text": "B. ‘而’字在文言文中只能充当语气助词，没有任何语法含义。", "correct": false}, {"text": "C. ‘而’字表修饰关系，说明沉船是慢慢发生的。", "correct": false}], "correctFeedback": "💥 破绽识破！CRITICAL HIT！安泽精准指明文言文转折用法，钱押运官脸色惨白，吞吞吐吐无法自圆其说！", "hintFeedback": "🤔 战术耳机提示：安泽，回想【文言虚词考点】：「而」字连接‘舟裂’与‘粮未沉’，前后语义构成截然相反的转折逻辑！"}, {"round": 3, "suspectStatement": "“那沉入水底的箱子装的真真切切全是稻谷！稻谷在水里吸饱了水，自然沉到底下，怎么可能是什么官银？！”", "questionDesc": "张安泽结合初中先修阿基米德浮力定律与密度鉴别公式指出：", "options": [{"text": "A. 稻谷密度远小于水，即便吸水饱和后混合密度也接近水；该箱子打捞测重密度超 2.5 g/cm³，必定藏有高密度白银（银密度 10.5 g/cm³）！", "correct": true}, {"text": "B. 任何物体无论多大多重，在水里受到的浮力都完全相同。", "correct": false}, {"text": "C. 水的密度比黄金和白银都要大，金属才会浮在水面上。", "correct": false}], "correctFeedback": "💥 绝杀识破！CASE CRACKED！三千两沉银箱在公堂之上当场开封，银光耀目！钱某双膝跪地，全盘供出幕后漕运销赃网络！", "hintFeedback": "🤔 战术耳机提示：安泽，回想【浮力与密度】：稻谷密度仅 0.65，木箱实测沉降重力远超排开水重，唯有内藏贵重重金属才会如此迅速沉底！"}]}, "bridge_02": {"id": "bridge_02", "grade": "bridge", "caseIdDisplay": "CASE #049", "gradeDisplay": "小升初与跨学科拔尖", "curricularDisplay": "工程浓度方程 × 杠杆力矩平衡 × 古文炼字修辞", "title": "天工开物机关楼与墨家齿轮", "rewardText": "+55 心愿币", "rewardCoins": 55, "rewardXp": 110, "secretCard": "《天工开物·水碓杠杆与浑天仪》典藏拓片", "desc": "钦天监机关楼的浑天黄道仪发生铜钟失准事件！机关总掌声称是墨家平衡杠杆动力臂自然磨损，且工期由于工人流失延误。安泽通过力矩平衡公式、工程工作总量代数方程与古文炼字考据，揭开了一场伪造工期私吞重金的惊天阴谋！", "connectedText": "已连结小升初数学工程方程、初中物理杠杆力矩与古文修辞", "suspect": {"name": "工造司丞 鲁主簿", "avatar": "⚙️", "mood": "振振有词"}, "clues": [{"icon": "⚖️", "title": "证物A：浑天仪青铜不平衡力矩杠杆"}, {"icon": "📜", "title": "证物B：工程流水工期账本与修辞批注"}, {"icon": "🧪", "title": "证物C：配重铜球内部的空心夹铅样本"}], "knowledge": {"math": {"icon": "🧮", "subject": "数学思维 · 工程问题与工作效率方程", "title": "工作总量归一与合作效率模型", "layers": [{"tag": "🏷️ 知识母树坐标", "content": "小升初数学压轴考点 > 应用题模型 > 工程问题与分式方程"}, {"tag": "🎯 第一性原理 / 底层规律", "content": "工作总量 = 工作效率 × 工作时间。将总量视为单位‘1’，合作效率等于各单独效率之和。"}, {"tag": "🧠 核心推演与方程模型", "content": "• 甲队单独做需 20 天，效率 1/20；乙队单独做需 30 天，效率 1/30。\n• 两队合作每天效率 = 1/20 + 1/30 = 5/60 = 1/12。\n• 合作完成需要 1 ÷ (1/12) = 12 天。"}, {"tag": "⚔️ 剧本杀案卷应用 · 破案实战", "content": "【案卷应用】：鲁主簿虚报工程耗时 25 天并申请巨额工钱。安泽列出甲乙两班组效率方程，算得合作只需 12 天，揭穿其虚报 13 天全员工资中饱私囊的罪证！"}, {"tag": "🔗 前后知识锚点", "content": "⬅️ 前置：分数混合运算与工程基础\n➡️ 延伸思考：如果中途甲队休息 3 天，全部工程耗时应如何建立方程求解？"}]}, "chinese": {"icon": "📜", "subject": "大语文 · 古诗文‘炼字’艺术与修辞辨析", "title": "文言‘炼字’传神与修辞手法鉴赏", "layers": [{"tag": "🏷️ 知识母树坐标", "content": "小升初与中考语文核心考点 > 古代诗歌鉴赏 > 炼字艺术与修辞手法"}, {"tag": "🎯 第一性原理 / 底层规律", "content": "‘炼字’指诗人推敲动词、形容词或副词，达到‘一字传神’的意境（如‘春风又绿江南岸’之‘绿’）。"}, {"tag": "🧠 核心推演与名篇赏析", "content": "• 名篇炼字：王安石改‘到、过、入、满’为‘绿’，变静态为动态，生动展现春回大地的蓬勃生机。\n• 贾岛‘推敲’典故：“鸟宿池边树，僧敲月下门”，以动衬静，烘托夜深寂静。"}, {"tag": "⚔️ 剧本杀案卷应用 · 破案实战", "content": "【案卷应用】：鲁主簿为开脱罪责，在日记中涂改‘匠人窃铜而去’为‘匠人投铜而铸’。安泽从字法与炼字意境当场指出其‘改字伪造’破绽！"}, {"tag": "🔗 前后知识锚点", "content": "⬅️ 前置：古诗词朗读与大意理解\n➡️ 延伸思考：初中文言文中词类活用（名词作动词、使动用法）的识别与赏析。"}]}, "physics": {"icon": "⚙️", "subject": "科学素养 · 杠杆五要素与力矩平衡条件", "title": "杠杆平衡条件 (F1 × L1 = F2 × L2)", "layers": [{"tag": "🏷️ 知识母树坐标", "content": "初中物理八年级先修 > 简单机械 > 杠杆力矩平衡条件"}, {"tag": "🎯 第一性原理 / 底层规律", "content": "杠杆平衡条件：动力 × 动力臂 = 阻力 × 阻力臂 (F1 × L1 = F2 × L2)。"}, {"tag": "🧠 核心推演与实验探究", "content": "• 动力臂 L1 为支点到动力作用线的垂直距离；阻力臂 L2 为支点到阻力作用线的垂直距离。\n• 若力臂缩短一半，要保持平衡，力必须加倍；若两端力臂相等，则两端受力必相等。"}, {"tag": "⚔️ 剧本杀案卷应用 · 破案实战", "content": "【案卷应用】：鲁主簿辩称杠杆倾斜是由于‘铜臂磨损缩短’。安泽用尺测量力臂完全对称，但两端受力平衡却要求一端重 10 斤一端重 6 斤，当场证明右侧铜球是空心夹铅作假！"}, {"tag": "🔗 前后知识锚点", "content": "⬅️ 前置：天平与重力的基本概念\n➡️ 延伸思考：滑轮组与斜面机械效率如何计算？"}]}}, "rounds": [{"round": 1, "suspectStatement": "“天公不作美，甲班组单独修需要 20 天，乙班组单独修要 30 天，两班组一起赶工足足耗了 25 天才修好，多要点工钱怎么了？！”", "questionDesc": "安泽运用小升初【工程问题】列出工作效率方程，当场计算合作所需天数：", "options": [{"text": "A. 合作效率为 1/20 + 1/30 = 1/12，两班组合作只需 12 天！嫌疑人虚报了整整 13 天的工期工钱！", "correct": true}, {"text": "B. 合作所需时间是 20 + 30 = 50 天，25 天已经算快的了。", "correct": false}, {"text": "C. 工程问题无法用数学方程精确推算。", "correct": false}], "correctFeedback": "💥 破绽识破！CRITICAL HIT！工程方程秒破：1 ÷ (1/20 + 1/30) = 12 天！虚报的 13 天工钱全被鲁主簿转入自己私账！", "hintFeedback": "🤔 战术耳机提示：把总工程看作 1，甲每天完成 1/20，乙每天完成 1/30，两人合做每天完成 1/12，需要多少天？"}, {"round": 2, "suspectStatement": "“我这公文记的‘僧敲月下门’不过是随手抄录，跟浑天仪故障毫无关系！”", "questionDesc": "安泽依据贾岛‘推敲’典故与炼字艺术，点破公文背后的秘密：", "options": [{"text": "A. ‘推敲’原典中以动衬静，而公文记录暗指其深夜‘敲门私运铜料’，以此字暗号接应同党！", "correct": true}, {"text": "B. 贾岛推敲是指练习推门和敲门的力量大小，是物理力学问题。", "correct": false}, {"text": "C. 文言炼字跟现代破案没有任何联系。", "correct": false}], "correctFeedback": "💥 破绽识破！CRITICAL HIT！安泽揭开文人暗语，深夜守门官当场供认曾接听其‘敲三响’暗号放行铜料马车！", "hintFeedback": "🤔 战术耳机提示：贾岛诗中‘敲’字展现出清脆动作与声响，嫌疑人在值班日记中借此作为深夜交接铜料的接头暗记！"}, {"round": 3, "suspectStatement": "“那机关平衡杆两端都是纯铜打造，倾斜不过是支点松动，岂能说我偷换了铜料？！”", "questionDesc": "安泽运用初中物理【杠杆平衡条件 (F1×L1 = F2×L2)】，当场称重力矩：", "options": [{"text": "A. 支点两侧力臂完全相等 (L1 = L2)，平衡时两端铜球质量必须相等！实测左球 10 斤右球仅 6 斤，右球分明是掏空偷换了铜料！", "correct": true}, {"text": "B. 等臂杠杆两边重量不同也能自然保持水平。", "correct": false}, {"text": "C. 只要动力足够大，力臂长度对杠杆平衡没有任何影响。", "correct": false}], "correctFeedback": "💥 绝杀识破！CASE CRACKED！凿开右侧铜球，里面竟然全是廉价泥铅与石块！上千斤失窃的黄铜在鲁主簿家地窖被全部起获！", "hintFeedback": "🤔 战术耳机提示：等臂杠杆平衡条件：F1 × L1 = F2 × L2，当 L1 = L2 时，F1 必须等于 F2！重量相差 4 斤证明内有猫腻！"}]}};
 
-    const CHRONO_CASE_ROUNDS = [
-      {
-        round: 1,
-        suspectStatement: '“大人明鉴！我们从下游开阳码头逆流到汴京，全程 36 公里，江水逆流凶猛，我们拼命划船足足航行了 2.5 小时！途中根本没有停靠，怎么可能私自倒卖粮食啊？！”',
-        questionDesc: '已知粮船在静水速度为 15 km/h，逆流水速为 3 km/h，全程 36 公里。嫌疑人声称逆水只用了 2.5 小时，破绽在于：',
-        options: [
-          { text: 'A. 逆水实际速度 = 15 - 3 = 12 km/h，航行必须耗时整整 3 小时！多出的半小时正是私自停靠黑市倒卖的时间！', correct: true },
-          { text: 'B. 顺水航行速度应当更快，他实际耗时只有 1 小时。', correct: false },
-          { text: 'C. 水流速度是顺向的，所以逆水根本不会减慢船速。', correct: false }
-        ],
-        correctFeedback: '💥 破绽识破！CRITICAL HIT！安泽精准运用小升初流水行船模型：逆水速度 = 船速 - 水速 = 12 km/h。36 ÷ 12 = 3 小时！嫌疑人谎称 2.5 小时，多出的 30 分钟正是私自停靠黑市倒卖官粮的时间！',
-        hintFeedback: '🤔 战术耳机提示：安泽，回想刚才的【流水行船模型】：逆水航行时，江水在对抗船只前进，逆水速度 = 船速减去水速 (15 - 3 = 12)。全程 36 公里除以 12 等于几小时？重新算算看！'
-      },
-      {
-        round: 2,
-        suspectStatement: '“大人！就算时间有微小出入，账本上分明写着‘抵汴而止，吏其私籴之’，这是说货到了汴京才停止，是汴京粮吏自己跑来买粮食，跟我这个押运官无关啊！”',
-        questionDesc: '安泽调取漕运密账真迹，识破了他在文言虚词与释义上的狡辩陷阱：',
-        options: [
-          { text: 'A. ‘而’字表转折，‘其’字是指示代词指代钱某自己；‘籴’是买入粮食，整句实指‘运抵汴京前就停下了，是钱某自己私下卖粮变现’！', correct: true },
-          { text: 'B. ‘籴’是官府开仓放粮的意思，跟民间买卖毫无关系。', correct: false },
-          { text: 'C. 文言文中虚词没有实际意义，不能作为断案证据。', correct: false }
-        ],
-        correctFeedback: '💥 破绽识破！CRITICAL HIT！安泽一针见血破译宋代文言暗语：钱某偷换虚词指代！‘其’实指押运官自身，‘籴’（音dí）为买入，他故意模糊主语推卸罪责，但涂改痕迹彻底暴露了他的私籴企图！',
-        hintFeedback: '🤔 战术耳机提示：安泽，回想【文言虚词模型】，“籴”是买入粮食（相对的“粜”是卖出）。在古文中“其”常常指代当事人本身，回看账本涂改处，想想究竟是谁在主导这一行为？'
-      },
-      {
-        round: 3,
-        suspectStatement: '“大人饶命……但粮食真的全沉入河底了！木头货船遇到暗礁破裂沉底，这纯属天灾水患，我根本没有私藏银两啊！”',
-        questionDesc: '打捞队打捞沉船残片，发现木船不仅沉底且深陷河床淤泥。安泽依据初中浮力与密度定律指出：',
-        options: [
-          { text: 'A. 松木密度远小于水（ρ木 < ρ水），正常木船漏水后也会半浮于水面；沉底深陷是因为龙骨夹层暗中浇铸了密度高达 10.5 g/cm³ 的厚重白银！', correct: true },
-          { text: 'B. 木头在水里泡久了密度会自动变得比铁块还大，所以沉底是正常的。', correct: false },
-          { text: 'C. 水的浮力只与船只的颜色有关，与排开水的体积无关。', correct: false }
-        ],
-        correctFeedback: '💥 绝杀识破！CASE CRACKED！安泽运用阿基米德浮力定律与物质密度：木船哪怕进水，木质残骸仍具正浮力！搜查队凿开龙骨，果然起获了熔铸成船梁的 800 两纯银！铁证如山，嫌疑人彻底崩溃伏法！',
-        hintFeedback: '🤔 战术耳机提示：安泽，回想【浮力平衡模型】！木头的密度约为 0.6~0.8 g/cm³，水的密度是 1.0 g/cm³。阿基米德原理告诉我们木头具有天然浮力，为什么这艘木船会像巨石一样沉入河床？'
-      }
-    ];
+    // ==================== ⚡ 分级真题特训靶场题库 (小学4·5年级 语数英 课内外 52题) ====================
+    const CHRONO_ARENA_QUESTIONS = [{"id": "q_g4_m_in_01", "grade": "g4", "gradeDisplay": "四年级", "subject": "math", "subjectDisplay": "数学", "scope": "in", "scopeDisplay": "课内考点", "topic": "乘法分配律与简便计算", "question": "计算 125 × 32 × 25 时，下列最简便的拆分与运算路径是：", "options": ["A. 125 × (30 + 2) × 25", "B. (125 × 8) × (4 × 25) = 1000 × 100 = 100000", "C. 先用竖式算 125 × 32，再算乘 25", "D. 125 × 32 × (20 + 5)"], "correctIndex": 1, "analysis": "【知识母树】：乘法结合律与特殊数对转化。\n【破局原理】：把 32 拆成 8 × 4，与 125 凑成 1000，与 25 凑成 100。原式 = (125 × 8) × (4 × 25) = 100,000。口算秒出！"}, {"id": "q_g4_m_in_02", "grade": "g4", "gradeDisplay": "四年级", "subject": "math", "subjectDisplay": "数学", "scope": "in", "scopeDisplay": "课内考点", "topic": "大数的读法与数位顺序表", "question": "一个八位数，最高位千万位是 6，万位是 8，千位是 4，其余各位都是 0，这个数读作：", "options": ["A. 六千零八万四千", "B. 六千八万四千", "C. 六千零八十万四千", "D. 六千零零八万四千"], "correctIndex": 0, "analysis": "【知识母树】：大数的读法规则。\n【破局原理】：每级末尾的 0 都不读，其他数位连续有几个 0 都只读一个“零”。千万位 6，百万和十万位为 0，万位 8，万级读作“六千零八万”；个级千位 4，读作“四千”。合起来读作“六千零八万四千”。"}, {"id": "q_g4_m_in_03", "grade": "g4", "gradeDisplay": "四年级", "subject": "math", "subjectDisplay": "数学", "scope": "in", "scopeDisplay": "课内考点", "topic": "平行与垂直几何概念", "question": "在同一个平面内，两条直线的位置关系只有哪两种？", "options": ["A. 平行与垂直", "B. 平行与相交", "C. 相交与重合", "D. 垂直与交叉"], "correctIndex": 1, "analysis": "【知识母树】：平面几何公理。\n【破局原理】：在同一个平面内，两条不重合的直线要么相交，要么不相交（平行）。垂直是相交成 90° 直角的一种特殊情形，因此位置关系只有平行和相交两种。"}, {"id": "q_g4_m_in_04", "grade": "g4", "gradeDisplay": "四年级", "subject": "math", "subjectDisplay": "数学", "scope": "in", "scopeDisplay": "课内考点", "topic": "乘法分配律逆运算", "question": "计算 99 × 47 + 47 的巧算过程是：", "options": ["A. 47 × (99 + 1) = 47 × 100 = 4700", "B. 99 × (47 + 1) = 99 × 48", "C. (100 - 1) × 47 + 47", "D. 99 × 47 + 1"], "correctIndex": 0, "analysis": "【知识母树】：乘法分配律逆运算 a×b + a = a×(b + 1)。\n【破局原理】：把独立的 47 看作 47 × 1，提取公因数 47 得到 47 × (99 + 1) = 47 × 100 = 4700。"}, {"id": "q_g4_m_out_01", "grade": "g4", "gradeDisplay": "四年级", "subject": "math", "subjectDisplay": "数学", "scope": "out", "scopeDisplay": "课外奥数", "topic": "差倍模型", "question": "甲乙两筐苹果，甲筐比乙筐多 36 个，且甲筐苹果数是乙筐的 4 倍。乙筐有苹果多少个？", "options": ["A. 9 个", "B. 12 个", "C. 15 个", "D. 18 个"], "correctIndex": 1, "analysis": "【知识母树】：奥数差倍模型。\n【破局原理】：差 ÷ (倍数 - 1) = 较小数。甲是乙的 4 倍，甲比乙多 4 - 1 = 3 倍。乙筐 = 36 ÷ 3 = 12 个，甲筐 = 48 个。"}, {"id": "q_g4_m_out_02", "grade": "g4", "gradeDisplay": "四年级", "subject": "math", "subjectDisplay": "数学", "scope": "out", "scopeDisplay": "课外奥数", "topic": "鸡兔同笼假设法", "question": "笼中有鸡和兔共 35 只，数脚一共有 94 只。问兔有多少只？", "options": ["A. 10 只", "B. 12 只", "C. 14 只", "D. 16 只"], "correctIndex": 1, "analysis": "【知识母树】：经典假设法思维。\n【破局原理】：假设 35 只全是鸡，则只有 35 × 2 = 70 只脚，少了 94 - 70 = 24 只脚。每把一只鸡换成兔增加 4 - 2 = 2 只脚，故兔的只数 = 24 ÷ 2 = 12 只！鸡 = 23 只。"}, {"id": "q_g4_m_out_03", "grade": "g4", "gradeDisplay": "四年级", "subject": "math", "subjectDisplay": "数学", "scope": "out", "scopeDisplay": "课外奥数", "topic": "两端植树问题", "question": "在一条全长 120 米的小路一边植树，每隔 6 米栽一棵，两端都要栽。一共需要栽多少棵树？", "options": ["A. 20 棵", "B. 21 棵", "C. 19 棵", "D. 22 棵"], "correctIndex": 1, "analysis": "【知识母树】：两端都栽植树模型。\n【破局原理】：棵数 = 间隔数 + 1。间隔数 = 120 ÷ 6 = 20 个，总棵数 = 20 + 1 = 21 棵！"}, {"id": "q_g4_m_out_04", "grade": "g4", "gradeDisplay": "四年级", "subject": "math", "subjectDisplay": "数学", "scope": "out", "scopeDisplay": "课外奥数", "topic": "和倍模型", "question": "学校图书室故事书与科技书共 240 本，故事书本数是科技书的 3 倍。科技书有多少本？", "options": ["A. 60 本", "B. 80 本", "C. 90 本", "D. 120 本"], "correctIndex": 0, "analysis": "【知识母树】：和倍模型应用。\n【破局原理】：和 ÷ (倍数 + 1) = 较小数（1倍量）。科技书 = 240 ÷ (3 + 1) = 60 本，故事书 = 180 本。"}, {"id": "q_g4_c_in_01", "grade": "g4", "gradeDisplay": "四年级", "subject": "chinese", "subjectDisplay": "语文", "scope": "in", "scopeDisplay": "课内考点", "topic": "《观潮》重点修辞赏析", "question": "“浪潮越来越近，犹如千万匹白色战马齐头并进，浩浩荡荡地飞奔而来。” 这句话运用的修辞手法及表达效果是：", "options": ["A. 拟人，表现潮水像人一样有智慧", "B. 比喻，生动形象地写出大潮来时排山倒海的气势与磅礴声威", "C. 夸张，说明江面上真的有一万匹白马", "D. 排比，增强了文章的抒情节奏"], "correctIndex": 1, "analysis": "【知识母树】：部编版四上《观潮》比喻修辞。\n【破局原理】：将大潮比作“千万匹白色战马齐头并进”，生动逼真地刻画了钱塘江大潮形态与声势的雷霆万钧。"}, {"id": "q_g4_c_in_02", "grade": "g4", "gradeDisplay": "四年级", "subject": "chinese", "subjectDisplay": "语文", "scope": "in", "scopeDisplay": "课内考点", "topic": "《题西林壁》诗理剖析", "question": "苏轼《题西林壁》中“不识庐山真面目，只缘身在此山中”蕴含的哲理是：", "options": ["A. 只要身在庐山，就能看清庐山的全貌", "B. 要想客观全面地认识事物，必须跳出局部，摆脱主观盲区与局限", "C. 庐山的云雾太大，导致游客看不清方向", "D. 观察山峰一定要在正前方观察"], "correctIndex": 1, "analysis": "【知识母树】：哲理诗意探究。\n【破局原理】：诗人指出当局者迷的认识局限，告诉人们观察客观事物必须站在宏观、全面的角度，不能以偏概全。"}, {"id": "q_g4_c_in_03", "grade": "g4", "gradeDisplay": "四年级", "subject": "chinese", "subjectDisplay": "语文", "scope": "in", "scopeDisplay": "课内考点", "topic": "《精卫填海》文言实词", "question": "《精卫填海》中“炎帝之少女，名曰女娃”一句里的“少女”，在古代文言中的含义是：", "options": ["A. 年轻貌美的女孩", "B. 小女儿", "C. 宫廷女官", "D. 传说中的仙女"], "correctIndex": 1, "analysis": "【知识母树】：古今异义文言实词。\n【破局原理】：“少女”在文言中指“幼女、小女儿”（古义），今义才指年轻女子。此题是四上文言高频考点！"}, {"id": "q_g4_c_in_04", "grade": "g4", "gradeDisplay": "四年级", "subject": "chinese", "subjectDisplay": "语文", "scope": "in", "scopeDisplay": "课内考点", "topic": "易错多音字与字音字形", "question": "下列词语中加点字的注音完全正确的一项是：", "options": ["A. 投降 (xiáng)    潜入 (qián)    悄无声息 (qiǎo)", "B. 降落 (xiáng)    潜水 (qiǎn)    悄悄 (qiāo)", "C. 投降 (jiàng)    血液 (xiě)     洞穴 (xué)", "D. 荧光 (yín)      家雀儿 (qiǎo)  骨髓 (suí)"], "correctIndex": 0, "analysis": "【知识母树】：四上字音辨析。\n【破局原理】：降(xiáng 投降 / jiàng 降落)；潜(qián 二声，不可读成 qiǎn)；悄(qiǎo 悄无声息 / qiāo 悄悄话)。A 项注音完全正确。"}, {"id": "q_g4_c_out_01", "grade": "g4", "gradeDisplay": "四年级", "subject": "chinese", "subjectDisplay": "语文", "scope": "out", "scopeDisplay": "课外培优", "topic": "古代度量衡考据", "question": "成语“锱铢必较”中的“锱”和“铢”是古代极微小的重量单位。古代一斤等于多少两？（俗称“半斤八两”）", "options": ["A. 10 两", "B. 12 两", "C. 16 两", "D. 24 两"], "correctIndex": 2, "analysis": "【知识母树】：古代文化常识与成语考据。\n【破局原理】：古代 6 铢为 1 锱，24 铢为 1 两，16 两为 1 斤！因此半斤正好等于八两，“半斤八两”成语由此而来。"}, {"id": "q_g4_c_out_02", "grade": "g4", "gradeDisplay": "四年级", "subject": "chinese", "subjectDisplay": "语文", "scope": "out", "scopeDisplay": "课外培优", "topic": "神话文学流派精神", "question": "“女娲补天”、“夸父逐日”、“精卫填海”等上古神话，共同体现了中华民族怎样的先民精神内核？", "options": ["A. 顺应天命、与世无争的隐逸情操", "B. 战胜自然、改造自然、顽强不息的抗争品格", "C. 幻象逃避、追求永生的方术思想", "D. 尊卑有序的宗法礼仪体系"], "correctIndex": 1, "analysis": "【知识母树】：中国古代神话源流。\n【破局原理】：中国古代神话与西方神话不同，先民神话始终贯穿着勇于反抗自然灾害、顽强搏斗、坚韧不屈的积极抗争精神。"}, {"id": "q_g4_c_out_03", "grade": "g4", "gradeDisplay": "四年级", "subject": "chinese", "subjectDisplay": "语文", "scope": "out", "scopeDisplay": "课外培优", "topic": "寓言《自相矛盾》实词", "question": "文言寓言《自相矛盾》中“吾盾之坚，物莫能陷也”中“陷”字的意思是：", "options": ["A. 陷阱、埋伏", "B. 刺破、穿透", "C. 凹陷、塌陷", "D. 诬陷、陷害"], "correctIndex": 1, "analysis": "【知识母树】：先秦文言实词本义。\n【破局原理】：“物莫能陷也”中，“陷”为及物动词，意思是“刺破、攻破、穿透”。后文“以子之矛陷子之盾”同义。"}, {"id": "q_g4_c_out_04", "grade": "g4", "gradeDisplay": "四年级", "subject": "chinese", "subjectDisplay": "语文", "scope": "out", "scopeDisplay": "课外培优", "topic": "历史典故与人物", "question": "下列成语与对应的历史人物完全匹配的一组是：", "options": ["A. 卧薪尝胆 — 勾践   /  破釜沉舟 — 项羽   /  闻鸡起舞 — 祖逖", "B. 卧薪尝胆 — 夫差   /  四面楚歌 — 刘邦   /  负荆请罪 — 诸葛亮", "C. 望梅止渴 — 曹操   /  三顾茅庐 — 周瑜   /  完璧归赵 — 白起", "D. 纸上谈兵 — 廉颇   /  指鹿为马 — 赵高   /  入木三分 — 颜真卿"], "correctIndex": 0, "analysis": "【知识母树】：历史典故常识积累。\n【破局原理】：越王勾践卧薪尝胆；项羽巨鹿之战破釜沉舟；祖逖闻鸡起舞。A 项全部精准匹配。"}, {"id": "q_g4_e_in_01", "grade": "g4", "gradeDisplay": "四年级", "subject": "english", "subjectDisplay": "英语", "scope": "in", "scopeDisplay": "课内考点", "topic": "现在进行时态 (be doing)", "question": "Look! The children ______ basketball on the playground right now.", "options": ["A. plays", "B. is playing", "C. are playing", "D. played"], "correctIndex": 2, "analysis": "【知识母树】：现在进行时态构成。\n【破局原理】：Look! 与 right now 是现在进行时标志词。主语 The children 是复数，be 动词用 are，动词 play 加 -ing 为 playing。"}, {"id": "q_g4_e_in_02", "grade": "g4", "gradeDisplay": "四年级", "subject": "english", "subjectDisplay": "英语", "scope": "in", "scopeDisplay": "课内考点", "topic": "现在分词双写规则", "question": "下列三组动词变现在分词 (-ing) 中，全部需要“双写尾字母再加 -ing”的是：", "options": ["A. run, swim, stop", "B. eat, sleep, read", "C. play, listen, watch", "D. write, make, come"], "correctIndex": 0, "analysis": "【知识母树】：动词变 -ing 构词规则。\n【破局原理】：重读闭音节且末尾只有一个辅音字母时双写：run -> running, swim -> swimming, stop -> stopping。D项是去e加ing。"}, {"id": "q_g4_e_in_03", "grade": "g4", "gradeDisplay": "四年级", "subject": "english", "subjectDisplay": "英语", "scope": "in", "scopeDisplay": "课内考点", "topic": "There be 句型就近原则", "question": "There ______ an apple and five bananas on the table.", "options": ["A. are", "B. is", "C. be", "D. have"], "correctIndex": 1, "analysis": "【知识母树】：There be 句型的就近一致原则。\n【破局原理】：There be 结构中，be 动词的人称和数取决于离它最近的名词。最近的是 an apple（单数），故用 is。"}, {"id": "q_g4_e_in_04", "grade": "g4", "gradeDisplay": "四年级", "subject": "english", "subjectDisplay": "英语", "scope": "in", "scopeDisplay": "课内考点", "topic": "名词复数特殊不规则变化", "question": "The farmer raised ten ______ (sheep) and four ______ (goose).", "options": ["A. sheeps; gooses", "B. sheep; geese", "C. sheeps; geese", "D. sheep; gooses"], "correctIndex": 1, "analysis": "【知识母树】：不规则名词复数变化。\n【破局原理】：sheep 单复数同形（sheep）；goose 变复数变内部元音为 geese（鹅）。"}, {"id": "q_g4_e_out_01", "grade": "g4", "gradeDisplay": "四年级", "subject": "english", "subjectDisplay": "英语", "scope": "out", "scopeDisplay": "课外拔高", "topic": "一般过去时不规则动词", "question": "Yesterday, Tom ______ (buy) a new comic book and ______ (read) it happily.", "options": ["A. buyed; readed", "B. bought; read", "C. bought; reads", "D. buying; reading"], "correctIndex": 1, "analysis": "【知识母树】：一般过去时不规则变化。\n【破局原理】：buy 的过去式是不规则词 bought；read 的过去式拼写依然是 read（发音由 /ri:d/ 变为 /red/）。"}, {"id": "q_g4_e_out_02", "grade": "g4", "gradeDisplay": "四年级", "subject": "english", "subjectDisplay": "英语", "scope": "out", "scopeDisplay": "课外拔高", "topic": "频度副词句中位置", "question": "频度副词 (always, usually, often, never) 在句子中的标准位置是：", "options": ["A. 放在 be 动词之前，行为动词之后", "B. 放在 be 动词之后，行为动词之前 (be后行前)", "C. 只能放在句子最末尾", "D. 只能放在句子最开头"], "correctIndex": 1, "analysis": "【知识母树】：频度副词语法位移规则。\n【破局原理】：口诀“be后行前”——如 He is always kind (在be动词之后)；He usually walks to school (在行为动词之前)。"}, {"id": "q_g4_e_out_03", "grade": "g4", "gradeDisplay": "四年级", "subject": "english", "subjectDisplay": "英语", "scope": "out", "scopeDisplay": "课外拔高", "topic": "方位介词 between 与 among", "question": "The secret cave was hidden ______ the two high cliffs.", "options": ["A. among", "B. between", "C. under", "D. through"], "correctIndex": 1, "analysis": "【知识母树】：空间介词辨析。\n【破局原理】：between 用于“两者之间”（the two high cliffs）；among 用于“三者或三者以上之间”。"}, {"id": "q_g4_e_out_04", "grade": "g4", "gradeDisplay": "四年级", "subject": "english", "subjectDisplay": "英语", "scope": "out", "scopeDisplay": "课外拔高", "topic": "情景交际与探案用语", "question": "在勘查现场询问宝物重量时，下列地道规范的英语提问是：", "options": ["A. How heavy is the gold statue? / How much does it weigh?", "B. How many weights does it have?", "C. How long is the heavy statue?", "D. How much price is the weight?"], "correctIndex": 0, "analysis": "【知识母树】：日常交际与度量衡表达。\n【破局原理】：询问重量常用句型：How heavy is it? 或 How much does it weigh?（weigh 是动词称重）。"}, {"id": "q_g5_m_in_01", "grade": "g5", "gradeDisplay": "五年级", "subject": "math", "subjectDisplay": "数学", "scope": "in", "scopeDisplay": "课内考点", "topic": "小数乘法巧算", "question": "计算 0.25 × 1.25 × 32 的最简便算式是：", "options": ["A. (0.25 × 4) × (1.25 × 8) = 1 × 10 = 10", "B. 0.25 × (1.25 × 32) = 0.25 × 40 = 10", "C. 0.25 × 32 × 1.25 列竖式死算", "D. (0.25 + 1.25) × 32"], "correctIndex": 0, "analysis": "【知识母树】：五年级小数乘法巧算。\n【破局原理】：将 32 拆成 4 × 8。0.25 × 4 = 1，1.25 × 8 = 10，1 × 10 = 10。口算秒杀！"}, {"id": "q_g5_m_in_02", "grade": "g5", "gradeDisplay": "五年级", "subject": "math", "subjectDisplay": "数学", "scope": "in", "scopeDisplay": "课内考点", "topic": "多边形面积等底等高原理", "question": "一个三角形的底是 12 厘米，高是 8 厘米。与它等底等高的平行四边形的面积是多少？", "options": ["A. 48 平方厘米", "B. 96 平方厘米", "C. 192 平方厘米", "D. 24 平方厘米"], "correctIndex": 1, "analysis": "【知识母树】：多边形面积公式推导体系。\n【破局原理】：三角形面积 = 底 × 高 ÷ 2，平行四边形面积 = 底 × 高。等底等高时，平行四边形面积正好是三角形面积的 2 倍！12 × 8 = 96 cm²。"}, {"id": "q_g5_m_in_03", "grade": "g5", "gradeDisplay": "五年级", "subject": "math", "subjectDisplay": "数学", "scope": "in", "scopeDisplay": "课内考点", "topic": "梯形面积公式割补推导", "question": "梯形面积公式 S = (a + b) × h ÷ 2，推导过程中“除以 2”的原因是：", "options": ["A. 两个完全一样的梯形拼成了一个底为 (a + b) 的平行四边形，计算单个梯形必须除以 2", "B. 梯形只有两个底，所以必须除以 2", "C. 沿高对折后只剩一半", "D. 为了跟三角形面积公式保持一致"], "correctIndex": 0, "analysis": "【知识母树】：几何转化思想。\n【破局原理】：两个完全相同的梯形旋转拼合，能够拼成一个底为（上底+下底）、高为 h 的平行四边形，故一个梯形面积需除以 2。"}, {"id": "q_g5_m_in_04", "grade": "g5", "gradeDisplay": "五年级", "subject": "math", "subjectDisplay": "数学", "scope": "in", "scopeDisplay": "课内考点", "topic": "简易方程求解", "question": "解方程 4x - 12 = 36，未知数 x 的值是：", "options": ["A. x = 6", "B. x = 12", "C. x = 8", "D. x = 15"], "correctIndex": 1, "analysis": "【知识母树】：等式性质解方程。\n【破局原理】：两边同时加 12 得 4x = 48；两边同时除以 4 得 x = 12。"}, {"id": "q_g5_m_out_01", "grade": "g5", "gradeDisplay": "五年级", "subject": "math", "subjectDisplay": "数学", "scope": "out", "scopeDisplay": "课外奥数", "topic": "相遇时空行程模型", "question": "甲乙两车同时从 A、B 两地相对开出，甲车时速 60 km，乙车时速 40 km，经过 3.5 小时相遇。A、B 两地相距多少千米？", "options": ["A. 300 km", "B. 350 km", "C. 400 km", "D. 420 km"], "correctIndex": 1, "analysis": "【知识母树】：相遇行程模型。\n【破局原理】：路程 = 速度和 × 相遇时间。总路程 = (60 + 40) × 3.5 = 100 × 3.5 = 350 km。"}, {"id": "q_g5_m_out_02", "grade": "g5", "gradeDisplay": "五年级", "subject": "math", "subjectDisplay": "数学", "scope": "out", "scopeDisplay": "课外奥数", "topic": "同向追及行程模型", "question": "快车时速 80 km，慢车时速 50 km。慢车先出发 2 小时，快车追上慢车需要多少小时？", "options": ["A. 3 小时", "B. 3 小时 20 分钟 (10/3 小时)", "C. 3.5 小时", "D. 4 小时"], "correctIndex": 1, "analysis": "【知识母树】：同向追及模型。\n【破局原理】：追及路程 = 慢车先行路程 = 50 × 2 = 100 km。速度差 = 80 - 50 = 30 km/h。追及时间 = 100 ÷ 30 = 10/3 小时 = 3 小时 20 分钟。"}, {"id": "q_g5_m_out_03", "grade": "g5", "gradeDisplay": "五年级", "subject": "math", "subjectDisplay": "数学", "scope": "out", "scopeDisplay": "课外奥数", "topic": "容斥原理（重叠问题）", "question": "全班 45 人，参加数学竞赛的有 28 人，参加英语竞赛的有 24 人，两科都参加的有 10 人。两科都没参加的有多少人？", "options": ["A. 2 人", "B. 3 人", "C. 5 人", "D. 7 人"], "correctIndex": 1, "analysis": "【知识母树】：集合与容斥原理。\n【破局原理】：参加至少一科的人数 = 28 + 24 - 10 = 42 人。没参加的人数 = 45 - 42 = 3 人。"}, {"id": "q_g5_m_out_04", "grade": "g5", "gradeDisplay": "五年级", "subject": "math", "subjectDisplay": "数学", "scope": "out", "scopeDisplay": "课外奥数", "topic": "多边形割补法求阴影面积", "question": "求不规则多边形阴影面积时，采用“大长方形面积减去四周空白直角三角形面积”的数学方法属于：", "options": ["A. 整体减空白割补转化法", "B. 穷举估算法", "C. 近似测量法", "D. 极限微积分法"], "correctIndex": 0, "analysis": "【知识母树】：几何转化法核心思维。\n【破局原理】：不规则图形难以直接使用公式时，用规则的外包图形面积减去各边缘空白图形面积，是五年级奥数最核心的割补转化技巧！"}, {"id": "q_g5_c_in_01", "grade": "g5", "gradeDisplay": "五年级", "subject": "chinese", "subjectDisplay": "语文", "scope": "in", "scopeDisplay": "课内考点", "topic": "《杨氏之子》语言机辩赏析", "question": "孔君平指着杨梅说“此是君家果”，杨氏子应声答曰“未闻孔雀是夫子家禽”。杨氏子的回答巧妙之处在于：", "options": ["A. 抓住对方姓“孔”与“孔雀”的联系巧妙反诘，既有礼貌地反击了对方，又充满童趣与机智", "B. 杨氏子非常生气，直接斥责孔君平无礼", "C. 说明孔雀不是家禽，是国家保护动物", "D. 转移话题，不想继续谈论杨梅"], "correctIndex": 0, "analysis": "【知识母树】：部编版五下《杨氏之子》语言艺术。\n【破局原理】：杨氏子由“杨梅”联想到“杨姓”，以子之矛攻子之盾，用“孔雀”与“孔姓”反问，答话未正面否定，委婉得体且机锋敏捷。"}, {"id": "q_g5_c_in_02", "grade": "g5", "gradeDisplay": "五年级", "subject": "chinese", "subjectDisplay": "语文", "scope": "in", "scopeDisplay": "课内考点", "topic": "说明文说明方法判定", "question": "“太阳离我们约有一亿五千万千米远。到太阳上去，如果步行，日夜不停地走，差不多要走三千五百年。” 这句话主要使用的说明方法是：", "options": ["A. 举例子、作比较", "B. 列数字、作假设", "C. 打比方、分类别", "D. 下定义、列图表"], "correctIndex": 1, "analysis": "【知识母树】：五年级说明文常见说明方法。\n【破局原理】：“一亿五千万千米”、“三千五百年”为确凿数据（列数字）；“如果步行”假定了行进方式（作假设）。"}, {"id": "q_g5_c_in_03", "grade": "g5", "gradeDisplay": "五年级", "subject": "chinese", "subjectDisplay": "语文", "scope": "in", "scopeDisplay": "课内考点", "topic": "《落花生》借物喻人哲理", "question": "许地山《落花生》一文中，父亲希望孩子们成为怎样的人？", "options": ["A. 成为像苹果、桃子那样高高挂在枝头引人注目的人", "B. 做有用的人，不要做只讲体面而对别人没有好处的人", "C. 成为懂得做生意赚钱的精明商人", "D. 成为隐姓埋名、不与社会接触的隐士"], "correctIndex": 1, "analysis": "【知识母树】：五上《落花生》主旨与借物喻人写法。\n【破局原理】：文章借花生的朴实无华、默默奉献，点明“做有用的人，不要做只讲体面而对别人没有好处的人”的人生态度。"}, {"id": "q_g5_c_in_04", "grade": "g5", "gradeDisplay": "五年级", "subject": "chinese", "subjectDisplay": "语文", "scope": "in", "scopeDisplay": "课内考点", "topic": "古诗爱国主旨与绝笔情怀", "question": "陆游在《示儿》中写道：“死去元知万事空，但悲不见九州同。” 诗中“九州同”的意思是：", "options": ["A. 九州的大地风景相同", "B. 全国统一，收复中原失地", "C. 九州的老百姓过同样的日子", "D. 九州的河流汇聚到同一片大海"], "correctIndex": 1, "analysis": "【知识母树】：爱国古诗词考点。\n【破局原理】：“九州”代指中国全境，“同”指统一。全诗表达了诗人至死不渝的爱国情操与渴望祖国统一的殷切遗愿。"}, {"id": "q_g5_c_out_01", "grade": "g5", "gradeDisplay": "五年级", "subject": "chinese", "subjectDisplay": "语文", "scope": "out", "scopeDisplay": "课外拔高", "topic": "文言虚词“之”的四种用法区分", "question": "下列各句中的“之”字，充当“人称代词（代人或物）”的一项是：", "options": ["A. 故人西辞黄鹤楼，烟花三月下扬州（送孟浩然之广陵）", "B. 弈秋，通国之善弈者也", "C. 思援弓缴而射之", "D. 菊之爱，陶后鲜有闻"], "correctIndex": 2, "analysis": "【知识母树】：文言虚词深度辨析。\n【破局原理】：A项“之”为动词（往、到）；B项“之”为助词（的）；C项“射之”中“之”代指大雁（代词）；D项“之”为宾语前置标志。"}, {"id": "q_g5_c_out_02", "grade": "g5", "gradeDisplay": "五年级", "subject": "chinese", "subjectDisplay": "语文", "scope": "out", "scopeDisplay": "课外拔高", "topic": "古代年龄称谓考据", "question": "古代常有独特的年龄代称，按年龄从小到大排列正确的一组是：", "options": ["A. 豆蔻年华 (13岁) ➔ 弱冠之年 (20岁) ➔ 而立之年 (30岁) ➔ 不惑之年 (40岁)", "B. 弱冠之年 ➔ 豆蔻年华 ➔ 不惑之年 ➔ 而立之年", "C. 而立之年 ➔ 弱冠之年 ➔ 知天命 ➔ 豆蔻年华", "D. 豆蔻年华 ➔ 而立之年 ➔ 弱冠之年 ➔ 耳顺之年"], "correctIndex": 0, "analysis": "【知识母树】：中国古代文化常识。\n【破局原理】：女子十三四岁称“豆蔻”；男子二十岁行冠礼称“弱冠”；三十“而立”；四十“不惑”；五十“知天命”；六十“花甲/耳顺”。A项顺序完全正确！"}, {"id": "q_g5_c_out_03", "grade": "g5", "gradeDisplay": "五年级", "subject": "chinese", "subjectDisplay": "语文", "scope": "out", "scopeDisplay": "课外拔高", "topic": "文言寓言《郑人买履》主旨", "question": "《郑人买履》中郑人曰：“宁信度，无自信也。” 这则寓言讽刺了怎样的人？", "options": ["A. 讽刺做事马虎大意、丢三落四的人", "B. 讽刺死板教条、墨守成规、不顾客观实际的人", "C. 讽刺贫穷但爱面子的人", "D. 讽刺不诚实守信的商贩"], "correctIndex": 1, "analysis": "【知识母树】：先秦诸子寓言批判精神。\n【破局原理】：郑人宁可相信尺码绳子，也不相信自己的脚，辛辣讽刺了凡事只认教条而不看事实的教条主义者。"}, {"id": "q_g5_c_out_04", "grade": "g5", "gradeDisplay": "五年级", "subject": "chinese", "subjectDisplay": "语文", "scope": "out", "scopeDisplay": "课外拔高", "topic": "唐宋八大家常识", "question": "“唐宋八大家”中属于“唐代”的两位大散文家是：", "options": ["A. 李白 与 杜甫", "B. 韩愈 与 柳宗元", "C. 苏轼 与 欧阳修", "D. 王安石 与 曾巩"], "correctIndex": 1, "analysis": "【知识母树】：古代文学流派。\n【破局原理】：唐宋八大家中，唐代有韩愈、柳宗元；宋代有欧阳修、苏洵、苏轼、苏辙、王安石、曾巩。"}, {"id": "q_g5_e_in_01", "grade": "g5", "gradeDisplay": "五年级", "subject": "english", "subjectDisplay": "英语", "scope": "in", "scopeDisplay": "课内考点", "topic": "一般将来时 (will / be going to)", "question": "— What are you going to do this weekend?\n— We ______ the Science Museum with our teacher.", "options": ["A. visit", "B. visited", "C. will visit", "D. visits"], "correctIndex": 2, "analysis": "【知识母树】：一般将来时态匹配。\n【破局原理】：问句使用 are you going to 询问将来计划，答句对应使用 will visit 或 are going to visit 表示将来要做的动作。"}, {"id": "q_g5_e_in_02", "grade": "g5", "gradeDisplay": "五年级", "subject": "english", "subjectDisplay": "英语", "scope": "in", "scopeDisplay": "课内考点", "topic": "形容词比较级规则与不规则", "question": "This red apple is ______ than that green one, and it tastes much ______.", "options": ["A. big; good", "B. bigger; better", "C. biggest; best", "D. more big; gooder"], "correctIndex": 1, "analysis": "【知识母树】：形容词比较级构词。\n【破局原理】：than 为比较级标志词。big 双写加 -er 为 bigger；good 的比较级是不规则变化 better。"}, {"id": "q_g5_e_in_03", "grade": "g5", "gradeDisplay": "五年级", "subject": "english", "subjectDisplay": "英语", "scope": "in", "scopeDisplay": "课内考点", "topic": "情态动词用法", "question": "You ______ finish your homework before watching TV, and you ______ play with fire. It's dangerous!", "options": ["A. should; mustn't", "B. can; must", "C. may; should", "D. must; can"], "correctIndex": 0, "analysis": "【知识母树】：情态动词语义网络。\n【破局原理】：should 表示“应当”；mustn't 表示“绝不能、严禁”（具有强制警示意义）。后接动词原形。"}, {"id": "q_g5_e_in_04", "grade": "g5", "gradeDisplay": "五年级", "subject": "english", "subjectDisplay": "英语", "scope": "in", "scopeDisplay": "课内考点", "topic": "特殊疑问词辨析", "question": "— ______ did you find the ancient coin?\n— In the old wooden box under the table.", "options": ["A. When", "B. Where", "C. Why", "D. How"], "correctIndex": 1, "analysis": "【知识母树】：WH-特殊疑问句。\n【破局原理】：答语指明了具体地点（In the old wooden box），询问地点疑问词必须用 Where。"}, {"id": "q_g5_e_out_01", "grade": "g5", "gradeDisplay": "五年级", "subject": "english", "subjectDisplay": "英语", "scope": "out", "scopeDisplay": "课外拔高", "topic": "过去进行时态 (was/were doing)", "question": "When the detective arrived at the scene, the suspect ______ to destroy the evidence.", "options": ["A. is trying", "B. was trying", "C. tries", "D. will try"], "correctIndex": 1, "analysis": "【知识母树】：过去进行时态。\n【破局原理】：When 引导过去时间从句（arrived），主句表达过去那一刻正在发生的动作，主语 the suspect 单数用 was trying。"}, {"id": "q_g5_e_out_02", "grade": "g5", "gradeDisplay": "五年级", "subject": "english", "subjectDisplay": "英语", "scope": "out", "scopeDisplay": "课外拔高", "topic": "构词法前后缀辨析", "question": "在英语词根前加 un- 表示否定，在词尾加 -ful / -less 分别表示“充满...”和“无...”。下列派生词全部正确的是：", "options": ["A. careful (细心的) / careless (粗心的) / happy ➔ unhappy (不高兴的)", "B. careed / carely / uncare", "C. carefull / carelessed / inhappy", "D. carefully / uncared / imhappy"], "correctIndex": 0, "analysis": "【知识母树】：英语构词法派生体系。\n【破局原理】：care + ful = careful；care + less = careless；un- + happy = unhappy。A项构词完全精准！"}, {"id": "q_g5_e_out_03", "grade": "g5", "gradeDisplay": "五年级", "subject": "english", "subjectDisplay": "英语", "scope": "out", "scopeDisplay": "课外拔高", "topic": "连词逻辑辨析", "question": "______ it was raining heavily outside, the young detective continued inspecting the tracks.", "options": ["A. Although", "B. Because", "C. But", "D. So"], "correctIndex": 0, "analysis": "【知识母树】：让步状语从句连词。\n【破局原理】：主从句构成让步转折逻辑（尽管雨下得很大，但侦探依然继续勘查），用 Although。注意：Although 与 but 不能同时出现在一个句中！"}, {"id": "q_g5_e_out_04", "grade": "g5", "gradeDisplay": "五年级", "subject": "english", "subjectDisplay": "英语", "scope": "out", "scopeDisplay": "课外拔高", "topic": "形容词最高级与范围介词", "question": "Mount Everest is ______ mountain ______ the world.", "options": ["A. higher; than", "B. the highest; in", "C. highest; of", "D. the higher; at"], "correctIndex": 1, "analysis": "【知识母树】：形容词最高级语法规则。\n【破局原理】：最高级前必须加 the（the highest）；在某一地域范围内用介词 in（in the world）。"}, {"id": "q_bridge_cross_01", "grade": "bridge", "gradeDisplay": "小升初", "subject": "math", "subjectDisplay": "数学·奥数", "scope": "out", "scopeDisplay": "名校真题", "topic": "流水行船时空方程", "question": "一艘轮船在静水中的速度是每小时 20 千米，水流速度是每小时 4 千米。它逆水航行 48 千米需要几个小时？", "options": ["A. 2 小时", "B. 3 小时", "C. 2.4 小时", "D. 4 小时"], "correctIndex": 1, "analysis": "【知识母树】：流水行船速度矢量方程。\n【破局原理】：逆水航行速度 = 静水船速 - 水速 = 20 - 4 = 16 km/h。逆行时间 = 路程 ÷ 逆水速度 = 48 ÷ 16 = 3 小时！"}, {"id": "q_bridge_cross_02", "grade": "bridge", "gradeDisplay": "小升初", "subject": "chinese", "subjectDisplay": "语文·文言", "scope": "out", "scopeDisplay": "名校真题", "topic": "高频文言虚词“而”的逻辑关系", "question": "下列各句中“而”字表【转折关系（然而、却）】的一项是：", "options": ["A. 学而时习之，不亦说乎", "B. 温故而知新，可以为师矣", "C. 舟已行矣，而剑不行", "D. 敏而好学，不耻下问"], "correctIndex": 2, "analysis": "【知识母树】：文言虚词多维逻辑剖析。\n【破局原理】：A、B、D 项中的“而”均为顺承或递进连词；C 项“船已经行驶前进了，然而宝剑并没有随船走动”，前后语义相反，是典型的转折连词！"}, {"id": "q_bridge_cross_03", "grade": "bridge", "gradeDisplay": "小升初", "subject": "cross", "subjectDisplay": "科学·物理", "scope": "out", "scopeDisplay": "初中先修", "topic": "阿基米德浮力定律与沉浮条件", "question": "根据阿基米德浮力定律 F_浮 = ρ_液 × g × V_排，如果一个实心金属球浸没在水中下沉，这说明它的密度与水密度的关系是：", "options": ["A. 金属球密度大于水的密度 (ρ_物 > ρ_水)", "B. 金属球密度小于水的密度 (ρ_物 < ρ_水)", "C. 金属球密度等于水的密度 (ρ_物 = ρ_水)", "D. 金属球排开水的重力大于自身重力"], "correctIndex": 0, "analysis": "【知识母树】：阿基米德原理与物体的浮沉条件。\n【破局原理】：浸没在液体中的物体，当物体的重力大于浮力时下沉；由公式换算可知，其物理本质即物体的平均密度大于液体的密度 (ρ_物 > ρ_液)。"}, {"id": "q_bridge_cross_04", "grade": "bridge", "gradeDisplay": "小升初", "subject": "math", "subjectDisplay": "数学·工程", "scope": "out", "scopeDisplay": "名校真题", "topic": "工程问题归一法方程", "question": "一项工程，甲队单独做需 10 天完成，乙队单独做需 15 天完成。两队合做需要几天完成？", "options": ["A. 12.5 天", "B. 6 天", "C. 5 天", "D. 8 天"], "correctIndex": 1, "analysis": "【知识母树】：工程问题合作效率模型。\n【破局原理】：把总工程看作单位“1”。甲效率 1/10，乙效率 1/15，合作效率 = 1/10 + 1/15 = 1/6。合作天数 = 1 ÷ (1/6) = 6 天！"}];
+
+    let chronoCaseMode = 'story'; // 'story' | 'arena'
+    let currentActiveCaseId = 'g4_01';
+    let activeGradeFilter = 'all';
 
     let currentChronoState = {
+      caseId: 'g4_01',
       roundIndex: 0,
       solvedClues: 0,
-      hp: 100,
-      isCompleted: false
+      isVictorious: false
     };
 
+    let arenaState = {
+      grade: 'all',
+      subject: 'all',
+      scope: 'all',
+      currentIndex: 0,
+      answered: {},
+      coinsEarned: 0,
+      currentStreak: 0,
+      maxStreak: 0
+    };
+
+    function switchCaseMode(mode) {
+      chronoCaseMode = mode;
+      const storyCont = document.getElementById('case-story-container');
+      const arenaCont = document.getElementById('case-arena-container');
+      const btnStory = document.getElementById('btn-mode-story');
+      const btnArena = document.getElementById('btn-mode-arena');
+
+      if (mode === 'story') {
+        storyCont.classList.remove('hidden');
+        arenaCont.classList.add('hidden');
+        btnStory.className = 'flex-1 sm:flex-initial px-4 py-2 rounded-xl text-xs sm:text-sm font-black bg-cyan-500 text-slate-950 shadow-lg shadow-cyan-500/25 transition flex items-center justify-center gap-1.5';
+        btnArena.className = 'flex-1 sm:flex-initial px-4 py-2 rounded-xl text-xs sm:text-sm font-black bg-slate-800 text-slate-300 hover:text-white border border-slate-700 hover:border-amber-400/50 transition flex items-center justify-center gap-1.5';
+        renderChronoCaseSelector();
+        switchChronoCase(currentActiveCaseId);
+      } else {
+        storyCont.classList.add('hidden');
+        arenaCont.classList.remove('hidden');
+        btnStory.className = 'flex-1 sm:flex-initial px-4 py-2 rounded-xl text-xs sm:text-sm font-black bg-slate-800 text-slate-300 hover:text-white border border-slate-700 hover:border-cyan-400/50 transition flex items-center justify-center gap-1.5';
+        btnArena.className = 'flex-1 sm:flex-initial px-4 py-2 rounded-xl text-xs sm:text-sm font-black bg-amber-500 text-slate-950 shadow-lg shadow-amber-500/25 transition flex items-center justify-center gap-1.5';
+        renderArenaMatrix();
+        renderCurrentArenaQuestion();
+      }
+    }
+
+    // ---------- 案卷主线剧本逻辑 ----------
+    function filterChronoCases(grade) {
+      activeGradeFilter = grade;
+      ['all', 'g4', 'g5', 'bridge'].forEach(g => {
+        const btn = document.getElementById('btn-grade-' + g);
+        if (!btn) return;
+        if (g === grade) {
+          btn.className = 'px-2.5 py-1 rounded-xl text-xs font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 transition shadow-sm';
+        } else {
+          btn.className = 'px-2.5 py-1 rounded-xl text-xs font-bold bg-slate-800 text-slate-400 hover:text-white border border-slate-700 transition';
+        }
+      });
+
+      populateCaseDropdown();
+      const available = getFilteredCases();
+      if (available.length > 0) {
+        switchChronoCase(available[0].id);
+      }
+    }
+
+    function getFilteredCases() {
+      const all = Object.values(CHRONO_CASES_DB);
+      if (activeGradeFilter === 'all') return all;
+      return all.filter(c => c.grade === activeGradeFilter);
+    }
+
+    function populateCaseDropdown() {
+      const select = document.getElementById('case-select-dropdown');
+      if (!select) return;
+      const cases = getFilteredCases();
+      select.innerHTML = cases.map(c => `
+        <option value="${c.id}" ${c.id === currentActiveCaseId ? 'selected' : ''}>
+          ${c.caseIdDisplay}: ${c.title} (${c.gradeDisplay.split('·')[0].trim()})
+        </option>
+      `).join('');
+    }
+
+    function renderChronoCaseSelector() {
+      populateCaseDropdown();
+    }
+
+    function switchChronoCase(caseId) {
+      if (!CHRONO_CASES_DB[caseId]) return;
+      currentActiveCaseId = caseId;
+      const c = CHRONO_CASES_DB[caseId];
+
+      const select = document.getElementById('case-select-dropdown');
+      if (select && select.value !== caseId) select.value = caseId;
+
+      document.getElementById('case-badge-id').innerText = c.caseIdDisplay;
+      document.getElementById('case-badge-grade').innerText = c.gradeDisplay;
+      document.getElementById('case-badge-curricular').innerText = c.curricularDisplay;
+      document.getElementById('case-reward-text').innerHTML = `<span>🏆 破案悬赏：</span><span>${c.rewardText}</span>`;
+      document.getElementById('case-title-text').innerHTML = `<span>当日案卷：${c.title}</span>`;
+      document.getElementById('case-desc-text').innerText = c.desc;
+      document.getElementById('case-knowledge-connected-text').innerText = c.connectedText;
+
+      renderActiveCaseCards(c);
+      renderActiveCaseClues(c);
+      resetCaseDeduction();
+    }
+
+    function renderActiveCaseCards(c) {
+      const container = document.getElementById('cards-container');
+      if (!container) return;
+
+      const keys = Object.keys(c.knowledge);
+      const gradientColors = [
+        { bg: 'from-cyan-950/60 to-slate-900', border: 'border-cyan-500/40 hover:border-cyan-300', text: 'text-cyan-300', badgeBg: 'bg-cyan-500/20' },
+        { bg: 'from-indigo-950/60 to-slate-900', border: 'border-indigo-500/40 hover:border-indigo-300', text: 'text-indigo-300', badgeBg: 'bg-indigo-500/20' },
+        { bg: 'from-emerald-950/60 to-slate-900', border: 'border-emerald-500/40 hover:border-emerald-300', text: 'text-emerald-300', badgeBg: 'bg-emerald-500/20' }
+      ];
+
+      container.innerHTML = keys.map((k, idx) => {
+        const item = c.knowledge[k];
+        const style = gradientColors[idx % 3];
+        return `
+          <div onclick="openKnowledgeModal('${k}')" class="p-4 rounded-2xl bg-gradient-to-b ${style.bg} border ${style.border} cursor-pointer transition-all duration-300 transform hover:-translate-y-1 shadow-lg group relative">
+            <div class="flex items-center justify-between text-xs mb-2">
+              <span class="px-1.5 py-0.5 rounded ${style.badgeBg} ${style.text} font-bold text-[10px] truncate max-w-[180px]">
+                ${item.icon} ${item.subject}
+              </span>
+              <span class="${style.text} group-hover:translate-x-1 transition text-xs">➔</span>
+            </div>
+            <h4 class="text-sm font-black text-white group-hover:${style.text} transition line-clamp-1">${item.title}</h4>
+            <p class="text-[11px] text-slate-300 mt-1 line-clamp-2">
+              ${item.layers[1].content}
+            </p>
+            <div class="mt-2.5 pt-2 border-t border-slate-700/60 flex items-center justify-between text-[10px]">
+              <span class="${style.text} font-bold">5层思维母树</span>
+              <span class="text-slate-400">研读模型 🔍</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderActiveCaseClues(c) {
+      const container = document.getElementById('clues-container');
+      if (!container) return;
+      container.innerHTML = c.clues.map((clue, idx) => `
+        <div id="clue-tag-${idx}" class="p-2 rounded-xl bg-slate-800/80 border border-slate-700 ${idx === 0 ? 'text-slate-300' : 'text-slate-500'} flex items-center space-x-2">
+          <span>${clue.icon}</span>
+          <span class="truncate">${clue.title}</span>
+        </div>
+      `).join('');
+    }
+
     function renderChronoRound() {
-      const q = CHRONO_CASE_ROUNDS[currentChronoState.roundIndex];
+      const c = CHRONO_CASES_DB[currentActiveCaseId];
+      if (!c) return;
+      const q = c.rounds[currentChronoState.roundIndex];
       if (!q) return;
 
+      document.getElementById('suspect-avatar').innerText = c.suspect.avatar;
+      document.getElementById('suspect-name-title').innerText = `嫌疑人：${c.suspect.name}`;
+      document.getElementById('suspect-mood').innerText = c.suspect.mood;
       document.getElementById('current-round-text').innerText = (currentChronoState.roundIndex + 1);
       document.getElementById('suspect-statement').innerText = q.suspectStatement;
       document.getElementById('question-desc').innerText = q.questionDesc;
@@ -2086,134 +2296,104 @@
       const hpPercent = Math.max(0, 100 - currentChronoState.solvedClues * 33);
       document.getElementById('suspect-hp-bar').style.width = hpPercent + '%';
 
-      for (let i = 0; i < 3; i++) {
-        const dot = document.getElementById(`step-dot-${i}`);
-        if (i < currentChronoState.solvedClues) {
-          dot.className = 'w-2.5 h-2.5 rounded-full bg-emerald-400';
-        } else if (i === currentChronoState.solvedClues) {
-          dot.className = 'w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse';
-        } else {
-          dot.className = 'w-2.5 h-2.5 rounded-full bg-slate-700';
-        }
-      }
-
-      // 渲染选项
-      const container = document.getElementById('options-container');
-      container.innerHTML = q.options.map((opt, idx) => `
-        <button onclick="handleDeductionChoice(${idx})" class="w-full text-left p-3 rounded-xl bg-slate-800/80 hover:bg-slate-700/90 border border-slate-700 hover:border-cyan-400 text-xs text-slate-200 transition-all active:scale-[0.99] flex items-start space-x-2 shadow">
-          <span class="text-cyan-400 font-bold flex-shrink-0 mt-0.5">▶</span>
-          <span class="leading-relaxed">${opt.text}</span>
+      const optContainer = document.getElementById('deduction-options');
+      optContainer.innerHTML = q.options.map((opt, idx) => `
+        <button onclick="handleDeductionChoice(${idx})" class="w-full text-left p-3 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700 hover:border-cyan-500 text-slate-200 text-xs transition duration-200 active:scale-[0.99] flex items-center justify-between group">
+          <span class="flex-1">${opt.text}</span>
+          <span class="text-cyan-400 opacity-0 group-hover:opacity-100 transition ml-2">质询 ➔</span>
         </button>
       `).join('');
 
-      // 隐藏旧反馈
-      const fbBox = document.getElementById('feedback-box');
-      fbBox.classList.add('hidden');
+      document.getElementById('deduction-feedback').classList.add('hidden');
+      document.getElementById('btn-next-round').classList.add('hidden');
     }
 
     function handleDeductionChoice(choiceIdx) {
-      const q = CHRONO_CASE_ROUNDS[currentChronoState.roundIndex];
+      const c = CHRONO_CASES_DB[currentActiveCaseId];
+      const q = c.rounds[currentChronoState.roundIndex];
       const opt = q.options[choiceIdx];
-      const fbBox = document.getElementById('feedback-box');
+      const fbBox = document.getElementById('deduction-feedback');
+      const nextBtn = document.getElementById('btn-next-round');
+
       fbBox.classList.remove('hidden');
 
       if (opt.correct) {
-        fbBox.className = 'p-3.5 rounded-2xl text-xs bg-emerald-950/80 border border-emerald-500/50 text-emerald-200 leading-relaxed shadow-lg';
-        fbBox.innerHTML = `
-          <div class="font-bold text-emerald-300 mb-1 flex items-center gap-1.5">
-            <span>🎯</span>
-            <span>破绽识破！逻辑严密！</span>
-          </div>
-          <div>${q.correctFeedback}</div>
-          <div class="mt-2.5 text-right">
-            <button onclick="advanceNextChronoRound()" class="px-4 py-1.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 font-black text-xs shadow-md active:scale-95 transition">
-              ${currentChronoState.roundIndex < 2 ? '锁定该破绽，继续审讯 ➔' : '🏆 突破心理防线，结案！➔'}
-            </button>
-          </div>
-        `;
+        currentChronoState.solvedClues = Math.min(3, currentChronoState.solvedClues + 1);
+        fbBox.className = 'p-3 rounded-xl border border-emerald-500/50 bg-emerald-950/60 text-emerald-200 text-xs leading-relaxed';
+        fbBox.innerHTML = `<strong>${q.correctFeedback}</strong>`;
+
+        const curTag = document.getElementById(`clue-tag-${currentChronoState.roundIndex}`);
+        if (curTag) {
+          curTag.className = 'p-2 rounded-xl bg-emerald-500/20 border border-emerald-500/50 text-emerald-300 font-bold flex items-center space-x-2';
+        }
+        document.getElementById('clue-unlocked-count').innerText = `线索破译：${currentChronoState.solvedClues} / 3`;
+
+        const hpPercent = Math.max(0, 100 - currentChronoState.solvedClues * 33);
+        document.getElementById('suspect-hp-bar').style.width = hpPercent + '%';
+
+        nextBtn.classList.remove('hidden');
+        if (currentChronoState.solvedClues >= 3) {
+          nextBtn.innerText = '结案定罪并领取悬赏 🏆';
+          nextBtn.className = 'px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-400 text-slate-950 font-black text-xs shadow-lg shadow-amber-500/25 active:scale-95 transition';
+        } else {
+          nextBtn.innerText = '下一步搜证质询 ➔';
+          nextBtn.className = 'px-4 py-2 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-bold text-xs shadow-md shadow-cyan-500/20 active:scale-95 transition';
+        }
       } else {
-        fbBox.className = 'p-3.5 rounded-2xl text-xs bg-amber-950/80 border border-amber-500/50 text-amber-200 leading-relaxed shadow-lg';
-        fbBox.innerHTML = `
-          <div class="font-bold text-amber-300 mb-1 flex items-center gap-1.5">
-            <span>🎧</span>
-            <span>战术耳机提示（逻辑推导有误）</span>
-          </div>
-          <div>${q.hintFeedback}</div>
-          <div class="mt-2 text-right">
-            <span class="text-[10px] text-amber-400/80">无需自责，重新选择答案即可破防！</span>
-          </div>
-        `;
+        fbBox.className = 'p-3 rounded-xl border border-red-500/50 bg-red-950/60 text-red-200 text-xs leading-relaxed';
+        fbBox.innerHTML = `<strong>❌ 逻辑有误，嫌疑人反驳了你的质询！</strong><p class="mt-1 text-[11px] text-red-300">${q.hintFeedback}</p>`;
       }
     }
 
     function advanceNextChronoRound() {
-      // 成功解开一条线索
-      const clueTag = document.getElementById(`clue-tag-${currentChronoState.roundIndex}`);
-      if (clueTag) {
-        clueTag.classList.remove('text-slate-500');
-        clueTag.classList.add('text-emerald-300', 'border-emerald-500/50', 'bg-emerald-950/30');
-      }
-
-      currentChronoState.solvedClues++;
-      document.getElementById('clue-unlocked-count').innerText = `线索破译：${currentChronoState.solvedClues} / 3`;
-
-      if (currentChronoState.roundIndex < 2) {
-        currentChronoState.roundIndex++;
-        renderChronoRound();
-      } else {
-        // 完成全部 3 关，结案！
-        currentChronoState.isCompleted = true;
-        document.getElementById('suspect-mood-badge').innerText = '防线瓦解 · 伏法认罪';
-        document.getElementById('suspect-mood-badge').className = 'px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-300 text-[10px] font-bold';
-        document.getElementById('suspect-avatar').innerText = '🙇‍♂️';
-        document.getElementById('dash-case-status-badge').innerText = '✓ 今日案卷已破译';
-        document.getElementById('dash-case-status-badge').className = 'text-[10px] text-emerald-400 font-bold hidden sm:inline text-center';
-
-        // 弹出结案大捷弹窗
+      const c = CHRONO_CASES_DB[currentActiveCaseId];
+      if (currentChronoState.solvedClues >= 3) {
+        document.getElementById('victory-coins-num').innerText = c.rewardCoins;
+        document.getElementById('victory-xp-num').innerText = c.rewardXp;
         document.getElementById('case-victory-modal').classList.remove('hidden');
+        return;
       }
+      currentChronoState.roundIndex++;
+      renderChronoRound();
     }
 
     function confirmCaseVictory() {
       document.getElementById('case-victory-modal').classList.add('hidden');
-      // 给张安泽增发 50 心愿币奖励并更新顶栏
-      if (currentChildData) {
-        currentChildData.wishBalance = (currentChildData.wishBalance || 680) + 50;
-        currentChildData.xp = (currentChildData.xp || 1850) + 100;
+      const c = CHRONO_CASES_DB[currentActiveCaseId];
+      if (currentChildData && c) {
+        currentChildData.wishBalance = (currentChildData.wishBalance || 680) + c.rewardCoins;
+        currentChildData.xp = (currentChildData.xp || 1850) + c.rewardXp;
         document.getElementById('top-coins').innerText = currentChildData.wishBalance;
         document.getElementById('case-coins-badge').innerText = currentChildData.wishBalance;
         document.getElementById('top-xp-text').innerText = `${currentChildData.xp} XP`;
       }
-      try {
-        localStorage.setItem('case_042_cleared', 'true');
-      } catch (e) {}
-      alert('🎉 破案战利品已入账！+50 心愿币已添加至安泽的愿望储蓄池中！');
+      alert(`🎉 恭喜破获【${c.title}】！+${c.rewardCoins} 心愿币已入账！`);
     }
 
     function resetCaseDeduction() {
       currentChronoState = {
+        caseId: currentActiveCaseId,
         roundIndex: 0,
         solvedClues: 0,
-        hp: 100,
-        isCompleted: false
+        isVictorious: false
       };
-      document.getElementById('suspect-avatar').innerText = '🧔🏻‍♂️';
-      document.getElementById('suspect-mood-badge').innerText = '顽固抗辩中';
-      document.getElementById('suspect-mood-badge').className = 'px-1.5 py-0.2 rounded bg-red-500/20 text-red-300 text-[10px] font-bold';
-      document.getElementById('clue-unlocked-count').innerText = '线索破译：0 / 3';
-      
-      for (let i = 0; i < 3; i++) {
-        const ct = document.getElementById(`clue-tag-${i}`);
-        if (ct) {
-          ct.className = `p-2 rounded-xl bg-slate-800/80 border border-slate-700 ${i === 0 ? 'text-slate-300' : 'text-slate-500'} flex items-center space-x-2`;
-        }
+      const c = CHRONO_CASES_DB[currentActiveCaseId];
+      if (c) {
+        document.getElementById('suspect-avatar').innerText = c.suspect.avatar;
+        document.getElementById('suspect-name-title').innerText = `嫌疑人：${c.suspect.name}`;
+        document.getElementById('suspect-mood').innerText = c.suspect.mood;
       }
+      document.getElementById('clue-unlocked-count').innerText = '线索破译：0 / 3';
+      document.getElementById('suspect-hp-bar').style.width = '100%';
+      document.getElementById('deduction-progress-num').innerText = '0%';
+      renderActiveCaseClues(c);
       renderChronoRound();
     }
 
     function openKnowledgeModal(subjectKey) {
-      const data = CHRONO_CASE_KNOWLEDGE[subjectKey];
-      if (!data) return;
+      const c = CHRONO_CASES_DB[currentActiveCaseId];
+      if (!c || !c.knowledge || !c.knowledge[subjectKey]) return;
+      const data = c.knowledge[subjectKey];
 
       document.getElementById('modal-card-icon').innerText = data.icon;
       document.getElementById('modal-card-subject').innerText = data.subject;
@@ -2232,6 +2412,214 @@
 
     function closeKnowledgeModal() {
       document.getElementById('case-knowledge-modal').classList.add('hidden');
+    }
+
+    // ---------- 靶场过滤与做题逻辑 ----------
+    function getFilteredArenaQuestions() {
+      return CHRONO_ARENA_QUESTIONS.filter(q => {
+        if (arenaState.grade !== 'all' && q.grade !== arenaState.grade) return false;
+        if (arenaState.subject !== 'all' && q.subject !== arenaState.subject) return false;
+        if (arenaState.scope !== 'all' && q.scope !== arenaState.scope) return false;
+        return true;
+      });
+    }
+
+    function filterArenaBy(type, val) {
+      arenaState[type] = val;
+      arenaState.currentIndex = 0;
+
+      if (type === 'grade') {
+        ['all', 'g4', 'g5', 'bridge'].forEach(g => {
+          const b = document.getElementById('btn-arena-g-' + g);
+          if (b) b.className = (g === val) ? 'px-3 py-1 rounded-xl font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40 transition' : 'px-3 py-1 rounded-xl font-bold bg-slate-800 text-slate-400 hover:text-white border border-slate-700 transition';
+        });
+      } else if (type === 'subject') {
+        ['all', 'chinese', 'math', 'english', 'cross'].forEach(s => {
+          const b = document.getElementById('btn-arena-s-' + s);
+          if (b) b.className = (s === val) ? 'px-3 py-1 rounded-xl font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 transition' : 'px-3 py-1 rounded-xl font-bold bg-slate-800 text-slate-400 hover:text-white border border-slate-700 transition';
+        });
+      } else if (type === 'scope') {
+        ['all', 'in', 'out'].forEach(sc => {
+          const b = document.getElementById('btn-arena-sc-' + sc);
+          if (b) b.className = (sc === val) ? 'px-3 py-1 rounded-xl font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/40 transition' : 'px-3 py-1 rounded-xl font-bold bg-slate-800 text-slate-400 hover:text-white border border-slate-700 transition';
+        });
+      }
+
+      renderArenaMatrix();
+      renderCurrentArenaQuestion();
+    }
+
+    function renderArenaMatrix() {
+      const container = document.getElementById('arena-matrix-container');
+      if (!container) return;
+      const list = getFilteredArenaQuestions();
+      
+      container.innerHTML = list.map((q, idx) => {
+        const isCurrent = (idx === arenaState.currentIndex);
+        const ans = arenaState.answered[q.id];
+        let colorClass = 'bg-slate-800 text-slate-400 border border-slate-700 hover:bg-slate-700';
+        if (ans) {
+          colorClass = ans.correct ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-bold' : 'bg-red-500/20 text-red-300 border border-red-500/40';
+        }
+        if (isCurrent) {
+          colorClass += ' ring-2 ring-amber-400';
+        }
+        return `
+          <button onclick="jumpArenaQuestion(${idx})" class="h-8 rounded-lg text-xs font-mono transition flex items-center justify-center ${colorClass}">
+            ${idx + 1}
+          </button>
+        `;
+      }).join('');
+
+      updateArenaStats();
+    }
+
+    function updateArenaStats() {
+      const all = CHRONO_ARENA_QUESTIONS;
+      let totalAns = 0;
+      let correctAns = 0;
+      all.forEach(q => {
+        if (arenaState.answered[q.id]) {
+          totalAns++;
+          if (arenaState.answered[q.id].correct) correctAns++;
+        }
+      });
+
+      const pct = totalAns > 0 ? Math.round((correctAns / totalAns) * 100) : 100;
+      const statAns = document.getElementById('arena-stat-answered');
+      if (statAns) statAns.innerText = `${totalAns} / ${all.length}`;
+      const statAcc = document.getElementById('arena-stat-accuracy');
+      if (statAcc) statAcc.innerText = `${pct}%`;
+      const statStreak = document.getElementById('arena-stat-streak');
+      if (statStreak) statStreak.innerText = `🔥 ${arenaState.currentStreak}`;
+      const statCoins = document.getElementById('arena-stat-coins');
+      if (statCoins) statCoins.innerText = `+${arenaState.coinsEarned} 币已入账`;
+    }
+
+    function renderCurrentArenaQuestion() {
+      const list = getFilteredArenaQuestions();
+      if (list.length === 0) {
+        document.getElementById('arena-question-text').innerText = '当前筛选条件下暂无题目，请切换年级或学科条件。';
+        document.getElementById('arena-options-container').innerHTML = '';
+        document.getElementById('arena-analysis-box').classList.add('hidden');
+        document.getElementById('arena-progress-indicator').innerText = '0 / 0';
+        return;
+      }
+
+      if (arenaState.currentIndex >= list.length) arenaState.currentIndex = 0;
+      if (arenaState.currentIndex < 0) arenaState.currentIndex = list.length - 1;
+
+      const q = list[arenaState.currentIndex];
+
+      document.getElementById('arena-badge-grade').innerText = q.gradeDisplay;
+      document.getElementById('arena-badge-subject').innerText = q.subjectDisplay;
+      document.getElementById('arena-badge-scope').innerText = q.scopeDisplay;
+      document.getElementById('arena-badge-topic').innerText = q.topic;
+      document.getElementById('arena-progress-indicator').innerText = `第 ${arenaState.currentIndex + 1} / ${list.length} 题`;
+      document.getElementById('arena-question-text').innerText = q.question;
+
+      const ans = arenaState.answered[q.id];
+      const optContainer = document.getElementById('arena-options-container');
+
+      optContainer.innerHTML = q.options.map((opt, oIdx) => {
+        let style = 'bg-slate-800/80 hover:bg-slate-700/80 border-slate-700 text-slate-200';
+        let disabledAttr = '';
+        if (ans) {
+          disabledAttr = 'disabled';
+          if (oIdx === q.correctIndex) {
+            style = 'bg-emerald-950/80 border-emerald-500/80 text-emerald-200 font-bold';
+          } else if (oIdx === ans.selected && !ans.correct) {
+            style = 'bg-red-950/80 border-red-500/80 text-red-200';
+          } else {
+            style = 'bg-slate-900/50 border-slate-800 text-slate-500 opacity-60';
+          }
+        }
+
+        return `
+          <button onclick="handleArenaOptionClick(${oIdx})" ${disabledAttr} class="w-full text-left p-3.5 rounded-2xl border transition-all duration-200 active:scale-[0.99] flex items-center justify-between gap-3 text-xs sm:text-sm ${style}">
+            <span class="flex-1">${opt}</span>
+            ${ans && oIdx === q.correctIndex ? '<span class="text-emerald-400 font-bold">✓ 正确</span>' : ''}
+            ${ans && oIdx === ans.selected && !ans.correct ? '<span class="text-red-400 font-bold">✕ 错误</span>' : ''}
+          </button>
+        `;
+      }).join('');
+
+      const analysisBox = document.getElementById('arena-analysis-box');
+      if (ans) {
+        analysisBox.classList.remove('hidden');
+        document.getElementById('arena-analysis-content').innerText = q.analysis;
+        const verdict = document.getElementById('arena-verdict-tag');
+        if (ans.correct) {
+          verdict.className = 'text-[10px] px-2 py-0.5 rounded font-black bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
+          verdict.innerText = '✓ 回答正确 · 心愿币 +2 🪙';
+        } else {
+          verdict.className = 'text-[10px] px-2 py-0.5 rounded font-black bg-red-500/20 text-red-300 border border-red-500/30';
+          verdict.innerText = '✕ 需巩固 · 研读下方解题模型';
+        }
+      } else {
+        analysisBox.classList.add('hidden');
+      }
+
+      renderArenaMatrix();
+    }
+
+    function handleArenaOptionClick(optIdx) {
+      const list = getFilteredArenaQuestions();
+      const q = list[arenaState.currentIndex];
+      if (!q || arenaState.answered[q.id]) return;
+
+      const isCorrect = (optIdx === q.correctIndex);
+      arenaState.answered[q.id] = { selected: optIdx, correct: isCorrect };
+
+      if (isCorrect) {
+        arenaState.coinsEarned += 2;
+        arenaState.currentStreak += 1;
+        if (arenaState.currentStreak > arenaState.maxStreak) {
+          arenaState.maxStreak = arenaState.currentStreak;
+        }
+        if (currentChildData) {
+          currentChildData.wishBalance += 2;
+          currentChildData.xp += 5;
+          const coinBadge = document.getElementById('case-coins-badge');
+          if (coinBadge) coinBadge.innerText = currentChildData.wishBalance;
+          const topCoins = document.getElementById('top-coins');
+          if (topCoins) topCoins.innerText = currentChildData.wishBalance;
+          const topXp = document.getElementById('top-xp-text');
+          if (topXp) topXp.innerText = `${currentChildData.xp} XP`;
+        }
+      } else {
+        arenaState.currentStreak = 0;
+      }
+
+      renderCurrentArenaQuestion();
+    }
+
+    function nextArenaQuestion() {
+      const list = getFilteredArenaQuestions();
+      if (list.length === 0) return;
+      arenaState.currentIndex = (arenaState.currentIndex + 1) % list.length;
+      renderCurrentArenaQuestion();
+    }
+
+    function prevArenaQuestion() {
+      const list = getFilteredArenaQuestions();
+      if (list.length === 0) return;
+      arenaState.currentIndex = (arenaState.currentIndex - 1 + list.length) % list.length;
+      renderCurrentArenaQuestion();
+    }
+
+    function randomArenaQuestion() {
+      const list = getFilteredArenaQuestions();
+      if (list.length <= 1) return;
+      let nextIdx = Math.floor(Math.random() * list.length);
+      if (nextIdx === arenaState.currentIndex) nextIdx = (nextIdx + 1) % list.length;
+      arenaState.currentIndex = nextIdx;
+      renderCurrentArenaQuestion();
+    }
+
+    function jumpArenaQuestion(idx) {
+      arenaState.currentIndex = idx;
+      renderCurrentArenaQuestion();
     }
 
     function interactWithPet() {
