@@ -162,11 +162,17 @@
     <!-- 2. 主体区 (桌面/iPad 左侧栏 + 手机端底部栏) -->
     <main class="flex-1 flex flex-col md:flex-row overflow-hidden relative">
       
-      <!-- 桌面/平板侧边导航 (仅保留 地图 与 周报，其余可根据需要扩展) -->
+      <!-- 桌面/平板侧边导航 (地图、案卷、周报) -->
       <nav class="hidden md:flex w-20 bg-slate-900/90 border-r border-slate-800 flex-col items-center py-5 space-y-4 select-none flex-shrink-0 z-10">
         <button onclick="switchTab('workspace')" id="nav-workspace" class="nav-item active flex flex-col items-center p-2.5 rounded-2xl text-cyan-400 bg-brand-500/15 border border-brand-500/30 transition w-14">
           <span class="text-xl mb-0.5">🗺️</span>
           <span class="text-[10px] font-bold">地图</span>
+        </button>
+        <button onclick="switchTab('cases')" id="nav-cases" class="nav-item flex flex-col items-center p-2.5 rounded-2xl text-slate-400 hover:text-slate-200 transition w-14 relative group">
+          <span class="text-xl mb-0.5 group-hover:scale-110 transition">📁</span>
+          <span class="text-[10px] font-bold">案卷</span>
+          <span class="absolute top-1 right-2 w-2 h-2 bg-amber-400 rounded-full animate-ping"></span>
+          <span class="absolute top-1 right-2 w-2 h-2 bg-amber-500 rounded-full"></span>
         </button>
         <button onclick="switchTab('parent')" id="nav-parent" class="nav-item flex flex-col items-center p-2.5 rounded-2xl text-slate-400 hover:text-slate-200 transition w-14">
           <span class="text-xl mb-0.5">📊</span>
@@ -204,6 +210,37 @@
               <div class="self-end sm:self-center z-10 flex-shrink-0 cursor-pointer pet-bounce transform hover:scale-105 active:scale-95 transition" onclick="interactWithPet()" title="点击和小宠物互动">
                 <div class="w-20 h-20 sm:w-28 sm:h-28 rounded-2xl overflow-hidden ring-4 ring-brand-500/40 shadow-2xl bg-slate-800">
                   <img src="https://iili.io/nfES1e4.webp" id="pet-avatar-img" class="w-full h-full object-cover" alt="Pet Avatar">
+                </div>
+              </div>
+            </div>
+
+            <!-- ⚡ 今日 S 级特勤案卷横幅 (时空档案局 · 跨学科知识剧本杀) -->
+            <div onclick="switchTab('cases')" class="relative overflow-hidden rounded-3xl p-4 sm:p-6 bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 border border-cyan-500/40 hover:border-cyan-400 shadow-2xl shadow-cyan-950/40 cursor-pointer transition-all duration-300 transform hover:-translate-y-0.5 group select-none">
+              <div class="absolute -right-8 -top-8 w-48 h-48 bg-cyan-500/10 rounded-full blur-2xl pointer-events-none"></div>
+              <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 relative z-10">
+                <div class="flex items-center space-x-3.5">
+                  <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-cyan-500/20 border border-cyan-400/40 flex items-center justify-center text-2xl sm:text-3xl shadow-lg shadow-cyan-500/20 flex-shrink-0 group-hover:scale-105 transition">
+                    📁
+                  </div>
+                  <div>
+                    <div class="flex items-center gap-2 flex-wrap">
+                      <span class="px-2 py-0.5 rounded-md bg-cyan-500/20 text-cyan-300 text-[10px] sm:text-xs font-bold border border-cyan-500/30">时空案卷 · CASE #042</span>
+                      <span class="px-2 py-0.5 rounded-md bg-amber-500/20 text-amber-300 text-[10px] sm:text-xs font-bold border border-amber-500/30">小升初与初中跨学科破案</span>
+                      <span class="text-[10px] text-slate-400">通关奖励 💰+50 心愿币</span>
+                    </div>
+                    <h3 class="text-base sm:text-xl font-black text-white mt-1 group-hover:text-cyan-200 transition flex items-center gap-2">
+                      <span>今日案卷：《宋代漕运沉银与粮仓失窃案》</span>
+                    </h3>
+                    <p class="text-xs text-slate-300 line-clamp-1 mt-0.5">
+                      运用三大武器破案：流水行船代数方程 × 文言虚词「而/其」× 浮力与密度探究
+                    </p>
+                  </div>
+                </div>
+                <div class="self-stretch sm:self-center flex sm:flex-col items-center justify-between sm:justify-center gap-1.5 flex-shrink-0">
+                  <button class="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-black text-xs shadow-lg shadow-cyan-500/25 flex items-center justify-center gap-1.5 active:scale-95 transition">
+                    <span>接取案卷并搜证 ➔</span>
+                  </button>
+                  <span class="text-[10px] text-cyan-400/80 hidden sm:inline text-center" id="dash-case-status-badge">● 侦破进行中 (0/3)</span>
                 </div>
               </div>
             </div>
@@ -580,6 +617,238 @@
           </div>
         </section>
 
+        <!-- ================= VIEW 7: 📁 时空档案局 · 跨学科知识剧本杀 ================= -->
+        <section id="view-cases" class="view-panel hidden w-full h-full p-3 sm:p-5 md:p-6 overflow-y-auto">
+          <div class="max-w-7xl mx-auto space-y-4 pb-6">
+
+            <!-- 1. 特勤调查官头部状态栏 -->
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-4 rounded-2xl bg-slate-900/90 border border-cyan-500/30 shadow-xl">
+              <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-600 to-blue-500 flex items-center justify-center text-xl shadow-lg shadow-cyan-500/30">
+                  🕵️
+                </div>
+                <div>
+                  <div class="flex items-center gap-2">
+                    <span class="text-sm font-black text-white">时空档案局 · 特勤侦破中心</span>
+                    <span class="px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 text-[10px] font-bold border border-cyan-500/30">CHRONO AGENCY</span>
+                  </div>
+                  <div class="text-xs text-slate-400 mt-0.5">
+                    特勤调查官：<span class="text-cyan-300 font-bold">张安泽</span> · 三级调查官 (Lv.3) | 今日目标：破解跨学科案卷
+                  </div>
+                </div>
+              </div>
+
+              <!-- 状态徽章 -->
+              <div class="flex items-center space-x-2 self-stretch sm:self-auto justify-between sm:justify-end text-xs">
+                <div class="px-3 py-1.5 rounded-xl bg-slate-800/90 border border-slate-700 flex items-center space-x-1.5">
+                  <span class="text-amber-400 font-bold">🔥 18 天</span>
+                  <span class="text-slate-400 text-[11px]">破案连胜</span>
+                </div>
+                <div class="px-3 py-1.5 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center space-x-1.5">
+                  <span>💰</span>
+                  <span class="text-amber-300 font-bold" id="case-coins-badge">680</span>
+                  <span class="text-[10px] text-amber-400/80">心愿币</span>
+                </div>
+                <button onclick="resetCaseDeduction()" class="px-3 py-1.5 rounded-xl bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-500/30 text-cyan-300 text-[11px] font-bold transition">
+                  🔄 重温案卷
+                </button>
+              </div>
+            </div>
+
+            <!-- 2. 主战区：左侧案卷与三联知识卡 + 右侧审讯对峙终端 -->
+            <div class="grid grid-cols-1 xl:grid-cols-12 gap-4 sm:gap-5">
+
+              <!-- 左侧大区 (xl: 7 列): 案卷背景与三联体系知识卡 -->
+              <div class="xl:col-span-7 space-y-4">
+
+                <!-- 案卷卷宗详情卡 -->
+                <div class="p-4 sm:p-5 rounded-3xl bg-slate-900/90 border border-slate-800 shadow-xl relative overflow-hidden">
+                  <div class="absolute top-0 right-0 w-64 h-64 bg-cyan-500/5 rounded-full blur-3xl pointer-events-none"></div>
+                  
+                  <div class="flex items-center justify-between mb-2">
+                    <div class="flex items-center gap-2">
+                      <span class="px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 text-[10px] font-extrabold border border-cyan-500/30">CASE #042</span>
+                      <span class="px-2 py-0.5 rounded bg-purple-500/20 text-purple-300 text-[10px] font-extrabold border border-purple-500/30">小升初与初中高难度</span>
+                    </div>
+                    <span class="text-xs text-amber-400 font-bold flex items-center gap-1">
+                      <span>🏆 破案悬赏：</span>
+                      <span>+50 心愿币</span>
+                    </span>
+                  </div>
+
+                  <h3 class="text-lg sm:text-xl font-black text-white flex items-center gap-2">
+                    <span>当日案卷：宋代粮仓失窃与沉银谜案</span>
+                  </h3>
+
+                  <p class="text-xs sm:text-sm text-slate-300 mt-2 leading-relaxed">
+                    北宋元祐年间，常平仓三千石官粮自下游开阳码头起运，抵达汴京时却空空如也。押粮官声称突发恶浪导致货船破损沉底；但搜查官发现漕运账本涂改隐晦，甚至打捞到了高密度白银！请调查官研读以下三门科学情报，识破嫌疑人伪证！
+                  </p>
+                </div>
+
+                <!-- 三张体系化知识卡 (连通母树与破案武器) -->
+                <div>
+                  <div class="flex items-center justify-between mb-2 px-1">
+                    <span class="text-xs font-black text-slate-300 flex items-center gap-1.5">
+                      <span>🧬 破案核心科学情报 (点击卡片研读 5 层思维模型)</span>
+                    </span>
+                    <span class="text-[11px] text-cyan-400">已连结知识母树 3 个节点</span>
+                  </div>
+
+                  <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    
+                    <!-- 卡片 1: 数学/小升初模型 -->
+                    <div onclick="openKnowledgeModal('math')" class="p-4 rounded-2xl bg-gradient-to-b from-cyan-950/60 to-slate-900 border border-cyan-500/40 hover:border-cyan-300 cursor-pointer transition-all duration-300 transform hover:-translate-y-1 shadow-lg shadow-cyan-950/30 group relative">
+                      <div class="flex items-center justify-between text-xs mb-2">
+                        <span class="px-1.5 py-0.5 rounded bg-cyan-500/20 text-cyan-300 font-bold text-[10px]">🧮 数学 · 代数</span>
+                        <span class="text-cyan-400 group-hover:translate-x-1 transition text-xs">➔</span>
+                      </div>
+                      <h4 class="text-sm font-black text-white group-hover:text-cyan-200 transition">流水行船方程模型</h4>
+                      <p class="text-[11px] text-slate-300 mt-1 line-clamp-2">
+                        相对运动时空法则：顺流=船速+水速，逆流=船速-水速。
+                      </p>
+                      <div class="mt-2.5 pt-2 border-t border-cyan-500/20 flex items-center justify-between text-[10px]">
+                        <span class="text-cyan-400 font-bold">小升初必考模型</span>
+                        <span class="text-slate-400">研读模型 🔍</span>
+                      </div>
+                    </div>
+
+                    <!-- 卡片 2: 语文/文言衔接 -->
+                    <div onclick="openKnowledgeModal('chinese')" class="p-4 rounded-2xl bg-gradient-to-b from-indigo-950/60 to-slate-900 border border-indigo-500/40 hover:border-indigo-300 cursor-pointer transition-all duration-300 transform hover:-translate-y-1 shadow-lg shadow-indigo-950/30 group relative">
+                      <div class="flex items-center justify-between text-xs mb-2">
+                        <span class="px-1.5 py-0.5 rounded bg-indigo-500/20 text-indigo-300 font-bold text-[10px]">📜 语文 · 文言</span>
+                        <span class="text-indigo-400 group-hover:translate-x-1 transition text-xs">➔</span>
+                      </div>
+                      <h4 class="text-sm font-black text-white group-hover:text-indigo-200 transition">文言虚词「而」与「其」</h4>
+                      <p class="text-[11px] text-slate-300 mt-1 line-clamp-2">
+                        字阵破译：“抵汴而止，吏其私籴之”中的隐晦转折与偷换词性。
+                      </p>
+                      <div class="mt-2.5 pt-2 border-t border-indigo-500/20 flex items-center justify-between text-[10px]">
+                        <span class="text-indigo-300 font-bold">初中文言断层通关</span>
+                        <span class="text-slate-400">研读模型 🔍</span>
+                      </div>
+                    </div>
+
+                    <!-- 卡片 3: 科学/物理浮力 -->
+                    <div onclick="openKnowledgeModal('physics')" class="p-4 rounded-2xl bg-gradient-to-b from-emerald-950/60 to-slate-900 border border-emerald-500/40 hover:border-emerald-300 cursor-pointer transition-all duration-300 transform hover:-translate-y-1 shadow-lg shadow-emerald-950/30 group relative">
+                      <div class="flex items-center justify-between text-xs mb-2">
+                        <span class="px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold text-[10px]">🔬 物理 · 浮力</span>
+                        <span class="text-emerald-400 group-hover:translate-x-1 transition text-xs">➔</span>
+                      </div>
+                      <h4 class="text-sm font-black text-white group-hover:text-emerald-200 transition">浮力平衡与密度探究</h4>
+                      <p class="text-[11px] text-slate-300 mt-1 line-clamp-2">
+                        阿基米德浮力定律：木质沉船为何无法漂浮？暗格藏高密度白银！
+                      </p>
+                      <div class="mt-2.5 pt-2 border-t border-emerald-500/20 flex items-center justify-between text-[10px]">
+                        <span class="text-emerald-300 font-bold">初中物理核心实验</span>
+                        <span class="text-slate-400">研读模型 🔍</span>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+
+                <!-- 搜证线索物证抽屉 -->
+                <div class="p-4 rounded-2xl bg-slate-900/60 border border-slate-800 text-xs">
+                  <div class="text-slate-400 font-bold mb-2 flex items-center justify-between">
+                    <span>🗂️ 现场证物清单 (随审讯进度逐一解锁)</span>
+                    <span id="clue-unlocked-count" class="text-cyan-400">线索破译：0 / 3</span>
+                  </div>
+                  <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                    <div id="clue-tag-0" class="p-2 rounded-xl bg-slate-800/80 border border-slate-700 text-slate-300 flex items-center space-x-2">
+                      <span>⏱️</span>
+                      <span class="truncate">证物A：水文与码头航行刻漏</span>
+                    </div>
+                    <div id="clue-tag-1" class="p-2 rounded-xl bg-slate-800/80 border border-slate-700 text-slate-500 flex items-center space-x-2">
+                      <span>📜</span>
+                      <span class="truncate">证物B：涂改的汴京漕运密账</span>
+                    </div>
+                    <div id="clue-tag-2" class="p-2 rounded-xl bg-slate-800/80 border border-slate-700 text-slate-500 flex items-center space-x-2">
+                      <span>⚓</span>
+                      <span class="truncate">证物C：沉船龙骨夹层打捞报告</span>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+
+              <!-- 右侧大区 (xl: 5 列): 嫌疑人审讯与线索演绎终端 -->
+              <div class="xl:col-span-5 flex flex-col">
+                <div class="p-4 sm:p-5 rounded-3xl bg-slate-900 border border-cyan-500/40 shadow-2xl flex-1 flex flex-col justify-between space-y-4 relative">
+                  
+                  <!-- 审讯终端头部 -->
+                  <div>
+                    <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                      <div class="flex items-center space-x-2.5">
+                        <div class="w-10 h-10 rounded-full bg-slate-800 border-2 border-red-500/50 flex items-center justify-center text-xl flex-shrink-0" id="suspect-avatar">
+                          🧔🏻‍♂️
+                        </div>
+                        <div>
+                          <div class="text-xs font-bold text-white flex items-center gap-1.5">
+                            <span>嫌疑人：押运官 钱某</span>
+                            <span id="suspect-mood-badge" class="px-1.5 py-0.2 rounded bg-red-500/20 text-red-300 text-[10px] font-bold">顽固抗辩中</span>
+                          </div>
+                          <div class="text-[11px] text-slate-400">破案对峙第 <span id="current-round-text" class="text-cyan-300 font-bold">1</span> / 3 关</div>
+                        </div>
+                      </div>
+
+                      <!-- 心理防线血条 -->
+                      <div class="text-right">
+                        <div class="text-[10px] text-slate-400">心理防线</div>
+                        <div class="w-24 h-2 bg-slate-800 rounded-full overflow-hidden mt-1 border border-slate-700">
+                          <div id="suspect-hp-bar" class="h-full bg-gradient-to-r from-red-500 to-amber-400 transition-all duration-500" style="width: 100%;"></div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- 进度环形或指示器 -->
+                    <div class="mt-3 flex items-center justify-between text-[11px] text-slate-400 bg-slate-950/60 p-2.5 rounded-xl border border-slate-800/80">
+                      <span>破译进度：<strong id="deduction-progress-num" class="text-cyan-400">0%</strong></span>
+                      <div class="flex gap-1.5">
+                        <span id="step-dot-0" class="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse"></span>
+                        <span id="step-dot-1" class="w-2.5 h-2.5 rounded-full bg-slate-700"></span>
+                        <span id="step-dot-2" class="w-2.5 h-2.5 rounded-full bg-slate-700"></span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- 嫌疑人辩护对白区 -->
+                  <div class="p-3.5 rounded-2xl bg-slate-950/80 border border-slate-800 text-xs relative">
+                    <span class="absolute -top-2.5 left-4 px-2 py-0.5 rounded bg-slate-800 text-[10px] font-bold text-slate-300">嫌疑人供词</span>
+                    <p class="text-slate-200 mt-1 italic leading-relaxed" id="suspect-statement">
+                      “大人明鉴！我们从下游开阳码头逆流到汴京，全程 36 公里，江水逆流凶猛，我们拼命划船足足航行了 2.5 小时！途中根本没有停靠，怎么可能私自倒卖粮食啊？！”
+                    </p>
+                  </div>
+
+                  <!-- 调查官提问与选项对决区 -->
+                  <div class="space-y-2.5 flex-1">
+                    <div class="text-xs font-bold text-cyan-300 flex items-center gap-1.5">
+                      <span>🎯 调查官安泽，请指出其证词中的破绽：</span>
+                    </div>
+
+                    <!-- 题目题干说明 -->
+                    <div class="text-[11px] text-slate-300 bg-slate-800/50 p-2.5 rounded-xl border border-slate-700/60" id="question-desc">
+                      已知两码头相距 36 公里，粮船在静水速度为 15 km/h，逆流水速为 3 km/h。嫌疑人声称逆水耗时 2.5 小时，他的破绽是：
+                    </div>
+
+                    <!-- 选项列表 -->
+                    <div class="space-y-2 pt-1" id="options-container">
+                      <!-- 动态填充 -->
+                    </div>
+                  </div>
+
+                  <!-- 即时反馈区域 (答对破绽识破 / 答错耳机战术提示) -->
+                  <div id="feedback-box" class="hidden p-3 rounded-2xl text-xs border transition-all">
+                    <!-- 动态反馈 -->
+                  </div>
+
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+        </section>
+
       </div>
     </main>
 
@@ -588,6 +857,10 @@
       <button onclick="switchTab('workspace')" id="nav-m-workspace" class="nav-m-item flex flex-col items-center py-1 px-2 rounded-xl text-cyan-400 font-bold">
         <span class="text-lg">🗺️</span>
         <span class="text-[10px] mt-0.5">地图</span>
+      </button>
+      <button onclick="switchTab('cases')" id="nav-m-cases" class="nav-m-item flex flex-col items-center py-1 px-2 rounded-xl text-slate-400">
+        <span class="text-lg">📁</span>
+        <span class="text-[10px] mt-0.5">案卷</span>
       </button>
       <button onclick="switchTab('parent')" id="nav-m-parent" class="nav-m-item flex flex-col items-center py-1 px-2 rounded-xl text-slate-400">
         <span class="text-lg">📊</span>
@@ -677,6 +950,96 @@
     </div>
   </div>
 
+  <!-- 6. 📁 时空档案局：体系化知识卡 5 层深度研读弹窗 -->
+  <div id="case-knowledge-modal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-3 sm:p-5 overflow-y-auto">
+    <div class="max-w-2xl w-full glass-card p-5 sm:p-7 rounded-3xl border border-cyan-500/40 shadow-2xl space-y-4 my-auto relative">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <div class="flex items-center space-x-2.5">
+          <span class="text-2xl" id="modal-card-icon">🧮</span>
+          <div>
+            <div class="flex items-center gap-2">
+              <span id="modal-card-subject" class="px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 text-[10px] font-bold border border-cyan-500/30">小升初必考模型</span>
+              <span class="text-[10px] text-slate-400">体系化认知母树</span>
+            </div>
+            <h3 class="text-base sm:text-lg font-black text-white mt-0.5" id="modal-card-title">流水行船方程模型</h3>
+          </div>
+        </div>
+        <button onclick="closeKnowledgeModal()" class="w-8 h-8 rounded-full bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center text-sm transition">✕</button>
+      </div>
+
+      <!-- 5层结构化深度知识内容 -->
+      <div class="space-y-3.5 text-xs max-h-[70vh] overflow-y-auto pr-1" id="modal-card-content">
+        <!-- 动态填充 -->
+      </div>
+
+      <div class="pt-2 flex justify-end">
+        <button onclick="closeKnowledgeModal()" class="px-5 py-2 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 text-slate-950 font-black text-xs active:scale-95 transition shadow-lg shadow-cyan-500/20">
+          掌握要诀，去审讯破案 ➔
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 7. 🏆 时空档案局：S级结案评定与战利品弹窗 -->
+  <div id="case-victory-modal" class="hidden fixed inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-4 overflow-y-auto">
+    <div class="max-w-md w-full glass-card p-6 sm:p-8 rounded-3xl border border-amber-500/60 shadow-2xl text-center space-y-4 my-auto relative overflow-hidden">
+      <div class="absolute -right-10 -top-10 w-40 h-40 bg-amber-500/20 rounded-full blur-3xl pointer-events-none"></div>
+      
+      <div class="w-20 h-20 mx-auto rounded-3xl bg-gradient-to-tr from-amber-500 to-yellow-300 flex items-center justify-center text-4xl shadow-xl shadow-amber-500/30 animate-bounce">
+        🏆
+      </div>
+
+      <div>
+        <div class="inline-block px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 font-extrabold text-xs border border-amber-500/40 mb-2">
+          CASE CLOSED · 结案大捷
+        </div>
+        <h3 class="text-xl sm:text-2xl font-black text-white">S 级结案评定 · 案情大白！</h3>
+        <p class="text-xs text-slate-300 mt-2 italic px-3 py-2 rounded-xl bg-slate-900/80 border border-slate-800 text-left">
+          “押粮官 钱某瘫坐在地：‘大人真乃神人！仅凭水流算术、账本虚词与沉船浮力，便彻底识破了我私吞官粮、在龙骨浇铸白银的计划……小的甘愿伏法！’”
+        </p>
+      </div>
+
+      <!-- 战利品与奖励卡 -->
+      <div class="p-3.5 rounded-2xl bg-gradient-to-br from-amber-500/10 via-slate-900 to-cyan-500/10 border border-amber-500/30 text-left space-y-2">
+        <div class="text-[11px] font-bold text-amber-300 flex items-center justify-between">
+          <span>🎁 本案特勤战利品到账</span>
+          <span class="text-[10px] text-cyan-400">已入库安泽档案</span>
+        </div>
+        <div class="grid grid-cols-2 gap-2 text-xs">
+          <div class="p-2.5 rounded-xl bg-slate-800/80 border border-slate-700/80 flex items-center space-x-2">
+            <span class="text-xl">💰</span>
+            <div>
+              <div class="font-extrabold text-amber-300 text-sm">+50 心愿币</div>
+              <div class="text-[10px] text-slate-400">可兑换心愿目标</div>
+            </div>
+          </div>
+          <div class="p-2.5 rounded-xl bg-slate-800/80 border border-slate-700/80 flex items-center space-x-2">
+            <span class="text-xl">⭐</span>
+            <div>
+              <div class="font-extrabold text-cyan-300 text-sm">+100 经验值</div>
+              <div class="text-[10px] text-slate-400">调查官军阶晋升</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 解锁的限定卡牌 -->
+        <div class="p-2.5 rounded-xl bg-slate-950/80 border border-cyan-500/40 flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-lg bg-cyan-500/20 border border-cyan-400/40 flex items-center justify-center text-xl flex-shrink-0">
+            🎴
+          </div>
+          <div class="truncate text-left">
+            <div class="font-bold text-white text-xs truncate">绝密图鉴：宋代漕运沉银机密图谱</div>
+            <div class="text-[10px] text-cyan-300">稀有度：★★★★★ (S级收藏)</div>
+          </div>
+        </div>
+      </div>
+
+      <button onclick="confirmCaseVictory()" class="w-full py-3 rounded-2xl bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 text-slate-950 font-black text-sm shadow-xl shadow-amber-500/30 active:scale-95 transition">
+        收下战利品，继续探索 🚀
+      </button>
+    </div>
+  </div>
+
   <script>
     window.BUILTIN_WEST_DATA = {"1": {"subtitles": [{"start": 0.0, "end": 5.5, "en": "rom the beginning of time, a rock had sat  high on top of a mountain.", "cn": "从远古之初起，有一块神石耸立在巍峨的高山之巅。"}, {"start": 5.5, "end": 10.9, "en": "The sun, the  moon, Heaven, and Earth all worked their  magic on the rock.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 10.9, "end": 16.4, "en": "One day the rock split  open.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 16.4, "end": 21.8, "en": "Inside was a monkey.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 21.8, "end": 27.3, "en": "The monkey stood up and stretched.", "cn": "石猴站立起来舒展身躯，双眼突然射出万道耀眼的金光！"}, {"start": 27.3, "end": 32.7, "en": "Suddenly powerful light shot from his eyes.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 32.7, "end": 38.2, "en": "For a moment the light reached the Cloud  Palace in Heaven.", "cn": "这道耀眼的金光瞬间直冲天庭，照亮了九霄云殿。"}, {"start": 38.2, "end": 43.6, "en": "F The Jade Emperor, ruler of Heaven, sat  up.", "cn": "天庭的主宰玉皇大帝被惊动，立即唤来身旁的护卫统领。"}, {"start": 43.6, "end": 49.1, "en": "He turned to one of his captains, who was  standing nearby.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 49.1, "end": 54.5, "en": "“Find out what caused that light,” said the  emperor.", "cn": "“快去查明，究竟是何方神圣发出了如此神光！”玉帝下令道。"}, {"start": 54.5, "end": 60.0, "en": "“Yes, Your Majesty,” said the captain.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 60.0, "end": 65.5, "en": "The captain rushed out of the hall.", "cn": "统领领命冲出大殿，透过南天门向下界俯瞰探查。"}, {"start": 65.5, "end": 70.9, "en": "He  looked out the southern gate of Heaven  and saw the monkey on Earth below.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 70.9, "end": 76.4, "en": "The  1 2 light was gone.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 76.4, "end": 81.8, "en": "But the captain had magical  sight.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 81.8, "end": 87.3, "en": "He could see everything that had just  happened.", "cn": "凭借神目千里眼，他看清了下界发生的一切奇妙景象。"}, {"start": 87.3, "end": 92.7, "en": "“Interesting,” said the captain.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 92.7, "end": 98.2, "en": "“Well?” said the Jade Emperor when the  captain returned.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 98.2, "end": 103.6, "en": "“What caused the light?” “It was a monkey,” said the captain.", "cn": "统领回报：“启禀玉帝，下界傲来国花果山上，有一石猴破石而出！”"}, {"start": 103.6, "end": 109.1, "en": "“A monkey?” asked the Jade Emperor.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 109.1, "end": 114.5, "en": "“Yes,” said the captain.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 114.5, "end": 120.0, "en": "“He’s on the  Fruit and Flower Mountain, down on Earth.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 120.0, "end": 125.5, "en": "There had been a rock on the mountain.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 125.5, "end": 130.9, "en": "The  monkey came from the rock.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 130.9, "end": 136.4, "en": "The light shone  from the monkey’s eyes.” The emperor thought for a moment and  then shrugged.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 136.4, "end": 141.8, "en": "“I’m not surprised,” he said.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 141.8, "end": 147.3, "en": "“Amazing things happen when Heaven and  Earth work together.” As time passed, Monkey learned to walk,  3 4 run, and climb.", "cn": "玉皇大帝沉思片刻道：“天地精华孕育造化，不足为奇。”"}, {"start": 147.3, "end": 152.7, "en": "He drank from streams and  ate grasses and leaves.", "cn": "他饮山涧清泉，食林间野果，穿梭于奇洞峰峦之间。"}, {"start": 152.7, "end": 158.2, "en": "He gathered fruit  and explored caves and mountaintops.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 158.2, "end": 163.6, "en": "He  became friends with all the other monkeys  and apes.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 163.6, "end": 169.1, "en": "At night he slept under a cliff.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 169.1, "end": 174.5, "en": "One very hot morning, all the monkeys  and apes were playing in the shade.", "cn": "一个炎热的清晨，猴群们在密林树荫下纳凉玩耍。"}, {"start": 174.5, "end": 180.0, "en": "“It is so hot today!” cried one monkey.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 180.0, "end": 185.5, "en": "“Let’s play in the stream.” “Good idea!” said another monkey.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 185.5, "end": 190.9, "en": "The monkeys and apes ran to the stream.", "cn": "猴群欢呼雀跃着奔向溪水，水花飞溅，笑声回荡在整个山谷。"}, {"start": 190.9, "end": 196.4, "en": "The water rolled and bounced over the rocks.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 196.4, "end": 201.8, "en": "The monkeys jumped into the cool water.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 201.8, "end": 207.3, "en": "Everyone splashed and played.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 207.3, "end": 212.7, "en": "After a few minutes, one monkey  scratched her head.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 212.7, "end": 218.2, "en": "“We all love this stream,”  she said.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 218.2, "end": 223.6, "en": "“We drink from it.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 223.6, "end": 229.1, "en": "We swim in  it.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 229.1, "end": 234.5, "en": "We know that it flows all the way to the  5 6 ocean.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 234.5, "end": 240.0, "en": "But does anyone know where the  stream begins?” They all looked at one another and shook  their heads.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 240.0, "end": 245.5, "en": "“We have nothing to do today,” the monkey  continued.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 245.5, "end": 250.9, "en": "“Why don’t we follow the stream to  find its source?”  “That sounds like fun,” said another  monkey.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 250.9, "end": 256.4, "en": "“Let’s go!” said a third monkey.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 256.4, "end": 261.8, "en": "Everyone jumped out of the water.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 261.8, "end": 267.3, "en": "They  ran alongside the stream and swung from tree  to tree.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 267.3, "end": 272.7, "en": "They jumped over rocks and climbed  up steep cliffs.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 272.7, "end": 278.2, "en": "Higher and higher they  went up the mountain until they reached an  enormous waterfall.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 278.2, "end": 283.6, "en": "Mist filled the air.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 283.6, "end": 289.1, "en": "The  water crashed down, roaring like thunder.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 289.1, "end": 294.5, "en": "“I wonder what’s behind that waterfall,”  7 8 said one monkey.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 294.5, "end": 300.0, "en": "“Me too,” said a second monkey.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 300.0, "end": 305.5, "en": "“But  nobody could jump through it.” “Whoever can jump through and come  back alive will be our king,” said a gibbon.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 305.5, "end": 310.9, "en": "“Is  anyone brave enough to try?” All the monkeys and apes looked at one  another.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 310.9, "end": 316.4, "en": "They shook their heads.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 316.4, "end": 321.8, "en": "“I’m not going to try,” said a tall monkey.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 321.8, "end": 327.3, "en": "“Me neither,” said a short monkey.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 327.3, "end": 332.7, "en": "A voice called out, “I’ll do it!” Everyone moved out of the way as the  speaker stepped forward.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 332.7, "end": 338.2, "en": "It was Monkey.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 338.2, "end": 343.6, "en": "“Are you sure?” asked the gibbon.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 343.6, "end": 349.1, "en": "“It  looks dangerous.” Monkey laughed.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 349.1, "end": 354.5, "en": "“I’m not afraid of  anything!", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 354.5, "end": 360.0, "en": "And when I come back, I will be  king!” 9 10 Monkey took a deep breath and leaped  into the waterfall.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}], "vocabs": [{"word": "journey", "meaning": "旅⾏", "phonetic": "", "pos": "重点词汇"}, {"word": "west", "meaning": "1.", "phonetic": "", "pos": "重点词汇"}, {"word": "向西⽅", "meaning": ")", "phonetic": "", "pos": "重点词汇"}, {"word": "split", "meaning": "劈开，裂开", "phonetic": "", "pos": "重点词汇"}, {"word": "powerful", "meaning": "强⼤的，强⽽有⼒的", "phonetic": "", "pos": "重点词汇"}, {"word": "shot", "meaning": "1.	(", "phonetic": "", "pos": "重点词汇"}, {"word": "飞驰，", "meaning": "飞快地移动", "phonetic": "", "pos": "重点词汇"}, {"word": "emperor", "meaning": "皇帝，帝王", "phonetic": "", "pos": "重点词汇"}, {"word": "Jade	Emperor", "meaning": "⽟皇⼤帝", "phonetic": "", "pos": "重点词汇"}, {"word": "captain", "meaning": "1.	(", "phonetic": "", "pos": "重点词汇"}, {"word": "船长，舰长，", "meaning": "(", "phonetic": "", "pos": "重点词汇"}, {"word": "nearby", "meaning": "在附近", "phonetic": "", "pos": "重点词汇"}, {"word": "southern", "meaning": "南⽅的", "phonetic": "", "pos": "重点词汇"}, {"word": "magical", "meaning": "魔术的，魔法的", "phonetic": "", "pos": "重点词汇"}, {"word": "sight", "meaning": "景⾊，景象", "phonetic": "", "pos": "重点词汇"}, {"word": "interesting", "meaning": "有趣的", "phonetic": "", "pos": "重点词汇"}, {"word": "cause", "meaning": "导致，使发⽣，引起", "phonetic": "", "pos": "重点词汇"}, {"word": "shone", "meaning": "发光，闪烁", "phonetic": "", "pos": "重点词汇"}, {"word": "amazing", "meaning": "惊⼈的，令⼈吃惊的", "phonetic": "", "pos": "重点词汇"}, {"word": "drank", "meaning": "喝", "phonetic": "", "pos": "重点词汇"}, {"word": "explore", "meaning": "探险，调查", "phonetic": "", "pos": "重点词汇"}, {"word": "mountaintop", "meaning": "⼭顶", "phonetic": "", "pos": "重点词汇"}, {"word": "ape", "meaning": "⼈猿，类⼈猿", "phonetic": "", "pos": "重点词汇"}, {"word": "slept", "meaning": "睡觉", "phonetic": "", "pos": "重点词汇"}, {"word": "cliff", "meaning": "悬崖，绝壁", "phonetic": "", "pos": "重点词汇"}, {"word": "shade", "meaning": "1.", "phonetic": "", "pos": "重点词汇"}, {"word": "遮蔽，蔽荫", "meaning": ")", "phonetic": "", "pos": "重点词汇"}, {"word": "bounce", "meaning": "1.	(", "phonetic": "", "pos": "重点词汇"}, {"word": "蹦蹦跳跳", "meaning": ")", "phonetic": "", "pos": "重点词汇"}, {"word": "splash", "meaning": "溅，泼，激起⽔花", "phonetic": "", "pos": "重点词汇"}, {"word": "scratch", "meaning": "抓，搔", "phonetic": "", "pos": "重点词汇"}, {"word": "source", "meaning": "源头，出处，根源", "phonetic": "", "pos": "重点词汇"}, {"word": "alongside", "meaning": "并排地，在旁边", "phonetic": "", "pos": "重点词汇"}, {"word": "steep", "meaning": "陡峭的，险峻的", "phonetic": "", "pos": "重点词汇"}, {"word": "enormous", "meaning": "巨⼤的，庞⼤的", "phonetic": "", "pos": "重点词汇"}, {"word": "waterfall", "meaning": "瀑布", "phonetic": "", "pos": "重点词汇"}, {"word": "mist", "meaning": "薄雾", "phonetic": "", "pos": "重点词汇"}, {"word": "crash", "meaning": "down", "phonetic": "", "pos": "重点词汇"}, {"word": "roar", "meaning": "1.	(", "phonetic": "", "pos": "重点词汇"}, {"word": "呼喊，", "meaning": "⼤声叫喊", "phonetic": "", "pos": "重点词汇"}, {"word": "thunder", "meaning": "雷", "phonetic": "", "pos": "重点词汇"}, {"word": "gibbon", "meaning": "长臂猿", "phonetic": "", "pos": "重点词汇"}]}, "2": {"subtitles": [{"start": 0.0, "end": 4.9, "en": "onkey splashed through the waterfall  and landed in a large cave.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 4.9, "end": 9.7, "en": "His eyes  opened wide.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 9.7, "end": 14.6, "en": "The cave was filled with  bamboo, trees, and beautiful flowers.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 14.6, "end": 19.5, "en": "Moss  covered the walls.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 19.5, "end": 24.3, "en": "A stream flowed through  the cave, and glowing light and mist filled  the air.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 24.3, "end": 29.2, "en": "Monkey found a long table with bowls,  cups, and plates.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 29.2, "end": 34.1, "en": "A fireplace sat against one  M wall.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 34.1, "end": 38.9, "en": "Deeper in the cave, Monkey found  bedrooms with cozy beds.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 38.9, "end": 43.8, "en": "Outside, the other monkeys and apes were  looking at the waterfall.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 43.8, "end": 48.6, "en": "“Do you think he made it through?” asked  one monkey.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 48.6, "end": 53.5, "en": "“No,” said another monkey.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 53.5, "end": 58.4, "en": "“He probably  got washed away down the river.” Suddenly—splash!", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 58.4, "end": 63.2, "en": "Monkey shot out of  1 2 the waterfall and landed in front of the group.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 63.2, "end": 68.1, "en": "“You’re alive!” said a monkey.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 68.1, "end": 73.0, "en": "Monkey laughed.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 73.0, "end": 77.8, "en": "“Yes!", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 77.8, "end": 82.7, "en": "And we are very  lucky!", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 82.7, "end": 87.6, "en": "I found a perfect home for all of us.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 87.6, "end": 92.4, "en": "Follow me!” Monkey jumped back through the water.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 92.4, "end": 97.3, "en": "Some of the monkeys scratched their  heads.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 97.3, "end": 102.2, "en": "“It still looks dangerous,” said one  monkey.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 102.2, "end": 107.0, "en": "“Let’s go,” said the gibbon.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 107.0, "end": 111.9, "en": "He leaped  through the waterfall.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 111.9, "end": 116.8, "en": "After that, another monkey jumped  through.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 116.8, "end": 121.6, "en": "Then some more jumped.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 121.6, "end": 126.5, "en": "Soon all of the monkeys and apes were in  the cave.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 126.5, "end": 131.4, "en": "Everyone ran around to see all the  wonderful things.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 131.4, "end": 136.2, "en": "“This cave is beautiful,” said the gibbon.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 136.2, "end": 141.1, "en": "3 4 Some of the monkeys and apes began  fighting and arguing.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 141.1, "end": 145.9, "en": "They grabbed plates  and bowls from one another.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 145.9, "end": 150.8, "en": "Others fought  over the bedrooms.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 150.8, "end": 155.7, "en": "“I saw this bed first!” yelled one monkey.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 155.7, "end": 160.5, "en": "“No!” yelled another monkey.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 160.5, "end": 165.4, "en": "“I did!” Monkey watched his friends for a moment  and then folded his arms.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 165.4, "end": 170.3, "en": "“Ahem!” he called.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 170.3, "end": 175.1, "en": "All the monkeys and apes stopped what  they were doing.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 175.1, "end": 180.0, "en": "They looked at Monkey.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 180.0, "end": 184.9, "en": "“I found this cave for us,” said Monkey.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 184.9, "end": 189.7, "en": "“That means I am now your king.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 189.7, "end": 194.6, "en": "Why aren’t  you bowing to me?” “He’s right,” said the gibbon.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 194.6, "end": 199.5, "en": "He bowed  to Monkey and said, “All hail the Monkey  King.” Everyone else bowed too.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 199.5, "end": 204.3, "en": "“All hail the  5 6 Monkey King!” they shouted.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 204.3, "end": 209.2, "en": "Many years went by.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 209.2, "end": 214.1, "en": "During the day the  monkeys and apes played in the forest and  the stream.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 214.1, "end": 218.9, "en": "And every night they slept safely  in their cave.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 218.9, "end": 223.8, "en": "One night the monkeys and apes had a  huge feast.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 223.8, "end": 228.6, "en": "Fruits and nuts covered the table.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 228.6, "end": 233.5, "en": "*  *  * Monkeys and apes danced and sang while  music played.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 233.5, "end": 238.4, "en": "Monkey sat on his throne and smiled.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 238.4, "end": 243.2, "en": "But  then his smile faded.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 243.2, "end": 248.1, "en": "Soon he was frowning.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 248.1, "end": 253.0, "en": "The gibbon saw Monkey and rushed over.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 253.0, "end": 257.8, "en": "“Your Majesty,” said the gibbon.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 257.8, "end": 262.7, "en": "“You  look sad.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 262.7, "end": 267.6, "en": "What’s wrong?” Monkey sighed.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 267.6, "end": 272.4, "en": "“Our life here is perfect.” “Yes, that’s true,” said the gibbon.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 272.4, "end": 277.3, "en": "“So  7 8 why are you sad?” Monkey was quiet for a moment.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 277.3, "end": 282.2, "en": "Then he  said, “Someday our lives will end.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 282.2, "end": 287.0, "en": "I wish this  perfect life could last forever.” The gibbon’s eyes lit up.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 287.0, "end": 291.9, "en": "“Oh,” he said.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 291.9, "end": 296.8, "en": "“You want to live forever?” “I do,” said Monkey.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 296.8, "end": 301.6, "en": "The gibbon rubbed his chin.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 301.6, "end": 306.5, "en": "“Then you  must study with a sage.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 306.5, "end": 311.4, "en": "Sages are very wise  people.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 311.4, "end": 316.2, "en": "They can turn themselves into other  animals.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 316.2, "end": 321.1, "en": "They can fly through the sky.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 321.1, "end": 325.9, "en": "And  they know how to live forever.” Monkey smiled again.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 325.9, "end": 330.8, "en": "“Where can I find  a sage?” he asked.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 330.8, "end": 335.7, "en": "“You must find a land with people,” said  the gibbon.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 335.7, "end": 340.5, "en": "“That’s where you’ll find a sage.” The next morning Monkey built a raft and  loaded food onto it.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 340.5, "end": 345.4, "en": "He pushed the raft into  9 10 the stream and jumped on.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 345.4, "end": 350.3, "en": "As the raft began to float away, Monkey  waved to his friends.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 350.3, "end": 355.1, "en": "“Don’t worry!” he called.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 355.1, "end": 360.0, "en": "“After I learn  how to live forever, I will return!” 11", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}], "vocabs": [{"word": "land", "meaning": "降落，登陆", "phonetic": "", "pos": "重点词汇"}, {"word": "wide", "meaning": "张得", "phonetic": "", "pos": "重点词汇"}, {"word": "bamboo", "meaning": "⽵⼦", "phonetic": "", "pos": "重点词汇"}, {"word": "moss", "meaning": "苔藓，地⾐", "phonetic": "", "pos": "重点词汇"}, {"word": "glowing", "meaning": "鲜艳的，鲜明的，炽热的", "phonetic": "", "pos": "重点词汇"}, {"word": "fireplace", "meaning": "壁炉", "phonetic": "", "pos": "重点词汇"}, {"word": "cozy", "meaning": "(", "phonetic": "", "pos": "重点词汇"}, {"word": "outside", "meaning": "(", "phonetic": "", "pos": "重点词汇"}, {"word": "wash	away", "meaning": "冲⾛", "phonetic": "", "pos": "重点词汇"}, {"word": "perfect", "meaning": "完美的", "phonetic": "", "pos": "重点词汇"}, {"word": "dangerous", "meaning": "危险的", "phonetic": "", "pos": "重点词汇"}, {"word": "argue", "meaning": "争论，辩论", "phonetic": "", "pos": "重点词汇"}, {"word": "fold", "meaning": "1.", "phonetic": "", "pos": "重点词汇"}, {"word": "折叠", "meaning": "(", "phonetic": "", "pos": "重点词汇"}, {"word": "cave", "meaning": "洞⽳，洞窟", "phonetic": "", "pos": "重点词汇"}, {"word": "hail", "meaning": "1.", "phonetic": "", "pos": "重点词汇"}, {"word": "⼤声招呼", "meaning": "(", "phonetic": "", "pos": "重点词汇"}, {"word": "雹，冰雹", "meaning": ")", "phonetic": "", "pos": "重点词汇"}, {"word": "all	hail", "meaning": "万岁！", "phonetic": "", "pos": "重点词汇"}, {"word": "safely", "meaning": "安全地", "phonetic": "", "pos": "重点词汇"}, {"word": "feast", "meaning": "盛宴，筵席", "phonetic": "", "pos": "重点词汇"}, {"word": "throne", "meaning": "王位，王座", "phonetic": "", "pos": "重点词汇"}, {"word": "fade", "meaning": "1.", "phonetic": "", "pos": "重点词汇"}, {"word": "frown", "meaning": "皱眉", "phonetic": "", "pos": "重点词汇"}, {"word": "wrong", "meaning": "错的，不对的", "phonetic": "", "pos": "重点词汇"}, {"word": "sigh", "meaning": "叹⽓，叹息", "phonetic": "", "pos": "重点词汇"}, {"word": "someday", "meaning": "将来有⼀天", "phonetic": "", "pos": "重点词汇"}, {"word": "last", "meaning": "1.", "phonetic": "", "pos": "重点词汇"}, {"word": "最后的", "meaning": ")", "phonetic": "", "pos": "重点词汇"}, {"word": "forever", "meaning": "永远地", "phonetic": "", "pos": "重点词汇"}, {"word": "lit	up", "meaning": "(", "phonetic": "", "pos": "重点词汇"}, {"word": "sage", "meaning": "圣⼈，圣贤", "phonetic": "", "pos": "重点词汇"}, {"word": "built", "meaning": "建筑，建造", "phonetic": "", "pos": "重点词汇"}, {"word": "raft", "meaning": "⽊筏，橡⽪船", "phonetic": "", "pos": "重点词汇"}, {"word": "load", "meaning": "1.", "phonetic": "", "pos": "重点词汇"}, {"word": "货物，装载物", "meaning": ")", "phonetic": "", "pos": "重点词汇"}, {"word": "float", "meaning": "1.", "phonetic": "", "pos": "重点词汇"}]}, "3": {"subtitles": [{"start": 0.0, "end": 4.9, "en": "onkey sailed over the ocean for a long  time.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 4.9, "end": 9.9, "en": "Finally he arrived at a new land.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 9.9, "end": 14.8, "en": "He walked for many years, visiting towns  and meeting people.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 14.8, "end": 19.7, "en": "But he didn’t find a sage  anywhere.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 19.7, "end": 24.7, "en": "Eventually he came to mountains  covered in thick forest.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 24.7, "end": 29.6, "en": "He headed up a steep  mountain trail and soon heard chopping.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 29.6, "end": 34.5, "en": "A  woodcutter was chopping firewood.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 34.5, "end": 39.5, "en": "M “Hello,” said Monkey.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 39.5, "end": 44.4, "en": "“Are there any  sages in these mountains?” The woodcutter dropped his ax.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 44.4, "end": 49.3, "en": "“You’re .", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 49.3, "end": 54.2, "en": "a monkey!” he said.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 54.2, "end": 59.2, "en": "“And  you’re talking!” “Yes, I am,” said Monkey.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 59.2, "end": 64.1, "en": "“And I want to  live forever.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 64.1, "end": 69.0, "en": "Do you know where I can find a  sage?” The woodcutter scratched his head.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 69.0, "end": 74.0, "en": "“Well,  1 2 yes,” he said.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 74.0, "end": 78.9, "en": "“A sage named Subodhi lives  on this mountain.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 78.9, "end": 83.8, "en": "He is very wise.” Monkey was excited.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 83.8, "end": 88.8, "en": "“Where can I find  him?” “Just follow this trail, and you will come  to his home,” said the woodcutter.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 88.8, "end": 93.7, "en": "“Thank you!” said Monkey.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 93.7, "end": 98.6, "en": "He waved  good-bye to the woodcutter and ran up the  trail.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 98.6, "end": 103.6, "en": "Soon he saw a temple built into the side  of the mountain.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 103.6, "end": 108.5, "en": "Subodhi was sitting with his students in  the main room of his temple.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 108.5, "end": 113.4, "en": "He looked at  his oldest student.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 113.4, "end": 118.4, "en": "“Please go to the door,” said Subodhi.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 118.4, "end": 123.3, "en": "“A  new student is about to arrive.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 123.3, "end": 128.2, "en": "Let him in.” The student looked confused.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 128.2, "end": 133.2, "en": "“Okay,  *  *  * 3 4 Master,” he said.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 133.2, "end": 138.1, "en": "The student got up and went to the door  of the temple.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 138.1, "end": 143.0, "en": "He looked outside.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 143.0, "end": 147.9, "en": "“Hello!” called Monkey.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 147.9, "end": 152.9, "en": "“I’m here to see  Subodhi!” A moment later Monkey was standing in  front of the sage.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 152.9, "end": 157.8, "en": "“I want to be your student,” said Monkey.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 157.8, "end": 162.7, "en": "“But you’re just a monkey,” said Subodhi.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 162.7, "end": 167.7, "en": "“How can you be my student?” Monkey laughed.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 167.7, "end": 172.6, "en": "“I might be a monkey.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 172.6, "end": 177.5, "en": "But I can walk and talk and do many other  things.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 177.5, "end": 182.5, "en": "I traveled almost 13 years to get here.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 182.5, "end": 187.4, "en": "I’m sure I can be your student.” Subodhi stared at Monkey for a moment.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 187.4, "end": 192.3, "en": "“Who are your parents?” he asked.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 192.3, "end": 197.3, "en": "Monkey scratched his head.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 197.3, "end": 202.2, "en": "“I don’t have  parents,” he said.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 202.2, "end": 207.1, "en": "“I was born from a rock.” 5 6 “Interesting,” said Subodhi.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 207.1, "end": 212.1, "en": "“You were  probably created by Heaven and Earth.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 212.1, "end": 217.0, "en": "You  may be my student.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 217.0, "end": 221.9, "en": "You need a name.” He  thought for a moment.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 221.9, "end": 226.8, "en": "“I will call you Sun  Wukong.” For the next seven years, Sun Wukong  lived in Subodhi’s temple.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 226.8, "end": 231.8, "en": "The monkey spent  *  *  * his days meditating, listening to his teacher’s  lessons, and doing chores.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 231.8, "end": 236.7, "en": "One day, while Subodhi was giving a  lesson, Wukong started to dance.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 236.7, "end": 241.6, "en": "Subodhi stood up.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 241.6, "end": 246.6, "en": "“How dare you dance  while I’m teaching?” he shouted.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 246.6, "end": 251.5, "en": "“I’m sorry,” said Wukong.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 251.5, "end": 256.4, "en": "“But I was so  happy, I needed to dance!” Subodhi calmed down.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 256.4, "end": 261.4, "en": "“You’re happy?” 7 8 “Yes,” said the monkey.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 261.4, "end": 266.3, "en": "“I love learning  from you.” “Wukong, you have been here a long  time.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 266.3, "end": 271.2, "en": "What would you like to learn from  me?” asked Subodhi.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 271.2, "end": 276.2, "en": "Wukong shrugged.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 276.2, "end": 281.1, "en": "“I don’t know.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 281.1, "end": 286.0, "en": "You  tell me what I should learn.” “Well,” said Subodhi, “I can teach you  how to tell the future.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 286.0, "end": 291.0, "en": "Would you like that?” “Maybe,” said Wukong.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 291.0, "end": 295.9, "en": "“Will it make me  live forever?” “Of course not,” said Subodhi.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 295.9, "end": 300.8, "en": "“Then forget it,” said Wukong.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 300.8, "end": 305.8, "en": "“Teach me  something else.” “Hmm,” said Subodhi.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 305.8, "end": 310.7, "en": "“How about some  magic breathing exercises?” “Will they make me live forever?” asked  Wukong.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 310.7, "end": 315.6, "en": "9 10 “No,” said Subodhi, frowning.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 315.6, "end": 320.5, "en": "“Then I’m not interested,” said Wukong.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 320.5, "end": 325.5, "en": "Subodhi became angry.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 325.5, "end": 330.4, "en": "He stood up and  knocked Wukong on the head three times.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 330.4, "end": 335.3, "en": "Then he left the room.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 335.3, "end": 340.3, "en": "“Wukong,” said another student.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 340.3, "end": 345.2, "en": "“You  were very rude to Master!” The other students all agreed.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 345.2, "end": 350.1, "en": "Wukong, however, smiled.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 350.1, "end": 355.1, "en": "None of the other students knew it, but Subodhi had  given him a secret message.", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}, {"start": 355.1, "end": 360.0, "en": "11 12", "cn": "【跟随原版英文纯正发音，开启双语精读与沉浸跟读】"}], "vocabs": [{"word": "eventually", "meaning": "最终", "phonetic": "", "pos": "重点词汇"}, {"word": "thick", "meaning": "厚的", "phonetic": "", "pos": "重点词汇"}, {"word": "steep", "meaning": "陡峭的，险峻的", "phonetic": "", "pos": "重点词汇"}, {"word": "trail", "meaning": "⼩径，", "phonetic": "", "pos": "重点词汇"}, {"word": "chop", "meaning": "1.", "phonetic": "", "pos": "重点词汇"}, {"word": "切细，剁碎", "meaning": ")", "phonetic": "", "pos": "重点词汇"}, {"word": "woodcutter", "meaning": "伐⽊者，樵夫", "phonetic": "", "pos": "重点词汇"}, {"word": "firewood", "meaning": "⽊柴，柴⽕", "phonetic": "", "pos": "重点词汇"}, {"word": "wise", "meaning": "聪明的，明智的", "phonetic": "", "pos": "重点词汇"}, {"word": "side", "meaning": "旁边，侧⾯", "phonetic": "", "pos": "重点词汇"}, {"word": "temple", "meaning": "神殿，庙宇，寺院", "phonetic": "", "pos": "重点词汇"}, {"word": "confused", "meaning": "混乱的，困惑的", "phonetic": "", "pos": "重点词汇"}, {"word": "master", "meaning": "1.", "phonetic": "", "pos": "重点词汇"}, {"word": "just", "meaning": "仅仅，只是", "phonetic": "", "pos": "重点词汇"}, {"word": "almost", "meaning": "⼏乎，差不多", "phonetic": "", "pos": "重点词汇"}, {"word": "stare", "meaning": "凝视，盯着看", "phonetic": "", "pos": "重点词汇"}, {"word": "parent", "meaning": "⽗亲或母亲", "phonetic": "", "pos": "重点词汇"}, {"word": "born", "meaning": "出⽣", "phonetic": "", "pos": "重点词汇"}, {"word": "probably", "meaning": "⼤概，或许", "phonetic": "", "pos": "重点词汇"}, {"word": "create", "meaning": "创造，创作", "phonetic": "", "pos": "重点词汇"}, {"word": "meditate", "meaning": "冥想，沉思", "phonetic": "", "pos": "重点词汇"}, {"word": "chore", "meaning": "家庭杂务", "phonetic": "", "pos": "重点词汇"}, {"word": "calm", "meaning": "down", "phonetic": "", "pos": "重点词汇"}, {"word": "future", "meaning": "未来", "phonetic": "", "pos": "重点词汇"}, {"word": "forget", "meaning": "忘记", "phonetic": "", "pos": "重点词汇"}, {"word": "breathing", "meaning": "呼吸", "phonetic": "", "pos": "重点词汇"}, {"word": "exercise", "meaning": "运动", "phonetic": "", "pos": "重点词汇"}, {"word": "rude", "meaning": "粗鲁的，⽆礼的", "phonetic": "", "pos": "重点词汇"}, {"word": "none", "meaning": "⼀个也没，没有任何⼈或物", "phonetic": "", "pos": "重点词汇"}, {"word": "given", "meaning": "给", "phonetic": "", "pos": "重点词汇"}, {"word": "secret", "meaning": "1.", "phonetic": "", "pos": "重点词汇"}, {"word": "秘密", "meaning": ")", "phonetic": "", "pos": "重点词汇"}, {"word": "message", "meaning": "消息，⼜信", "phonetic": "", "pos": "重点词汇"}]}, "4": {"subtitles": [{"start": 0.0, "end": 5.1, "en": "hen the other students went to bed  that night, Wukong stayed awake.", "cn": ""}, {"start": 5.1, "end": 10.3, "en": "At three o’clock in the morning, he crept  quietly through the dark temple.", "cn": ""}, {"start": 10.3, "end": 15.4, "en": "He entered  Subodhi’s room.", "cn": ""}, {"start": 15.4, "end": 20.6, "en": "“Wukong, what are you doing here?”  asked the sage.", "cn": ""}, {"start": 20.6, "end": 25.7, "en": "“I understood your secret message,” said  the monkey.", "cn": ""}, {"start": 25.7, "end": 30.9, "en": "“You hit me on the head three  W times.", "cn": ""}, {"start": 30.9, "end": 36.0, "en": "That meant you wanted me to visit  you at three o’clock.", "cn": ""}, {"start": 36.0, "end": 41.1, "en": "Now will you teach me  how to live forever?” Subodhi smiled.", "cn": ""}, {"start": 41.1, "end": 46.3, "en": "“I knew you were a  worthy student.", "cn": ""}, {"start": 46.3, "end": 51.4, "en": "Come closer.” Subodhi whispered into Wukong’s ear.", "cn": ""}, {"start": 51.4, "end": 56.6, "en": "The sage whispered prayers as well as secret  formulas about the universe and nature.", "cn": ""}, {"start": 56.6, "end": 61.7, "en": "As  the monkey listened to his teacher’s words,  1 2 powerful light filled the room.", "cn": ""}, {"start": 61.7, "end": 66.9, "en": "Now Wukong knew how to live forever!", "cn": ""}, {"start": 66.9, "end": 72.0, "en": "For the next few years, Wukong meditated  and practiced the secret formulas.", "cn": ""}, {"start": 72.0, "end": 77.1, "en": "While the  other students slept at night, Wukong stayed  up.", "cn": ""}, {"start": 77.1, "end": 82.3, "en": "Soon his mind and body were powerful,  *  *  * and he could change shape or size.", "cn": ""}, {"start": 82.3, "end": 87.4, "en": "He could  turn into other animals and soar through the  sky on clouds.", "cn": ""}, {"start": 87.4, "end": 92.6, "en": "One day all the students were sitting  outside.", "cn": ""}, {"start": 92.6, "end": 97.7, "en": "“Wukong,” said one student.", "cn": ""}, {"start": 97.7, "end": 102.9, "en": "“You have  been busy lately.” “It’s true,” said another student.", "cn": ""}, {"start": 102.9, "end": 108.0, "en": "“What  have you been doing?” 3 4 “I’ve been meditating and practicing  secret formulas,” said Wukong.", "cn": ""}, {"start": 108.0, "end": 113.1, "en": "“Secret formulas?” said the first student.", "cn": ""}, {"start": 113.1, "end": 118.3, "en": "Everyone looked very interested.", "cn": ""}, {"start": 118.3, "end": 123.4, "en": "They  leaned in closer to Wukong.", "cn": ""}, {"start": 123.4, "end": 128.6, "en": "“Yes,” said the monkey.", "cn": ""}, {"start": 128.6, "end": 133.7, "en": "“Our master told  them to me.” “He did?” said a student.", "cn": ""}, {"start": 133.7, "end": 138.9, "en": "“You must  be special.", "cn": ""}, {"start": 138.9, "end": 144.0, "en": "He doesn’t tell everyone those  formulas.", "cn": ""}, {"start": 144.0, "end": 149.1, "en": "What did he teach you?” Wukong smiled.", "cn": ""}, {"start": 149.1, "end": 154.3, "en": "“He taught me how  to live forever.", "cn": ""}, {"start": 154.3, "end": 159.4, "en": "He also taught me how to  change into other things.” “Show us what you can do,” said the  student.", "cn": ""}, {"start": 159.4, "end": 164.6, "en": "Wukong stood up.", "cn": ""}, {"start": 164.6, "end": 169.7, "en": "He muttered a quick  spell and made a sign with his hands.", "cn": ""}, {"start": 169.7, "end": 174.9, "en": "Suddenly—zap!", "cn": ""}, {"start": 174.9, "end": 180.0, "en": "The monkey was gone.", "cn": ""}, {"start": 180.0, "end": 185.1, "en": "An  5 6 enormous pine tree stood in his place.", "cn": ""}, {"start": 185.1, "end": 190.3, "en": "Wukong’s voice came from the tree.", "cn": ""}, {"start": 190.3, "end": 195.4, "en": "“What do you think?” The students clapped and cheered.", "cn": ""}, {"start": 195.4, "end": 200.6, "en": "“That’s amazing!” said one.", "cn": ""}, {"start": 200.6, "end": 205.7, "en": "“The monkey is truly powerful!” said  another.", "cn": ""}, {"start": 205.7, "end": 210.9, "en": "The noise disturbed Subodhi.", "cn": ""}, {"start": 210.9, "end": 216.0, "en": "He ran  outside and saw the enormous pine tree.", "cn": ""}, {"start": 216.0, "end": 221.1, "en": "“What’s going on out here?” he shouted.", "cn": ""}, {"start": 221.1, "end": 226.3, "en": "Everyone stopped cheering.", "cn": ""}, {"start": 226.3, "end": 231.4, "en": "Wukong  quickly turned back into himself.", "cn": ""}, {"start": 231.4, "end": 236.6, "en": "Subodhi’s eyes flashed with anger.", "cn": ""}, {"start": 236.6, "end": 241.7, "en": "“Everyone but Wukong, go inside!” he  yelled.", "cn": ""}, {"start": 241.7, "end": 246.9, "en": "Subodhi waited for the other students to  leave.", "cn": ""}, {"start": 246.9, "end": 252.0, "en": "“I taught you the secret formulas so you  7 8 could live forever,” said the sage.", "cn": ""}, {"start": 252.0, "end": 257.1, "en": "“Not so  you could show off!”  “I’m sorry,” said Wukong.", "cn": ""}, {"start": 257.1, "end": 262.3, "en": "“I—” Subodhi kept talking.", "cn": ""}, {"start": 262.3, "end": 267.4, "en": "“Now all of the  students have seen what you can do.", "cn": ""}, {"start": 267.4, "end": 272.6, "en": "They  will want to know how to do it too!", "cn": ""}, {"start": 272.6, "end": 277.7, "en": "If you  don’t tell them, they might harm you.", "cn": ""}, {"start": 277.7, "end": 282.9, "en": "It’s not  safe for you to stay here anymore.", "cn": ""}, {"start": 282.9, "end": 288.0, "en": "You must  go.” Wukong started to cry.", "cn": ""}, {"start": 288.0, "end": 293.1, "en": "“But, Master!", "cn": ""}, {"start": 293.1, "end": 298.3, "en": "Where will I go?” “Go back home,” said Subodhi.", "cn": ""}, {"start": 298.3, "end": 303.4, "en": "“But you taught me so many things!” said  the monkey.", "cn": ""}, {"start": 303.4, "end": 308.6, "en": "“I must repay you first.” “You don’t need to repay me,” said  Subodhi.", "cn": ""}, {"start": 308.6, "end": 313.7, "en": "“Just try to stay out of trouble.” The sage looked at Wukong for a moment.", "cn": ""}, {"start": 313.7, "end": 318.9, "en": "Then he said, “I can see that you will do evil  9 10 things someday.", "cn": ""}, {"start": 318.9, "end": 324.0, "en": "Don’t tell anyone you were  my student.", "cn": ""}, {"start": 324.0, "end": 329.1, "en": "Now go.” Wukong hung his head.", "cn": ""}, {"start": 329.1, "end": 334.3, "en": "“Good-bye,  Master.” He leaped onto a cloud and left.", "cn": ""}, {"start": 334.3, "end": 339.4, "en": "After a short journey, Wukong arrived at  the Fruit and Flower Mountain.", "cn": ""}, {"start": 339.4, "end": 344.6, "en": "“I have returned!” he called.", "cn": ""}, {"start": 344.6, "end": 349.7, "en": "The gibbon ran to him.", "cn": ""}, {"start": 349.7, "end": 354.9, "en": "“Your Majesty!", "cn": ""}, {"start": 354.9, "end": 360.0, "en": "Something terrible has happened!”  11 12", "cn": ""}], "vocabs": [{"word": "formula", "meaning": "(", "phonetic": "", "pos": "重点词汇"}, {"word": "secret	formula", "meaning": "秘诀", "phonetic": "", "pos": "重点词汇"}, {"word": "crept", "meaning": "蹑⼿蹑脚地⾛，缓慢地⾏进", "phonetic": "", "pos": "重点词汇"}, {"word": "worthy", "meaning": "1.", "phonetic": "", "pos": "重点词汇"}, {"word": "值得的，⾜以", "meaning": "……", "phonetic": "", "pos": "重点词汇"}, {"word": "prayer", "meaning": "祷告", "phonetic": "", "pos": "重点词汇"}, {"word": "universe", "meaning": "宇宙，太空", "phonetic": "", "pos": "重点词汇"}, {"word": "nature", "meaning": "⾃然", "phonetic": "", "pos": "重点词汇"}, {"word": "meditate", "meaning": "冥想，沉思", "phonetic": "", "pos": "重点词汇"}, {"word": "mind", "meaning": "1.", "phonetic": "", "pos": "重点词汇"}, {"word": "介意", "meaning": ")", "phonetic": "", "pos": "重点词汇"}, {"word": "shape", "meaning": "形状，样⼦", "phonetic": "", "pos": "重点词汇"}, {"word": "soar", "meaning": "⾼飞，往上飞舞", "phonetic": "", "pos": "重点词汇"}, {"word": "lately", "meaning": "最近", "phonetic": "", "pos": "重点词汇"}, {"word": "interested", "meaning": "感兴趣的", "phonetic": "", "pos": "重点词汇"}, {"word": "enormous", "meaning": "巨⼤的，庞⼤的", "phonetic": "", "pos": "重点词汇"}, {"word": "amazing", "meaning": "惊⼈的，令⼈吃惊的", "phonetic": "", "pos": "重点词汇"}, {"word": "truly", "meaning": "真实地，真正地", "phonetic": "", "pos": "重点词汇"}, {"word": "noise", "meaning": "声响，喧闹声", "phonetic": "", "pos": "重点词汇"}, {"word": "disturb", "meaning": "妨碍，打乱", "phonetic": "", "pos": "重点词汇"}, {"word": "flash", "meaning": "闪光，闪烁", "phonetic": "", "pos": "重点词汇"}, {"word": "taught", "meaning": "讲授，教", "phonetic": "", "pos": "重点词汇"}, {"word": "show	off", "meaning": "卖弄，炫耀", "phonetic": "", "pos": "重点词汇"}, {"word": "harm", "meaning": "损伤，损害", "phonetic": "", "pos": "重点词汇"}, {"word": "repay", "meaning": "1.", "phonetic": "", "pos": "重点词汇"}, {"word": "还", "meaning": "(", "phonetic": "", "pos": "重点词汇"}, {"word": "stay	out	of	trouble", "meaning": "不惹是⾮，避开⿇烦", "phonetic": "", "pos": "重点词汇"}, {"word": "evil", "meaning": "邪恶的，坏的", "phonetic": "", "pos": "重点词汇"}, {"word": "someday", "meaning": "将来有⼀天", "phonetic": "", "pos": "重点词汇"}, {"word": "hang	one's	head", "meaning": "把头垂下", "phonetic": "", "pos": "重点词汇"}]}, "5": {"subtitles": [{"start": 0.0, "end": 5.3, "en": "hat happened here?” Wukong asked the  gibbon.", "cn": ""}, {"start": 5.3, "end": 10.6, "en": "A few more monkeys and apes gathered  around Sun Wukong and the gibbon.", "cn": ""}, {"start": 10.6, "end": 15.9, "en": "They  looked scared.", "cn": ""}, {"start": 15.9, "end": 21.2, "en": "“A demon attacked us,” said the gibbon.", "cn": ""}, {"start": 21.2, "end": 26.5, "en": "“We tried to fight him, but he was too  powerful.", "cn": ""}, {"start": 26.5, "end": 31.8, "en": "He stole most of our things and  kidnapped many of us.” W Wukong was furious.", "cn": ""}, {"start": 31.8, "end": 37.1, "en": "“Who is he?", "cn": ""}, {"start": 37.1, "end": 42.4, "en": "Where  does he live?” “He is called the Demon of Chaos,” said  the gibbon.", "cn": ""}, {"start": 42.4, "end": 47.6, "en": "“He came from the north.” “Wait here,” Wukong ordered.", "cn": ""}, {"start": 47.6, "end": 52.9, "en": "“I will  handle the demon.” “The demon is very powerful,” the gibbon  warned.", "cn": ""}, {"start": 52.9, "end": 58.2, "en": "“I learned many things from a sage,”  1 2 Wukong replied.", "cn": ""}, {"start": 58.2, "end": 63.5, "en": "“I am now as powerful as  a god!", "cn": ""}, {"start": 63.5, "end": 68.8, "en": "I’m not afraid of any demon.", "cn": ""}, {"start": 68.8, "end": 74.1, "en": "I’ll be  back soon.” He leaped into the air and flew north.", "cn": ""}, {"start": 74.1, "end": 79.4, "en": "His subjects stared in amazement.", "cn": ""}, {"start": 79.4, "end": 84.7, "en": "“Our king can fly!” said the gibbon.", "cn": ""}, {"start": 84.7, "end": 90.0, "en": "Wukong soon spotted a gloomy mountain.", "cn": ""}, {"start": 90.0, "end": 95.3, "en": "Dark clouds hung over it.", "cn": ""}, {"start": 95.3, "end": 100.6, "en": "“That looks like a demon’s home,” he  thought.", "cn": ""}, {"start": 100.6, "end": 105.9, "en": "Wukong landed on the mountain and  found a cave.", "cn": ""}, {"start": 105.9, "end": 111.2, "en": "Two guards stood at the  entrance, practicing sword fighting.", "cn": ""}, {"start": 111.2, "end": 116.5, "en": "“I’m king of the Fruit and Flower  Mountain!” yelled Wukong.", "cn": ""}, {"start": 116.5, "end": 121.8, "en": "“The Demon of  Chaos attacked my subjects!", "cn": ""}, {"start": 121.8, "end": 127.1, "en": "I want revenge!” “Ahh!” the guards shrieked, and ran into  the cave.", "cn": ""}, {"start": 127.1, "end": 132.4, "en": "3 4 The Demon of Chaos was sitting at a  table, eating a meal.", "cn": ""}, {"start": 132.4, "end": 137.6, "en": "“Disaster!” one guard cried.", "cn": ""}, {"start": 137.6, "end": 142.9, "en": "“What sort of disaster?” asked the demon.", "cn": ""}, {"start": 142.9, "end": 148.2, "en": "“There’s a monkey outside,” said the  other guard.", "cn": ""}, {"start": 148.2, "end": 153.5, "en": "“He said he’s king of the Fruit  and Flower Mountain.", "cn": ""}, {"start": 153.5, "end": 158.8, "en": "You attacked his  subjects.", "cn": ""}, {"start": 158.8, "end": 164.1, "en": "Now he wants revenge!” “The monkeys and apes have spoken of a  king,” said the demon.", "cn": ""}, {"start": 164.1, "end": 169.4, "en": "“He left to find a sage.", "cn": ""}, {"start": 169.4, "end": 174.7, "en": "I guess he returned.” The demon stood up.", "cn": ""}, {"start": 174.7, "end": 180.0, "en": "“Does the monkey  have any weapons?” “No,” said one guard.", "cn": ""}, {"start": 180.0, "end": 185.3, "en": "“Then get me my armor and my sword,”  said the demon.", "cn": ""}, {"start": 185.3, "end": 190.6, "en": "A moment later the Demon of Chaos  walked outside.", "cn": ""}, {"start": 190.6, "end": 195.9, "en": "He looked at Wukong and  5 6 laughed.", "cn": ""}, {"start": 195.9, "end": 201.2, "en": "“You’re just a little monkey!” he  said.", "cn": ""}, {"start": 201.2, "end": 206.5, "en": "Wukong looked up at the huge demon.", "cn": ""}, {"start": 206.5, "end": 211.8, "en": "“I  am small,” he said, “but I am more powerful  than you can imagine.” “I’m not afraid of you!” said the demon.", "cn": ""}, {"start": 211.8, "end": 217.1, "en": "He swung his sword.", "cn": ""}, {"start": 217.1, "end": 222.4, "en": "Wukong jumped out of the way and then  flew at the demon.", "cn": ""}, {"start": 222.4, "end": 227.6, "en": "Pow!", "cn": ""}, {"start": 227.6, "end": 232.9, "en": "Wukong hit the demon on the nose.", "cn": ""}, {"start": 232.9, "end": 238.2, "en": "“Argh!” cried the demon.", "cn": ""}, {"start": 238.2, "end": 243.5, "en": "Wukong pulled out a handful of his own  hair and blew on it.", "cn": ""}, {"start": 243.5, "end": 248.8, "en": "Poof!", "cn": ""}, {"start": 248.8, "end": 254.1, "en": "Each strand of hair turned into a  fake monkey—exactly like Wukong.", "cn": ""}, {"start": 254.1, "end": 259.4, "en": "All at  once the fake monkeys attacked the demon,  punching and kicking him.", "cn": ""}, {"start": 259.4, "end": 264.7, "en": "“What .", "cn": ""}, {"start": 264.7, "end": 270.0, "en": "What’s going on?” cried the  7 8 demon, trying to fight all the fake monkeys.", "cn": ""}, {"start": 270.0, "end": 275.3, "en": "“It’s a magic spell,” said Wukong.", "cn": ""}, {"start": 275.3, "end": 280.6, "en": "“It’s  called Body Beyond the Body.” The Demon of Chaos was soon destroyed.", "cn": ""}, {"start": 280.6, "end": 285.9, "en": "Wukong chased away the guards and then  went into the cave.", "cn": ""}, {"start": 285.9, "end": 291.2, "en": "He found all the monkeys  and apes that the demon had kidnapped.", "cn": ""}, {"start": 291.2, "end": 296.5, "en": "When they saw him, they cheered.", "cn": ""}, {"start": 296.5, "end": 301.8, "en": "“Your Majesty!” cried the monkeys and  apes.", "cn": ""}, {"start": 301.8, "end": 307.1, "en": "“You came back!” Wukong smiled.", "cn": ""}, {"start": 307.1, "end": 312.4, "en": "“I will take you home!” The next morning Wukong woke up early.", "cn": ""}, {"start": 312.4, "end": 317.6, "en": "“Other demons might attack us,” he  thought.", "cn": ""}, {"start": 317.6, "end": 322.9, "en": "“We must be ready to protect  ourselves.” Wukong spent the day teaching his  *  *  * 9 10 subjects how to fight.", "cn": ""}, {"start": 322.9, "end": 328.2, "en": "They practiced with  swords and spears.", "cn": ""}, {"start": 328.2, "end": 333.5, "en": "Before long, the monkeys and apes were  a fierce army.", "cn": ""}, {"start": 333.5, "end": 338.8, "en": "“No demon will dare bother us now,” said  the gibbon.", "cn": ""}, {"start": 338.8, "end": 344.1, "en": "“No,” said Wukong.", "cn": ""}, {"start": 344.1, "end": 349.4, "en": "“There’s just one  problem though.” “What’s that?” asked the gibbon.", "cn": ""}, {"start": 349.4, "end": 354.7, "en": "“I can’t use any of the weapons we have!”  said Wukong.", "cn": ""}, {"start": 354.7, "end": 360.0, "en": "11 12", "cn": ""}], "vocabs": [{"word": "demon", "meaning": "魔⿁，恶魔", "phonetic": "", "pos": "重点词汇"}, {"word": "chaos", "meaning": "混乱，杂乱的⼀团", "phonetic": "", "pos": "重点词汇"}, {"word": "kidnap", "meaning": "绑架，诱拐", "phonetic": "", "pos": "重点词汇"}, {"word": "furious", "meaning": "⾮常愤怒的", "phonetic": "", "pos": "重点词汇"}, {"word": "handle", "meaning": "处理，对待", "phonetic": "", "pos": "重点词汇"}, {"word": "subject", "meaning": "1.", "phonetic": "", "pos": "重点词汇"}, {"word": "科⽬", "meaning": ")", "phonetic": "", "pos": "重点词汇"}, {"word": "amazement", "meaning": "(", "phonetic": "", "pos": "重点词汇"}, {"word": "gloomy", "meaning": "忧郁的，阴郁的", "phonetic": "", "pos": "重点词汇"}, {"word": "entrance", "meaning": "⼊⼜", "phonetic": "", "pos": "重点词汇"}, {"word": "revenge", "meaning": "报仇，报复", "phonetic": "", "pos": "重点词汇"}, {"word": "shriek", "meaning": "(", "phonetic": "", "pos": "重点词汇"}, {"word": "meal", "meaning": "膳⾷，⼀餐", "phonetic": "", "pos": "重点词汇"}, {"word": "disaster", "meaning": "灾害，灾难，巨⼤的不幸", "phonetic": "", "pos": "重点词汇"}, {"word": "sort", "meaning": "1.", "phonetic": "", "pos": "重点词汇"}, {"word": "分类", "meaning": ")", "phonetic": "", "pos": "重点词汇"}, {"word": "sage", "meaning": "圣⼈，圣贤", "phonetic": "", "pos": "重点词汇"}, {"word": "weapon", "meaning": "武器，兵器", "phonetic": "", "pos": "重点词汇"}, {"word": "guard", "meaning": "警卫，保安", "phonetic": "", "pos": "重点词汇"}, {"word": "imagine", "meaning": "想像", "phonetic": "", "pos": "重点词汇"}, {"word": "handful", "meaning": "⼀撮，⼀把", "phonetic": "", "pos": "重点词汇"}, {"word": "strand", "meaning": "(", "phonetic": "", "pos": "重点词汇"}, {"word": "fake", "meaning": "假的，冒充的", "phonetic": "", "pos": "重点词汇"}, {"word": "all	at", "meaning": "once", "phonetic": "", "pos": "重点词汇"}, {"word": "chase	away", "meaning": "赶⾛，驱逐", "phonetic": "", "pos": "重点词汇"}, {"word": "fierce", "meaning": "凶猛的，残酷的", "phonetic": "", "pos": "重点词汇"}, {"word": "army", "meaning": "军队，陆军", "phonetic": "", "pos": "重点词汇"}, {"word": "bother", "meaning": "烦扰，打搅", "phonetic": "", "pos": "重点词汇"}, {"word": "though", "meaning": "可是，然⽽", "phonetic": "", "pos": "重点词汇"}]}, "6": {"subtitles": [{"start": 0.0, "end": 6.5, "en": "hat’s wrong with our swords and  spears?” asked the gibbon.", "cn": ""}, {"start": 6.5, "end": 13.1, "en": "“They’re fine for normal monkeys  and apes,” said Wukong.", "cn": ""}, {"start": 13.1, "end": 19.6, "en": "“But I am very  powerful.", "cn": ""}, {"start": 19.6, "end": 26.2, "en": "I need a much heavier weapon.” The gibbon thought for a minute.", "cn": ""}, {"start": 26.2, "end": 32.7, "en": "“A  dragon king lives at the bottom of the Eastern  Sea,” he said.", "cn": ""}, {"start": 32.7, "end": 39.3, "en": "“Maybe he has a weapon you  can use.” W “That’s a good idea,” said Wukong.", "cn": ""}, {"start": 39.3, "end": 45.8, "en": "“I’ll  be back soon!” He said a quick spell so he could breathe  underwater.", "cn": ""}, {"start": 45.8, "end": 52.4, "en": "Then he dived into the stream.", "cn": ""}, {"start": 52.4, "end": 58.9, "en": "He swam to the ocean and went deeper and  deeper.", "cn": ""}, {"start": 58.9, "end": 65.5, "en": "Soon he arrived at a large palace.", "cn": ""}, {"start": 65.5, "end": 72.0, "en": "The Dragon King and the Dragon Queen  were sitting at a table, having tea.", "cn": ""}, {"start": 72.0, "end": 78.5, "en": "The  Dragon King looked over when Wukong  1 2 walked in.", "cn": ""}, {"start": 78.5, "end": 85.1, "en": "“Who are you?” asked the Dragon King.", "cn": ""}, {"start": 85.1, "end": 91.6, "en": "“I’m king of the Fruit and Flower  Mountain,” said Wukong.", "cn": ""}, {"start": 91.6, "end": 98.2, "en": "“My name is Sun  Wukong.” “It’s nice to meet you,” said the queen.", "cn": ""}, {"start": 98.2, "end": 104.7, "en": "“Would you like some tea?” “No, thank you,” said Wukong.", "cn": ""}, {"start": 104.7, "end": 111.3, "en": "“I need  a heavy weapon because I’m as strong as a  god.", "cn": ""}, {"start": 111.3, "end": 117.8, "en": "I want one of yours.” “Well,” said the Dragon King, “I suppose  I could find a weapon for you.” The Dragon  King looked at a turtle soldier.", "cn": ""}, {"start": 117.8, "end": 124.4, "en": "“Find a heavy  weapon for Sun Wukong.” The turtle went out of the room.", "cn": ""}, {"start": 124.4, "end": 130.9, "en": "He soon  came back, slowly dragging a huge sword.", "cn": ""}, {"start": 130.9, "end": 137.5, "en": "He dropped the sword and then fell down,  out of breath.", "cn": ""}, {"start": 137.5, "end": 144.0, "en": "3 4 Wukong picked up the sword with no  trouble at all.", "cn": ""}, {"start": 144.0, "end": 150.5, "en": "Swish!", "cn": ""}, {"start": 150.5, "end": 157.1, "en": "Swoosh!", "cn": ""}, {"start": 157.1, "end": 163.6, "en": "He waved the  sword through the air, pretending to fight.", "cn": ""}, {"start": 163.6, "end": 170.2, "en": "“This sword is too light,” said Wukong.", "cn": ""}, {"start": 170.2, "end": 176.7, "en": "“Find me a better weapon!” “This monkey is rude,” the Dragon Queen  whispered to her husband.", "cn": ""}, {"start": 176.7, "end": 183.3, "en": "“You’re right, dear,” the Dragon King  whispered back.", "cn": ""}, {"start": 183.3, "end": 189.8, "en": "“Let’s find him something  quickly so he’ll leave.” A few minutes later, several turtles and  octopuses dragged an enormous spear into  the room.", "cn": ""}, {"start": 189.8, "end": 196.4, "en": "“There,” said the Dragon King.", "cn": ""}, {"start": 196.4, "end": 202.9, "en": "“That  looks like a very heavy weapon.", "cn": ""}, {"start": 202.9, "end": 209.5, "en": "Right,  Wukong?” Wukong lifted the spear and began  stabbing at the air.", "cn": ""}, {"start": 209.5, "end": 216.0, "en": "He shook his head.", "cn": ""}, {"start": 216.0, "end": 222.5, "en": "“This  5 6 spear is too light.” The Dragon King snorted.", "cn": ""}, {"start": 222.5, "end": 229.1, "en": "“That spear is  very heavy!", "cn": ""}, {"start": 229.1, "end": 235.6, "en": "How can you say it’s too light?” “To me, it’s light,” said Wukong.", "cn": ""}, {"start": 235.6, "end": 242.2, "en": "“Find  me something else!” “We don’t have anything else,” said the  Dragon King.", "cn": ""}, {"start": 242.2, "end": 248.7, "en": "“That’s the heaviest weapon  we have.” Wukong stomped his foot.", "cn": ""}, {"start": 248.7, "end": 255.3, "en": "“I’m not  leaving until I get what I want!” “This is an outrage!” said the Dragon  King.", "cn": ""}, {"start": 255.3, "end": 261.8, "en": "The queen whispered to him again.", "cn": ""}, {"start": 261.8, "end": 268.4, "en": "“What  about the magical iron bar in the treasury?", "cn": ""}, {"start": 268.4, "end": 274.9, "en": "I’m  sure that’s heavy enough.” “We can’t give that to him,” said the  Dragon King.", "cn": ""}, {"start": 274.9, "end": 281.5, "en": "“It’s a treasure from Heaven.” “Who cares?” said the queen.", "cn": ""}, {"start": 281.5, "end": 288.0, "en": "“I just want  7 8 this monkey out of my palace!” The Dragon King sighed.", "cn": ""}, {"start": 288.0, "end": 294.5, "en": "“Wukong, we  might have something heavy enough for  you.” “Bring it here,” said Wukong.", "cn": ""}, {"start": 294.5, "end": 301.1, "en": "“We can’t,” said the Dragon King.", "cn": ""}, {"start": 301.1, "end": 307.6, "en": "“It’s  too heavy for anyone to lift.", "cn": ""}, {"start": 307.6, "end": 314.2, "en": "But if you can  lift it, we’ll let you have it.” “Show me where it is,” said Wukong.", "cn": ""}, {"start": 314.2, "end": 320.7, "en": "The group went to the treasury.", "cn": ""}, {"start": 320.7, "end": 327.3, "en": "An  enormous iron pillar stood in the center of the  room.", "cn": ""}, {"start": 327.3, "end": 333.8, "en": "Beams of golden light shone from it.", "cn": ""}, {"start": 333.8, "end": 340.4, "en": "“That pillar was used to measure all the  oceans and rivers,” said the Dragon King.", "cn": ""}, {"start": 340.4, "end": 346.9, "en": "Wukong went closer and looked up at the  large piece of iron.", "cn": ""}, {"start": 346.9, "end": 353.5, "en": "The Dragon King folded his arms.", "cn": ""}, {"start": 353.5, "end": 360.0, "en": "“If you  can pick it up, you can have it.” 9 10", "cn": ""}], "vocabs": [{"word": "spear", "meaning": "⽭", "phonetic": "", "pos": "重点词汇"}, {"word": "normal", "meaning": "正常的", "phonetic": "", "pos": "重点词汇"}, {"word": "bottom", "meaning": "底部，下端", "phonetic": "", "pos": "重点词汇"}, {"word": "eastern", "meaning": "东边的", "phonetic": "", "pos": "重点词汇"}, {"word": "quick", "meaning": "快的，敏捷的", "phonetic": "", "pos": "重点词汇"}, {"word": "underwater", "meaning": "在⽔⾥⾯地", "phonetic": "", "pos": "重点词汇"}, {"word": "soldier", "meaning": "军⼈", "phonetic": "", "pos": "重点词汇"}, {"word": "drag", "meaning": "拉", "phonetic": "", "pos": "重点词汇"}, {"word": "out	of	breath", "meaning": "喘不过⽓来", "phonetic": "", "pos": "重点词汇"}, {"word": "trouble", "meaning": "困难，困难局⾯", "phonetic": "", "pos": "重点词汇"}, {"word": "pretend", "meaning": "假装，伪装", "phonetic": "", "pos": "重点词汇"}, {"word": "rude", "meaning": "粗鲁的，⽆礼的", "phonetic": "", "pos": "重点词汇"}, {"word": "octopus", "meaning": "章鱼", "phonetic": "", "pos": "重点词汇"}, {"word": "enormous", "meaning": "巨⼤的，庞⼤的", "phonetic": "", "pos": "重点词汇"}, {"word": "stab", "meaning": "(", "phonetic": "", "pos": "重点词汇"}, {"word": "snort", "meaning": "1.", "phonetic": "", "pos": "重点词汇"}, {"word": "light", "meaning": "1.", "phonetic": "", "pos": "重点词汇"}, {"word": "灯", "meaning": ")", "phonetic": "", "pos": "重点词汇"}, {"word": "stomp", "meaning": "重踩，重踏", "phonetic": "", "pos": "重点词汇"}, {"word": "outrage", "meaning": "严重违法的⾏为，暴⾏", "phonetic": "", "pos": "重点词汇"}, {"word": "magical", "meaning": "魔术的，魔法的", "phonetic": "", "pos": "重点词汇"}, {"word": "iron", "meaning": "1.", "phonetic": "", "pos": "重点词汇"}, {"word": "熨", "meaning": ")", "phonetic": "", "pos": "重点词汇"}, {"word": "bar", "meaning": "棒，条，", "phonetic": "", "pos": "重点词汇"}, {"word": "treasury", "meaning": "宝库，宝藏室", "phonetic": "", "pos": "重点词汇"}, {"word": "pillar", "meaning": "(", "phonetic": "", "pos": "重点词汇"}, {"word": "beam", "meaning": "1.", "phonetic": "", "pos": "重点词汇"}, {"word": "堆满笑容，眉开眼笑", "meaning": ")", "phonetic": "", "pos": "重点词汇"}, {"word": "measure", "meaning": "测量，计量", "phonetic": "", "pos": "重点词汇"}, {"word": "fold", "meaning": "1.", "phonetic": "", "pos": "重点词汇"}, {"word": "折叠", "meaning": "(", "phonetic": "", "pos": "重点词汇"}, {"word": "fold	one's", "meaning": "arms", "phonetic": "", "pos": "重点词汇"}]}, "7": {"subtitles": [{"start": 0.0, "end": 5.0, "en": "un Wukong put his hand on the iron  pillar.", "cn": ""}, {"start": 5.0, "end": 10.0, "en": "He felt it move.", "cn": ""}, {"start": 10.0, "end": 15.0, "en": "“Hmm,” he thought.", "cn": ""}, {"start": 15.0, "end": 20.0, "en": "“This piece of iron  really is magical.", "cn": ""}, {"start": 20.0, "end": 25.0, "en": "I bet it will do whatever I  want it to do.” “Smaller!” commanded Wukong.", "cn": ""}, {"start": 25.0, "end": 30.0, "en": "The pillar shrank!", "cn": ""}, {"start": 30.0, "end": 35.0, "en": "Soon it was just a little  taller than Wukong.", "cn": ""}, {"start": 35.0, "end": 40.0, "en": "He picked it up and  swung it around.", "cn": ""}, {"start": 40.0, "end": 45.0, "en": "S “This is a perfect weapon for me,” he  said.", "cn": ""}, {"start": 45.0, "end": 50.0, "en": "“I can’t believe he can lift it!” said the  Dragon Queen.", "cn": ""}, {"start": 50.0, "end": 55.0, "en": "Wukong made the bar even smaller.", "cn": ""}, {"start": 55.0, "end": 60.0, "en": "Soon  it was no bigger than a pin.", "cn": ""}, {"start": 60.0, "end": 65.0, "en": "He placed it  inside his ear.", "cn": ""}, {"start": 65.0, "end": 70.0, "en": "“I’ve got what I want,” said Wukong.", "cn": ""}, {"start": 70.0, "end": 75.0, "en": "“Good-bye.” He turned around and left.", "cn": ""}, {"start": 75.0, "end": 80.0, "en": "1 2 “He was very rude,” said the Dragon  Queen.", "cn": ""}, {"start": 80.0, "end": 85.0, "en": "The Dragon King clenched his fists.", "cn": ""}, {"start": 85.0, "end": 90.0, "en": "“I’m  going to report him to the Jade Emperor!” Back home, the others were amazed by  Wukong’s new weapon.", "cn": ""}, {"start": 90.0, "end": 95.0, "en": "“Nobody will ever attack us again!”  *  *  * declared Wukong.", "cn": ""}, {"start": 95.0, "end": 100.0, "en": "The monkeys and apes cheered.", "cn": ""}, {"start": 100.0, "end": 105.0, "en": "They  held a big feast that lasted until late at night.", "cn": ""}, {"start": 105.0, "end": 110.0, "en": "Wukong went to bed happy.", "cn": ""}, {"start": 110.0, "end": 115.0, "en": "But as he fell  asleep, two spirits grabbed him.", "cn": ""}, {"start": 115.0, "end": 120.0, "en": "“What are you doing?” asked Wukong.", "cn": ""}, {"start": 120.0, "end": 125.0, "en": "“Let go of me!” He kicked and struggled as the spirits  dragged him out of his cave.", "cn": ""}, {"start": 125.0, "end": 130.0, "en": "They walked  3 4 toward a dark and creepy city.", "cn": ""}, {"start": 130.0, "end": 135.0, "en": "A sign on the  entrance gate said “Land of Darkness.” “The Land of Darkness?” cried Wukong.", "cn": ""}, {"start": 135.0, "end": 140.0, "en": "“That’s where people go when they die.", "cn": ""}, {"start": 140.0, "end": 145.0, "en": "I’m  supposed to live forever!” He yanked his arms free.", "cn": ""}, {"start": 145.0, "end": 150.0, "en": "“Grow!” he  cried.", "cn": ""}, {"start": 150.0, "end": 155.0, "en": "His iron bar quickly grew.", "cn": ""}, {"start": 155.0, "end": 160.0, "en": "Whap!", "cn": ""}, {"start": 160.0, "end": 165.0, "en": "He  knocked out the first spirit.", "cn": ""}, {"start": 165.0, "end": 170.0, "en": "Crack!", "cn": ""}, {"start": 170.0, "end": 175.0, "en": "He  knocked out the second spirit.", "cn": ""}, {"start": 175.0, "end": 180.0, "en": "Wukong stomped into the Land of  Darkness.", "cn": ""}, {"start": 180.0, "end": 185.0, "en": "He headed toward the Palace of  Darkness.", "cn": ""}, {"start": 185.0, "end": 190.0, "en": "As he went, he swung his iron bar  back and forth.", "cn": ""}, {"start": 190.0, "end": 195.0, "en": "Demons and ghosts fled.", "cn": ""}, {"start": 195.0, "end": 200.0, "en": "A tall spirit stepped out of the palace.", "cn": ""}, {"start": 200.0, "end": 205.0, "en": "“What’s going on out here?” the spirit  asked.", "cn": ""}, {"start": 205.0, "end": 210.0, "en": "“Who are you?” asked Wukong.", "cn": ""}, {"start": 210.0, "end": 215.0, "en": "5 6 “I am the Judge of the Dead,” said  the spirit.", "cn": ""}, {"start": 215.0, "end": 220.0, "en": "“Why are you causing all this  trouble?” “I want to know why I was brought here,”  said Wukong.", "cn": ""}, {"start": 220.0, "end": 225.0, "en": "“Tell me now!” The judge held up his hands.", "cn": ""}, {"start": 225.0, "end": 230.0, "en": "“If you were  brought here, it means your time on Earth is  over.” “Nonsense!” yelled Wukong.", "cn": ""}, {"start": 230.0, "end": 235.0, "en": "“I’m going  to live forever!” The judge looked nervous.", "cn": ""}, {"start": 235.0, "end": 240.0, "en": "“Let’s check  the Directory,” he said.", "cn": ""}, {"start": 240.0, "end": 245.0, "en": "“The Directory  contains the name and age of every creature  on Earth.", "cn": ""}, {"start": 245.0, "end": 250.0, "en": "It says when each creature will  die.” Inside the palace the judge opened a large  book.", "cn": ""}, {"start": 250.0, "end": 255.0, "en": "“What is your name?” he asked.", "cn": ""}, {"start": 255.0, "end": 260.0, "en": "Wukong told him.", "cn": ""}, {"start": 260.0, "end": 265.0, "en": "The judge flipped  7 8 through the pages.", "cn": ""}, {"start": 265.0, "end": 270.0, "en": "“Here it is,” said the judge.", "cn": ""}, {"start": 270.0, "end": 275.0, "en": "“It says ‘Sun  Wukong.", "cn": ""}, {"start": 275.0, "end": 280.0, "en": "Born from a stone three hundred  years ago.", "cn": ""}, {"start": 280.0, "end": 285.0, "en": "Died today.’” Wukong shook his head.", "cn": ""}, {"start": 285.0, "end": 290.0, "en": "“No.", "cn": ""}, {"start": 290.0, "end": 295.0, "en": "I’m going  to live forever.” “The Directory isn’t wrong,” said the  judge.", "cn": ""}, {"start": 295.0, "end": 300.0, "en": "“You’ll have to stay here now.” Wukong raised his iron bar and glared at  the judge.", "cn": ""}, {"start": 300.0, "end": 305.0, "en": "“Give me that book!” The judge hesitated.", "cn": ""}, {"start": 305.0, "end": 310.0, "en": "“I can’t give it to—” “Now!” said Wukong.", "cn": ""}, {"start": 310.0, "end": 315.0, "en": "Shaking, the judge handed the book to  Wukong.", "cn": ""}, {"start": 315.0, "end": 320.0, "en": "Wukong plucked two of his hairs and  blew on them.", "cn": ""}, {"start": 320.0, "end": 325.0, "en": "They turned into a brush and a  jar of ink.", "cn": ""}, {"start": 325.0, "end": 330.0, "en": "He drew a line through his name.", "cn": ""}, {"start": 330.0, "end": 335.0, "en": "“You can’t do that!” said the judge.", "cn": ""}, {"start": 335.0, "end": 340.0, "en": "9 10 “Yes, I can,” said Wukong.", "cn": ""}, {"start": 340.0, "end": 345.0, "en": "Next, Wukong found the names of all the  other monkeys and apes.", "cn": ""}, {"start": 345.0, "end": 350.0, "en": "He crossed out their  names too.", "cn": ""}, {"start": 350.0, "end": 355.0, "en": "“Now I really will live forever,” said  Wukong.", "cn": ""}, {"start": 355.0, "end": 360.0, "en": "“And so will all of my subjects!” 11", "cn": ""}], "vocabs": [{"word": "darkness", "meaning": "⿊暗，阴暗", "phonetic": "", "pos": "重点词汇"}, {"word": "command", "meaning": "命令", "phonetic": "", "pos": "重点词汇"}, {"word": "shrank", "meaning": "收缩，缩短", "phonetic": "", "pos": "重点词汇"}, {"word": "pin", "meaning": "1.", "phonetic": "", "pos": "重点词汇"}, {"word": "rude", "meaning": "粗鲁的，⽆礼的", "phonetic": "", "pos": "重点词汇"}, {"word": "clench", "meaning": "握紧", "phonetic": "", "pos": "重点词汇"}, {"word": "report", "meaning": "报告", "phonetic": "", "pos": "重点词汇"}, {"word": "declare", "meaning": "宣⾔，断⾔", "phonetic": "", "pos": "重点词汇"}, {"word": "feast", "meaning": "盛宴，筵席", "phonetic": "", "pos": "重点词汇"}, {"word": "creepy", "meaning": "令⼈⽑⾻悚然的", "phonetic": "", "pos": "重点词汇"}, {"word": "yank", "meaning": "猛然⼀拉，使劲⼀拉", "phonetic": "", "pos": "重点词汇"}, {"word": "knock	out", "meaning": "使昏迷", "phonetic": "", "pos": "重点词汇"}, {"word": "ghost", "meaning": "⿁，幽灵", "phonetic": "", "pos": "重点词汇"}, {"word": "fled", "meaning": "逃⾛，逃逸", "phonetic": "", "pos": "重点词汇"}, {"word": "cause", "meaning": "导致，使发⽣，引起", "phonetic": "", "pos": "重点词汇"}, {"word": "nonsense", "meaning": "胡说，废话", "phonetic": "", "pos": "重点词汇"}, {"word": "judge", "meaning": "1.", "phonetic": "", "pos": "重点词汇"}, {"word": "评委，裁判", "meaning": ")", "phonetic": "", "pos": "重点词汇"}, {"word": "nervous", "meaning": "紧张不安的", "phonetic": "", "pos": "重点词汇"}, {"word": "directory", "meaning": "(", "phonetic": "", "pos": "重点词汇"}, {"word": "contain", "meaning": "包含，容纳，装有", "phonetic": "", "pos": "重点词汇"}, {"word": "creature", "meaning": "⽣物，动物", "phonetic": "", "pos": "重点词汇"}, {"word": "flip", "meaning": "1.", "phonetic": "", "pos": "重点词汇"}, {"word": "翻跟⽃", "meaning": ")", "phonetic": "", "pos": "重点词汇"}, {"word": "born", "meaning": "出⽣", "phonetic": "", "pos": "重点词汇"}, {"word": "glare", "meaning": "怒⽬注视", "phonetic": "", "pos": "重点词汇"}, {"word": "hesitate", "meaning": "犹豫，踌躇", "phonetic": "", "pos": "重点词汇"}, {"word": "pluck", "meaning": "采，摘，拔", "phonetic": "", "pos": "重点词汇"}]}, "8": {"subtitles": [{"start": 0.0, "end": 6.4, "en": "he Jade Emperor was sitting on his  throne in the Cloud Palace.", "cn": ""}, {"start": 6.4, "end": 12.9, "en": "A messenger ran into the court.", "cn": ""}, {"start": 12.9, "end": 19.3, "en": "“Your  Majesty,” he said.", "cn": ""}, {"start": 19.3, "end": 25.7, "en": "“The Dragon King of the  Eastern Sea is here to see you.” “Let him in,” said the emperor.", "cn": ""}, {"start": 25.7, "end": 32.1, "en": "The Dragon King entered and bowed.", "cn": ""}, {"start": 32.1, "end": 38.6, "en": "“Your Majesty, I want to make a complaint.", "cn": ""}, {"start": 38.6, "end": 45.0, "en": "Sun Wukong came to my palace and  T demanded I give him a weapon.", "cn": ""}, {"start": 45.0, "end": 51.4, "en": "He was very  rude.” Another messenger came in.", "cn": ""}, {"start": 51.4, "end": 57.9, "en": "“The Judge  of the Dead would like to speak with you,  Your Majesty.” The judge came in and bowed.", "cn": ""}, {"start": 57.9, "end": 64.3, "en": "“A monkey  named Sun Wukong crossed out his name in  the Directory.", "cn": ""}, {"start": 64.3, "end": 70.7, "en": "I beg you to punish him!” The Jade Emperor rubbed his chin.", "cn": ""}, {"start": 70.7, "end": 77.1, "en": "“Who  1 2 is this Sun Wukong?", "cn": ""}, {"start": 77.1, "end": 83.6, "en": "And how did he become  so powerful?” The emperor’s captain stepped forward.", "cn": ""}, {"start": 83.6, "end": 90.0, "en": "“Sun Wukong is the monkey who was born  from a rock three hundred years ago.", "cn": ""}, {"start": 90.0, "end": 96.4, "en": "I don’t  know how he became so powerful.” “I remember him,” said the Jade Emperor.", "cn": ""}, {"start": 96.4, "end": 102.9, "en": "“I don’t care how powerful he is.", "cn": ""}, {"start": 102.9, "end": 109.3, "en": "He is  causing too much trouble on Earth.", "cn": ""}, {"start": 109.3, "end": 115.7, "en": "Gather  some troops, and go down to the Fruit and  Flower Mountain.", "cn": ""}, {"start": 115.7, "end": 122.1, "en": "I want Sun Wukong  arrested!”  The spirit of the planet Venus stepped  forward.", "cn": ""}, {"start": 122.1, "end": 128.6, "en": "“Your Majesty,” said Venus.", "cn": ""}, {"start": 128.6, "end": 135.0, "en": "“Perhaps we  could give Wukong a job here in Heaven.” The Jade Emperor raised his eyebrows.", "cn": ""}, {"start": 135.0, "end": 141.4, "en": "“Why would we do that?” 3 4 “If he’s here, we can keep an eye on him,”  said Venus.", "cn": ""}, {"start": 141.4, "end": 147.9, "en": "“It will be easy to keep him out  of trouble.” “Very well,” said the emperor.", "cn": ""}, {"start": 147.9, "end": 154.3, "en": "“Invite  Wukong to come to live in Heaven.", "cn": ""}, {"start": 154.3, "end": 160.7, "en": "He will  be in charge of the Royal Peach Garden.”   Wukong was telling his subjects about his  *  *  * adventure in the Land of Darkness.", "cn": ""}, {"start": 160.7, "end": 167.1, "en": "“After I crossed out my name,” he said, “I  crossed out all of your names too.", "cn": ""}, {"start": 167.1, "end": 173.6, "en": "We will all  live forever!” The monkeys and apes cheered.", "cn": ""}, {"start": 173.6, "end": 180.0, "en": "“Hooray  for the Monkey King!” Wukong noticed a spirit standing nearby.", "cn": ""}, {"start": 180.0, "end": 186.4, "en": "He pulled out his iron bar.", "cn": ""}, {"start": 186.4, "end": 192.9, "en": "“Who are you?” “I am Venus,” said the spirit.", "cn": ""}, {"start": 192.9, "end": 199.3, "en": "“I have an  5 6 invitation from the Jade Emperor.", "cn": ""}, {"start": 199.3, "end": 205.7, "en": "He would  like you to come to live in Heaven.” Wukong smiled.", "cn": ""}, {"start": 205.7, "end": 212.1, "en": "“At last he has invited  me.” When Wukong entered the royal court in  the Cloud Palace, he didn’t bow.", "cn": ""}, {"start": 212.1, "end": 218.6, "en": "“You’re supposed to bow before the  *  *  * emperor,” whispered Venus.", "cn": ""}, {"start": 218.6, "end": 225.0, "en": "Wukong laughed.", "cn": ""}, {"start": 225.0, "end": 231.4, "en": "“I’m just as powerful  as he is.", "cn": ""}, {"start": 231.4, "end": 237.9, "en": "Maybe he should bow before me!” Everyone but the Jade Emperor gasped.", "cn": ""}, {"start": 237.9, "end": 244.3, "en": "Wukong looked at the emperor.", "cn": ""}, {"start": 244.3, "end": 250.7, "en": "“I’m glad  you invited me.", "cn": ""}, {"start": 250.7, "end": 257.1, "en": "I guess you finally realized I  should be living up here with all of you.” “Show some respect,” said Venus.", "cn": ""}, {"start": 257.1, "end": 263.6, "en": "The Jade Emperor looked at Venus and  7 8 smiled.", "cn": ""}, {"start": 263.6, "end": 270.0, "en": "“Wukong is new here.", "cn": ""}, {"start": 270.0, "end": 276.4, "en": "He can be  excused for not acting the right way.” He  looked at Wukong.", "cn": ""}, {"start": 276.4, "end": 282.9, "en": "“I’m putting you in  charge of the Royal Peach Garden.", "cn": ""}, {"start": 282.9, "end": 289.3, "en": "You will  have a home here in Heaven.", "cn": ""}, {"start": 289.3, "end": 295.7, "en": "I hope you  won’t cause any more trouble.” “That sounds perfect!” said Wukong.", "cn": ""}, {"start": 295.7, "end": 302.1, "en": "The next morning a gardener showed  Wukong the peach garden.", "cn": ""}, {"start": 302.1, "end": 308.6, "en": "Bright, glowing  peaches hung from every branch.", "cn": ""}, {"start": 308.6, "end": 315.0, "en": "“The peaches in this garden are not like  peaches on Earth,” said the gardener.", "cn": ""}, {"start": 315.0, "end": 321.4, "en": "“These  peaches take thousands of years to become  ripe.", "cn": ""}, {"start": 321.4, "end": 327.9, "en": "Anybody who takes a bite of one will  live forever.” Each morning Wukong inspected the trees  in the garden.", "cn": ""}, {"start": 327.9, "end": 334.3, "en": "He took his job very seriously.", "cn": ""}, {"start": 334.3, "end": 340.7, "en": "“These peaches look delicious,” Wukong  9 10 thought one day.", "cn": ""}, {"start": 340.7, "end": 347.1, "en": "He looked around.", "cn": ""}, {"start": 347.1, "end": 353.6, "en": "None of  the gardeners were in sight.", "cn": ""}, {"start": 353.6, "end": 360.0, "en": "“Maybe I’ll eat  one.” 11", "cn": ""}], "vocabs": [{"word": "throne", "meaning": "王位，王座", "phonetic": "", "pos": "重点词汇"}, {"word": "messenger", "meaning": "信差，传令员", "phonetic": "", "pos": "重点词汇"}, {"word": "court", "meaning": "1.", "phonetic": "", "pos": "重点词汇"}, {"word": "法庭，法院，", "meaning": "3.	(", "phonetic": "", "pos": "重点词汇"}, {"word": "complaint", "meaning": "抱怨，怨⾔", "phonetic": "", "pos": "重点词汇"}, {"word": "demand", "meaning": "1.", "phonetic": "", "pos": "重点词汇"}, {"word": "查问，质问", "meaning": ")", "phonetic": "", "pos": "重点词汇"}, {"word": "cross	out", "meaning": "划掉，删去", "phonetic": "", "pos": "重点词汇"}, {"word": "chin", "meaning": "下巴", "phonetic": "", "pos": "重点词汇"}, {"word": "gather", "meaning": "1.", "phonetic": "", "pos": "重点词汇"}, {"word": "聚集", "meaning": ")", "phonetic": "", "pos": "重点词汇"}, {"word": "troop", "meaning": "(", "phonetic": "", "pos": "重点词汇"}, {"word": "planet", "meaning": "⾏星", "phonetic": "", "pos": "重点词汇"}, {"word": "Venus", "meaning": "⾦星", "phonetic": "", "pos": "重点词汇"}, {"word": "eyebrow", "meaning": "眉⽑", "phonetic": "", "pos": "重点词汇"}, {"word": "invite", "meaning": "邀请", "phonetic": "", "pos": "重点词汇"}, {"word": "adventure", "meaning": "冒险，冒险活动", "phonetic": "", "pos": "重点词汇"}, {"word": "hooray", "meaning": "耶！", "phonetic": "", "pos": "重点词汇"}, {"word": "nearby", "meaning": "在附近", "phonetic": "", "pos": "重点词汇"}, {"word": "invitation", "meaning": "邀请，邀请函", "phonetic": "", "pos": "重点词汇"}, {"word": "royal", "meaning": "王的，王室的", "phonetic": "", "pos": "重点词汇"}, {"word": "respect", "meaning": "尊敬，尊重", "phonetic": "", "pos": "重点词汇"}, {"word": "excuse", "meaning": "请求谅解", "phonetic": "", "pos": "重点词汇"}, {"word": "gardener", "meaning": "园丁", "phonetic": "", "pos": "重点词汇"}, {"word": "bite", "meaning": "⼀⼜的份量", "phonetic": "", "pos": "重点词汇"}, {"word": "take	a	bite	of", "meaning": "吃⼀⼜", "phonetic": "", "pos": "重点词汇"}, {"word": "inspect", "meaning": "检查，检阅", "phonetic": "", "pos": "重点词汇"}, {"word": "seriously", "meaning": "认真地，严肃地，严重地", "phonetic": "", "pos": "重点词汇"}, {"word": "delicious", "meaning": "美味的，可⼜的", "phonetic": "", "pos": "重点词汇"}, {"word": "in	sight", "meaning": "看见，被看到", "phonetic": "", "pos": "重点词汇"}]}, "9": {"subtitles": [{"start": 0.0, "end": 5.6, "en": "ukong plucked a peach from a branch  and bit into it.", "cn": ""}, {"start": 5.6, "end": 11.2, "en": "“This peach tastes wonderful!” he said.", "cn": ""}, {"start": 11.2, "end": 16.9, "en": "He ate another peach.", "cn": ""}, {"start": 16.9, "end": 22.5, "en": "And then he ate  another one.", "cn": ""}, {"start": 22.5, "end": 28.1, "en": "Each morning after that, Wukong secretly  ate more and more peaches.", "cn": ""}, {"start": 28.1, "end": 33.8, "en": "After eating he  climbed into a tree and took a nap.", "cn": ""}, {"start": 33.8, "end": 39.4, "en": "Time went by, and Wukong enjoyed his  W life in Heaven.", "cn": ""}, {"start": 39.4, "end": 45.0, "en": "Meanwhile the queen of Heaven was  busy.", "cn": ""}, {"start": 45.0, "end": 50.6, "en": "It was almost time for the annual Peach  Festival.", "cn": ""}, {"start": 50.6, "end": 56.2, "en": "She called for her maidens, Red  Gown and Blue Gown.", "cn": ""}, {"start": 56.2, "end": 61.9, "en": "“How may we help you?” asked Red  Gown.", "cn": ""}, {"start": 61.9, "end": 67.5, "en": "“The Peach Festival is tomorrow,” said  the queen.", "cn": ""}, {"start": 67.5, "end": 73.1, "en": "“All the important gods and spirits  1 2 in Heaven will be here.", "cn": ""}, {"start": 73.1, "end": 78.8, "en": "I also invited the  bodhisattva Guanyin, the goddess of mercy.", "cn": ""}, {"start": 78.8, "end": 84.4, "en": "Go to the Peach Garden now, and pick plenty  of ripe peaches.” Red Gown and Blue Gown went to the  garden.", "cn": ""}, {"start": 84.4, "end": 90.0, "en": "As soon as they went through the  gate, both maidens gasped.", "cn": ""}, {"start": 90.0, "end": 95.6, "en": "“Where are all the peaches?” cried Red  Gown.", "cn": ""}, {"start": 95.6, "end": 101.2, "en": "“They’re .", "cn": ""}, {"start": 101.2, "end": 106.9, "en": "gone!” cried Blue Gown.", "cn": ""}, {"start": 106.9, "end": 112.5, "en": "“This is terrible!” said Red Gown.", "cn": ""}, {"start": 112.5, "end": 118.1, "en": "“The  queen will be angry!” Wukong had been sleeping up on a branch.", "cn": ""}, {"start": 118.1, "end": 123.8, "en": "When he heard the maidens, he woke up.", "cn": ""}, {"start": 123.8, "end": 129.4, "en": "“Who’s making all this noise?” he asked,  jumping down to the ground.", "cn": ""}, {"start": 129.4, "end": 135.0, "en": "“I’m trying to  sleep!” The maidens were startled.", "cn": ""}, {"start": 135.0, "end": 140.6, "en": "“We’re sorry  3 4 to wake you, sir,” said Red Gown.", "cn": ""}, {"start": 140.6, "end": 146.2, "en": "“We came  to pick peaches for the Peach Festival.", "cn": ""}, {"start": 146.2, "end": 151.9, "en": "Do  you know what happened to—” “The Peach Festival?” said Wukong.", "cn": ""}, {"start": 151.9, "end": 157.5, "en": "His  eyes lit up.", "cn": ""}, {"start": 157.5, "end": 163.1, "en": "“I didn’t hear about that.” “Oh, it’s a wonderful festival,” said Blue  Gown.", "cn": ""}, {"start": 163.1, "end": 168.8, "en": "“All the important gods and spirits  will be there.” “That sounds like fun,” said Wukong.", "cn": ""}, {"start": 168.8, "end": 174.4, "en": "“I’m sure I’m invited, right?” Red Gown bit her lip.", "cn": ""}, {"start": 174.4, "end": 180.0, "en": "“Um, I don’t think so.” Wukong was furious.", "cn": ""}, {"start": 180.0, "end": 185.6, "en": "“The queen did not  invite me?", "cn": ""}, {"start": 185.6, "end": 191.2, "en": "I’m just as important as any other  spirit or god!” The maidens looked nervous.", "cn": ""}, {"start": 191.2, "end": 196.9, "en": "“Sir,” said Blue Gown.", "cn": ""}, {"start": 196.9, "end": 202.5, "en": "“Where are the  peaches?” “I ate them,” said Wukong.", "cn": ""}, {"start": 202.5, "end": 208.1, "en": "“I ate every  5 6 single one!", "cn": ""}, {"start": 208.1, "end": 213.8, "en": "And they were delicious!” “Oh no!” cried Red Gown.", "cn": ""}, {"start": 213.8, "end": 219.4, "en": "“We must tell  the queen.” “No, you’re not going to tell the queen,”  said Wukong.", "cn": ""}, {"start": 219.4, "end": 225.0, "en": "He quickly said a spell.", "cn": ""}, {"start": 225.0, "end": 230.6, "en": "Instantly Red  Gown and Blue Gown fell asleep.", "cn": ""}, {"start": 230.6, "end": 236.2, "en": "Wukong looked at all the empty peach  trees.", "cn": ""}, {"start": 236.2, "end": 241.9, "en": "He shook his head.", "cn": ""}, {"start": 241.9, "end": 247.5, "en": "“I’m in big  trouble.” When Red Gown and Blue Gown woke  up, they ran back to the Cloud Palace.", "cn": ""}, {"start": 247.5, "end": 253.1, "en": "“Your Majesty!” cried Red Gown.", "cn": ""}, {"start": 253.1, "end": 258.8, "en": "“Something terrible has happened!", "cn": ""}, {"start": 258.8, "end": 264.4, "en": "Sun  Wukong ate all the peaches!” “He got very angry and cast a spell on  *  *  * 7 8 us,” added Blue Gown.", "cn": ""}, {"start": 264.4, "end": 270.0, "en": "“When we woke up,  he was gone.”  The queen’s eyes flashed with anger.", "cn": ""}, {"start": 270.0, "end": 275.6, "en": "She  went to the royal court and told the Jade  Emperor.", "cn": ""}, {"start": 275.6, "end": 281.2, "en": "“That horrible monkey!” cried the  emperor.", "cn": ""}, {"start": 281.2, "end": 286.9, "en": "He turned to his captain.", "cn": ""}, {"start": 286.9, "end": 292.5, "en": "“Gather  100,000 soldiers.", "cn": ""}, {"start": 292.5, "end": 298.1, "en": "I want Wukong arrested!” The captain nodded and then left the  palace.", "cn": ""}, {"start": 298.1, "end": 303.8, "en": "Meanwhile the bodhisattva Guanyin left  her home on Mount Potalaka in the South  Sea.", "cn": ""}, {"start": 303.8, "end": 309.4, "en": "She soon arrived at the Cloud Palace.", "cn": ""}, {"start": 309.4, "end": 315.0, "en": "“I’m sorry to tell you this,” said the  queen.", "cn": ""}, {"start": 315.0, "end": 320.6, "en": "“But there won’t be a peach festival.” “Why not?” asked Guanyin.", "cn": ""}, {"start": 320.6, "end": 326.2, "en": "“A monkey named Sun Wukong ate  all the peaches,” said the emperor.", "cn": ""}, {"start": 326.2, "end": 331.9, "en": "“I sent  9 10 100,000 soldiers to arrest him.", "cn": ""}, {"start": 331.9, "end": 337.5, "en": "They’ll bring  him back to Heaven soon.” Just then a messenger ran into the court.", "cn": ""}, {"start": 337.5, "end": 343.1, "en": "“We need more soldiers, Your Majesty!”  “What?” cried the emperor.", "cn": ""}, {"start": 343.1, "end": 348.8, "en": "“Wukong defeated the entire army,” said  the messenger.", "cn": ""}, {"start": 348.8, "end": 354.4, "en": "The Jade Emperor put his head in his  hands.", "cn": ""}, {"start": 354.4, "end": 360.0, "en": "“We don’t have any more soldiers!” 11", "cn": ""}], "vocabs": [{"word": "pluck", "meaning": "采，摘，拔", "phonetic": "", "pos": "重点词汇"}, {"word": "branch", "meaning": "树枝", "phonetic": "", "pos": "重点词汇"}, {"word": "bit", "meaning": "1.", "phonetic": "", "pos": "重点词汇"}, {"word": "⼀点点", "meaning": ")", "phonetic": "", "pos": "重点词汇"}, {"word": "secretly", "meaning": "偷偷地，秘密地", "phonetic": "", "pos": "重点词汇"}, {"word": "heaven", "meaning": "天堂，天国", "phonetic": "", "pos": "重点词汇"}, {"word": "meanwhile", "meaning": "同时，在", "phonetic": "", "pos": "重点词汇"}, {"word": "busy", "meaning": "忙碌的，繁忙的", "phonetic": "", "pos": "重点词汇"}, {"word": "annual", "meaning": "⼀年的，每年的", "phonetic": "", "pos": "重点词汇"}, {"word": "maiden", "meaning": "少⼥，⼩姐", "phonetic": "", "pos": "重点词汇"}, {"word": "gown", "meaning": "(", "phonetic": "", "pos": "重点词汇"}, {"word": "important", "meaning": "重要的", "phonetic": "", "pos": "重点词汇"}, {"word": "bodhisattva", "meaning": "菩萨", "phonetic": "", "pos": "重点词汇"}, {"word": "Guanyin", "meaning": "观⾳", "phonetic": "", "pos": "重点词汇"}, {"word": "goddess", "meaning": "⼥神", "phonetic": "", "pos": "重点词汇"}, {"word": "mercy", "meaning": "仁慈，宽容", "phonetic": "", "pos": "重点词汇"}, {"word": "plenty	of", "meaning": "(", "phonetic": "", "pos": "重点词汇"}, {"word": "terrible", "meaning": "可怕的，极坏的，糟糕的", "phonetic": "", "pos": "重点词汇"}, {"word": "startle", "meaning": "使⼤吃⼀惊", "phonetic": "", "pos": "重点词汇"}, {"word": "noise", "meaning": "声响，喧闹声", "phonetic": "", "pos": "重点词汇"}, {"word": "furious", "meaning": "⾮常愤怒的", "phonetic": "", "pos": "重点词汇"}, {"word": "single", "meaning": "单⼀的，单个的", "phonetic": "", "pos": "重点词汇"}, {"word": "instantly", "meaning": "⽴刻，马上", "phonetic": "", "pos": "重点词汇"}, {"word": "empty", "meaning": "空的，未占⽤的", "phonetic": "", "pos": "重点词汇"}, {"word": "cast", "meaning": "1.", "phonetic": "", "pos": "重点词汇"}, {"word": "投射", "meaning": "(", "phonetic": "", "pos": "重点词汇"}, {"word": "flash", "meaning": "闪光，闪烁", "phonetic": "", "pos": "重点词汇"}, {"word": "horrible", "meaning": "可怕的，让⼈讨厌的", "phonetic": "", "pos": "重点词汇"}, {"word": "captain", "meaning": "1.	(", "phonetic": "", "pos": "重点词汇"}, {"word": "船长，舰长，", "meaning": "(", "phonetic": "", "pos": "重点词汇"}, {"word": "arrest", "meaning": "逮捕", "phonetic": "", "pos": "重点词汇"}, {"word": "defeat", "meaning": "战胜，击败", "phonetic": "", "pos": "重点词汇"}, {"word": "entire", "meaning": "整个的，全部的", "phonetic": "", "pos": "重点词汇"}]}, "10": {"subtitles": [{"start": 0.0, "end": 5.7, "en": "ow will we defeat Sun Wukong?”  moaned the Jade Emperor.", "cn": ""}, {"start": 5.7, "end": 11.4, "en": "“I sent our  entire army, and they couldn’t arrest him!”  “Perhaps we can ask the sage Erlang to  capture him,” said Guanyin.", "cn": ""}, {"start": 11.4, "end": 17.1, "en": "“Yes,” said the Jade Emperor.", "cn": ""}, {"start": 17.1, "end": 22.9, "en": "“Erlang  is very powerful.” He turned back to the  messenger.", "cn": ""}, {"start": 22.9, "end": 28.6, "en": "“Go to Plum Mountain.", "cn": ""}, {"start": 28.6, "end": 34.3, "en": "Ask  Erlang if he’ll help us.” H  Wukong stood in front of the waterfall  with his cheering subjects.", "cn": ""}, {"start": 34.3, "end": 40.0, "en": "“Our king has just defeated an entire  army from Heaven!” said the gibbon.", "cn": ""}, {"start": 40.0, "end": 45.7, "en": "“I hope the Jade Emperor learned his  lesson,” said Wukong.", "cn": ""}, {"start": 45.7, "end": 51.4, "en": "“He and his army are  no match for—” “Sun Wukong!” a deep voice boomed.", "cn": ""}, {"start": 51.4, "end": 57.1, "en": "*  *  * 1 2 Wukong looked up.", "cn": ""}, {"start": 57.1, "end": 62.9, "en": "A large man was  coming down from the sky.", "cn": ""}, {"start": 62.9, "end": 68.6, "en": "The apes and  other monkeys ran and hid.", "cn": ""}, {"start": 68.6, "end": 74.3, "en": "“I am Erlang,” said the man.", "cn": ""}, {"start": 74.3, "end": 80.0, "en": "“The Jade  Emperor sent me to arrest you.” Wukong laughed.", "cn": ""}, {"start": 80.0, "end": 85.7, "en": "“The Jade Emperor’s  entire army couldn’t defeat me.", "cn": ""}, {"start": 85.7, "end": 91.4, "en": "What do you  think you’re going to do?” “I am going to take you back to Heaven,”  said Erlang.", "cn": ""}, {"start": 91.4, "end": 97.1, "en": "“And you will be punished!” Waving his iron bar, Wukong leaped at  Erlang.", "cn": ""}, {"start": 97.1, "end": 102.9, "en": "Clang!", "cn": ""}, {"start": 102.9, "end": 108.6, "en": "Erlang blocked the bar with  his sword and then struck back.", "cn": ""}, {"start": 108.6, "end": 114.3, "en": "Wukong  jumped onto a cloud to get out of the way.", "cn": ""}, {"start": 114.3, "end": 120.0, "en": "Erlang leaped into the air.", "cn": ""}, {"start": 120.0, "end": 125.7, "en": "He shook his  body and suddenly grew much bigger.", "cn": ""}, {"start": 125.7, "end": 131.4, "en": "Wukong laughed.", "cn": ""}, {"start": 131.4, "end": 137.1, "en": "“I can do that too!” He shook his body and grew just as big as  3 4 Erlang.", "cn": ""}, {"start": 137.1, "end": 142.9, "en": "Clouds swirled and wind blew as the  two giants fought in the sky.", "cn": ""}, {"start": 142.9, "end": 148.6, "en": "Their weapons  banged together all through the night.", "cn": ""}, {"start": 148.6, "end": 154.3, "en": "They were still fighting when the sun rose  the next morning.", "cn": ""}, {"start": 154.3, "end": 160.0, "en": "“This fight could last forever,” thought  Wukong.", "cn": ""}, {"start": 160.0, "end": 165.7, "en": "“I should try a different plan.” Wukong struck at Erlang one last time  and then jumped back down to Earth.", "cn": ""}, {"start": 165.7, "end": 171.4, "en": "He  turned himself into a sparrow and perched on  a branch.", "cn": ""}, {"start": 171.4, "end": 177.1, "en": "“Erlang will never find me now,” thought  Wukong.", "cn": ""}, {"start": 177.1, "end": 182.9, "en": "He looked up and saw a hawk.", "cn": ""}, {"start": 182.9, "end": 188.6, "en": "The hawk  swooped toward him.", "cn": ""}, {"start": 188.6, "end": 194.3, "en": "“Oh no!” thought Wukong.", "cn": ""}, {"start": 194.3, "end": 200.0, "en": "“That’s  Erlang!” 5 6 Wukong dived into a stream.", "cn": ""}, {"start": 200.0, "end": 205.7, "en": "He turned  himself into a fish and swam in the water.", "cn": ""}, {"start": 205.7, "end": 211.4, "en": "But then a crane flew over the stream.", "cn": ""}, {"start": 211.4, "end": 217.1, "en": "The crane swooped down at the water.", "cn": ""}, {"start": 217.1, "end": 222.9, "en": "Its mouth was wide open.", "cn": ""}, {"start": 222.9, "end": 228.6, "en": "Wukong shot out  of the stream.", "cn": ""}, {"start": 228.6, "end": 234.3, "en": "He changed back into himself  and ran down a hill.", "cn": ""}, {"start": 234.3, "end": 240.0, "en": "“I’ll turn myself into a temple,” he  thought.", "cn": ""}, {"start": 240.0, "end": 245.7, "en": "“Then, if Erlang tries to enter, I’ll  bite him!” Wukong’s eyes became windows, and his  mouth became a door.", "cn": ""}, {"start": 245.7, "end": 251.4, "en": "He turned his tail into  a flagpole.", "cn": ""}, {"start": 251.4, "end": 257.1, "en": "A moment later Erlang came down the  hill.", "cn": ""}, {"start": 257.1, "end": 262.9, "en": "When he saw the temple, he scratched  his head.", "cn": ""}, {"start": 262.9, "end": 268.6, "en": "“Hmm,” said Erlang.", "cn": ""}, {"start": 268.6, "end": 274.3, "en": "“I never saw a  temple with a flagpole before.", "cn": ""}, {"start": 274.3, "end": 280.0, "en": "This must be  7 8 Wukong.", "cn": ""}, {"start": 280.0, "end": 285.7, "en": "I’ll kick in that door.” “Oh no!” thought Wukong.", "cn": ""}, {"start": 285.7, "end": 291.4, "en": "“He’ll break  all my teeth!” Wukong changed back into himself and  ran.", "cn": ""}, {"start": 291.4, "end": 297.1, "en": "Erlang was right behind him.", "cn": ""}, {"start": 297.1, "end": 302.9, "en": "Up in Heaven the Jade Emperor, the  queen, and Guanyin watched the chase.", "cn": ""}, {"start": 302.9, "end": 308.6, "en": "The  *  *  * sage Laozi came over to them.", "cn": ""}, {"start": 308.6, "end": 314.3, "en": "“What’s going on?” he asked, looking  down.", "cn": ""}, {"start": 314.3, "end": 320.0, "en": "“That monkey, Sun Wukong, ate all the  peaches from the garden,” said the Jade  Emperor.", "cn": ""}, {"start": 320.0, "end": 325.7, "en": "“Then he defeated our entire army.", "cn": ""}, {"start": 325.7, "end": 331.4, "en": "Erlang is trying to catch him now.” “I can help,” said Laozi.", "cn": ""}, {"start": 331.4, "end": 337.1, "en": "He took a metal ring off his arm.", "cn": ""}, {"start": 337.1, "end": 342.9, "en": "He  9 10 aimed carefully and hurled it down to Earth.", "cn": ""}, {"start": 342.9, "end": 348.6, "en": "Clunk!", "cn": ""}, {"start": 348.6, "end": 354.3, "en": "The ring hit Wukong on the head.", "cn": ""}, {"start": 354.3, "end": 360.0, "en": "The monkey looked dizzy for a moment and  then fell to the ground.", "cn": ""}], "vocabs": [{"word": "capture", "meaning": "捕获，俘虏", "phonetic": "", "pos": "重点词汇"}, {"word": "army", "meaning": "军队，陆军", "phonetic": "", "pos": "重点词汇"}, {"word": "lesson", "meaning": "1.", "phonetic": "", "pos": "重点词汇"}, {"word": "课程", "meaning": ")", "phonetic": "", "pos": "重点词汇"}, {"word": "no	match", "meaning": "for", "phonetic": "", "pos": "重点词汇"}, {"word": "deep", "meaning": "深的", "phonetic": "", "pos": "重点词汇"}, {"word": "voice", "meaning": "声⾳", "phonetic": "", "pos": "重点词汇"}, {"word": "boom", "meaning": "1.", "phonetic": "", "pos": "重点词汇"}, {"word": "隆隆声", "meaning": ")", "phonetic": "", "pos": "重点词汇"}, {"word": "hid", "meaning": "躲藏", "phonetic": "", "pos": "重点词汇"}, {"word": "block", "meaning": "1.	(", "phonetic": "", "pos": "重点词汇"}, {"word": "块，", "meaning": "3.	(", "phonetic": "", "pos": "重点词汇"}, {"word": "strike	back", "meaning": "回击，反 击", "phonetic": "", "pos": "重点词汇"}, {"word": "get	out	of	the", "meaning": "way", "phonetic": "", "pos": "重点词汇"}, {"word": "suddenly", "meaning": "忽然", "phonetic": "", "pos": "重点词汇"}, {"word": "swirl", "meaning": "1.", "phonetic": "", "pos": "重点词汇"}, {"word": "漩涡", "meaning": ")", "phonetic": "", "pos": "重点词汇"}, {"word": "himself", "meaning": "他⾃⼰", "phonetic": "", "pos": "重点词汇"}, {"word": "sparrow", "meaning": "⿇雀", "phonetic": "", "pos": "重点词汇"}, {"word": "perch", "meaning": "坐，栖息", "phonetic": "", "pos": "重点词汇"}, {"word": "hawk", "meaning": "⽼鹰", "phonetic": "", "pos": "重点词汇"}, {"word": "swoop", "meaning": "(", "phonetic": "", "pos": "重点词汇"}, {"word": "crane", "meaning": "起重机，吊车", "phonetic": "", "pos": "重点词汇"}, {"word": "temple", "meaning": "神殿，庙宇，寺院", "phonetic": "", "pos": "重点词汇"}, {"word": "flagpole", "meaning": "旗竿", "phonetic": "", "pos": "重点词汇"}, {"word": "scratch", "meaning": "抓，搔", "phonetic": "", "pos": "重点词汇"}, {"word": "Laozi", "meaning": "⽼⼦", "phonetic": "", "pos": "重点词汇"}, {"word": "metal", "meaning": "⾦属", "phonetic": "", "pos": "重点词汇"}, {"word": "ring", "meaning": "(", "phonetic": "", "pos": "重点词汇"}, {"word": "aim", "meaning": "瞄准", "phonetic": "", "pos": "重点词汇"}, {"word": "hurl", "meaning": "⽤⼒地扔", "phonetic": "", "pos": "重点词汇"}, {"word": "dizzy", "meaning": "头晕的", "phonetic": "", "pos": "重点词汇"}, {"word": "moment", "meaning": "⼀会，⽚刻", "phonetic": "", "pos": "重点词汇"}]}};
     let currentCourseContext = null;
@@ -722,6 +1085,7 @@
 
       if (tabId === 'books') loadBooksData();
       if (tabId === 'audios') loadAudiosData();
+      if (tabId === 'cases') renderChronoRound();
     }
 
     // 加载学生数据与学习地图
@@ -1622,12 +1986,268 @@
       }
     }
 
+    // ==================== 📁 时空档案局 · 跨学科剧本杀引擎 ====================
+    const CHRONO_CASE_KNOWLEDGE = {
+      math: {
+        icon: '🧮',
+        subject: '小升初必考模型 · 数学代数',
+        title: '流水行船与代数方程模型',
+        layers: [
+          { tag: '🏷️ 知识母树坐标', content: '数学思维母树 > 运动与方程模型 > 小升初经典：流水行船与相对运动' },
+          { tag: '🎯 第一性原理 / 底层规律', content: '运动是相对的！在流动的参照系中，物体的真实运动速度 = 自身机械做功速度 叠加 介质流动速度（同向则相加提速，反向则抵消阻碍）。' },
+          { tag: '🧠 核心推演与方程模型', content: '• 顺流速度 = 船速 + 水速 (v_顺 = v_船 + v_水)\n• 逆流速度 = 船速 - 水速 (v_逆 = v_船 - v_水)\n👉 【思维大招】：两式相加÷2 即为船速；两式相减÷2 即为水速！\n无须死背公式，设船速为 x，水速为 v，列出一元一次方程轻松破局！' },
+          { tag: '⚔️ 剧本杀案卷应用 · 破案实战', content: '【案卷应用】：嫌疑人谎称 36 公里逆水航行只用了 2.5 小时。根据测得静水船速 15 km/h，水速 3 km/h，算出逆水速度仅为 12 km/h。全程实际耗时为 36 ÷ 12 = 3 小时！多出的半小时正是靠岸私自倒卖官粮的时间！' },
+          { tag: '🔗 前后知识锚点', content: '⬅️ 前置基石：匀速直线运动速度、路程与时间关系 (S = v × t)\n➡️ 延伸思考：如果换成在商场相向而行的自动扶梯上行走，相对速度该如何建模？' }
+        ]
+      },
+      chinese: {
+        icon: '📜',
+        subject: '初中文言断层通关 · 大语文',
+        title: '文言虚词通关矩阵之「而」与「其」',
+        layers: [
+          { tag: '🏷️ 知识母树坐标', content: '大语文知识母树 > 文言语法图谱 > 12 核心虚词与词类活用' },
+          { tag: '🎯 第一性原理 / 底层规律', content: '文言文言简意深。虚词是古代汉语的“语法立交桥”，不直接表达具象事物，却精准决定句子逻辑转折、动作承接以及动作主使者的指代归属！' },
+          { tag: '🧠 核心推演与语法矩阵', content: '• 虚词「而」：表顺承（学而时习之）、表转折（青取之于蓝而青于蓝）、表修饰（杂然而前陈者）。本案中“抵汴而止”暗含转折与未达终点。\n• 虚词「其」：常作人称代词（他/他们）、指示代词（那/其中），在此处指代当事人本身。\n• 关键实词「籴」：买入粮食（相对的「粜」为卖出粮食）。' },
+          { tag: '⚔️ 剧本杀案卷应用 · 破案实战', content: '【案卷应用】：账本原文被狡猾涂改为“抵汴而止，吏其私籴之”。押粮官企图将“籴”辩解为官府正常开仓，并妄图推诿给汴京粮吏。调查官安泽一针见血指出“其”正指示钱某本人，“私籴”坐实了其未进港前即私下变卖官粮换取白银的铁证！' },
+          { tag: '🔗 前后知识锚点', content: '⬅️ 前置基石：文言单音节词向现代双音节词的语义演变\n➡️ 延伸思考：初中文言文中常见的“宾语前置”与“使动用法”有哪些识别规律？' }
+        ]
+      },
+      physics: {
+        icon: '🔬',
+        subject: '初中物理核心实验 · 科学探究',
+        title: '浮力平衡与密度实验探究',
+        layers: [
+          { tag: '🏷️ 知识母树坐标', content: '自然科学母树 > 初中力学系统 > 浮力与阿基米德原理' },
+          { tag: '🎯 第一性原理 / 底层规律', content: '阿基米德浮力定律：浸在液体中的物体受到向上的浮力，其大小等于物体排开液体所受的重力 (F_浮 = ρ_液 · g · V_排)。物体的沉浮完全取决于重力与浮力的对抗。' },
+          { tag: '🧠 核心推演与受力平衡模型', content: '• 漂浮条件：物体平均密度小于水 (ρ_物 < ρ_水) 时，浮力等于重力，必定漂浮。\n• 松木材质密度通常在 0.6~0.8 g/cm³，水的密度为 1.0 g/cm³，木质船只即便浸水，木材本身仍具正浮力。\n• 白银的密度高达 10.49 g/cm³！若非暗格熔铸了大量沉重金属，木质货船残骸断然不可能深陷泥沙毫无浮意！' },
+          { tag: '⚔️ 剧本杀案卷应用 · 破案实战', content: '【案卷应用】：沉船残片打捞表明，木船残体沉底极深，完全违反了普通木材浮力规律。调查官安泽据此断定船底夹层有超高密度重物，指引水鬼打捞队凿开龙骨，当场起获了浇铸成龙骨形状的 800 两纯银！' },
+          { tag: '🔗 前后知识锚点', content: '⬅️ 前置基石：质量、体积与密度公式 (ρ = m / V)\n➡️ 延伸思考：现代潜水艇是如何利用水舱充排水改变自身重力来实现下潜与上浮的？' }
+        ]
+      }
+    };
+
+    const CHRONO_CASE_ROUNDS = [
+      {
+        round: 1,
+        suspectStatement: '“大人明鉴！我们从下游开阳码头逆流到汴京，全程 36 公里，江水逆流凶猛，我们拼命划船足足航行了 2.5 小时！途中根本没有停靠，怎么可能私自倒卖粮食啊？！”',
+        questionDesc: '已知粮船在静水速度为 15 km/h，逆流水速为 3 km/h，全程 36 公里。嫌疑人声称逆水只用了 2.5 小时，破绽在于：',
+        options: [
+          { text: 'A. 逆水实际速度 = 15 - 3 = 12 km/h，航行必须耗时整整 3 小时！多出的半小时正是私自停靠黑市倒卖的时间！', correct: true },
+          { text: 'B. 顺水航行速度应当更快，他实际耗时只有 1 小时。', correct: false },
+          { text: 'C. 水流速度是顺向的，所以逆水根本不会减慢船速。', correct: false }
+        ],
+        correctFeedback: '💥 破绽识破！CRITICAL HIT！安泽精准运用小升初流水行船模型：逆水速度 = 船速 - 水速 = 12 km/h。36 ÷ 12 = 3 小时！嫌疑人谎称 2.5 小时，多出的 30 分钟正是私自停靠黑市倒卖官粮的时间！',
+        hintFeedback: '🤔 战术耳机提示：安泽，回想刚才的【流水行船模型】：逆水航行时，江水在对抗船只前进，逆水速度 = 船速减去水速 (15 - 3 = 12)。全程 36 公里除以 12 等于几小时？重新算算看！'
+      },
+      {
+        round: 2,
+        suspectStatement: '“大人！就算时间有微小出入，账本上分明写着‘抵汴而止，吏其私籴之’，这是说货到了汴京才停止，是汴京粮吏自己跑来买粮食，跟我这个押运官无关啊！”',
+        questionDesc: '安泽调取漕运密账真迹，识破了他在文言虚词与释义上的狡辩陷阱：',
+        options: [
+          { text: 'A. ‘而’字表转折，‘其’字是指示代词指代钱某自己；‘籴’是买入粮食，整句实指‘运抵汴京前就停下了，是钱某自己私下卖粮变现’！', correct: true },
+          { text: 'B. ‘籴’是官府开仓放粮的意思，跟民间买卖毫无关系。', correct: false },
+          { text: 'C. 文言文中虚词没有实际意义，不能作为断案证据。', correct: false }
+        ],
+        correctFeedback: '💥 破绽识破！CRITICAL HIT！安泽一针见血破译宋代文言暗语：钱某偷换虚词指代！‘其’实指押运官自身，‘籴’（音dí）为买入，他故意模糊主语推卸罪责，但涂改痕迹彻底暴露了他的私籴企图！',
+        hintFeedback: '🤔 战术耳机提示：安泽，回想【文言虚词模型】，“籴”是买入粮食（相对的“粜”是卖出）。在古文中“其”常常指代当事人本身，回看账本涂改处，想想究竟是谁在主导这一行为？'
+      },
+      {
+        round: 3,
+        suspectStatement: '“大人饶命……但粮食真的全沉入河底了！木头货船遇到暗礁破裂沉底，这纯属天灾水患，我根本没有私藏银两啊！”',
+        questionDesc: '打捞队打捞沉船残片，发现木船不仅沉底且深陷河床淤泥。安泽依据初中浮力与密度定律指出：',
+        options: [
+          { text: 'A. 松木密度远小于水（ρ木 < ρ水），正常木船漏水后也会半浮于水面；沉底深陷是因为龙骨夹层暗中浇铸了密度高达 10.5 g/cm³ 的厚重白银！', correct: true },
+          { text: 'B. 木头在水里泡久了密度会自动变得比铁块还大，所以沉底是正常的。', correct: false },
+          { text: 'C. 水的浮力只与船只的颜色有关，与排开水的体积无关。', correct: false }
+        ],
+        correctFeedback: '💥 绝杀识破！CASE CRACKED！安泽运用阿基米德浮力定律与物质密度：木船哪怕进水，木质残骸仍具正浮力！搜查队凿开龙骨，果然起获了熔铸成船梁的 800 两纯银！铁证如山，嫌疑人彻底崩溃伏法！',
+        hintFeedback: '🤔 战术耳机提示：安泽，回想【浮力平衡模型】！木头的密度约为 0.6~0.8 g/cm³，水的密度是 1.0 g/cm³。阿基米德原理告诉我们木头具有天然浮力，为什么这艘木船会像巨石一样沉入河床？'
+      }
+    ];
+
+    let currentChronoState = {
+      roundIndex: 0,
+      solvedClues: 0,
+      hp: 100,
+      isCompleted: false
+    };
+
+    function renderChronoRound() {
+      const q = CHRONO_CASE_ROUNDS[currentChronoState.roundIndex];
+      if (!q) return;
+
+      document.getElementById('current-round-text').innerText = (currentChronoState.roundIndex + 1);
+      document.getElementById('suspect-statement').innerText = q.suspectStatement;
+      document.getElementById('question-desc').innerText = q.questionDesc;
+
+      const progressPercent = Math.round((currentChronoState.solvedClues / 3) * 100);
+      document.getElementById('deduction-progress-num').innerText = progressPercent + '%';
+      
+      const hpPercent = Math.max(0, 100 - currentChronoState.solvedClues * 33);
+      document.getElementById('suspect-hp-bar').style.width = hpPercent + '%';
+
+      for (let i = 0; i < 3; i++) {
+        const dot = document.getElementById(`step-dot-${i}`);
+        if (i < currentChronoState.solvedClues) {
+          dot.className = 'w-2.5 h-2.5 rounded-full bg-emerald-400';
+        } else if (i === currentChronoState.solvedClues) {
+          dot.className = 'w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse';
+        } else {
+          dot.className = 'w-2.5 h-2.5 rounded-full bg-slate-700';
+        }
+      }
+
+      // 渲染选项
+      const container = document.getElementById('options-container');
+      container.innerHTML = q.options.map((opt, idx) => `
+        <button onclick="handleDeductionChoice(${idx})" class="w-full text-left p-3 rounded-xl bg-slate-800/80 hover:bg-slate-700/90 border border-slate-700 hover:border-cyan-400 text-xs text-slate-200 transition-all active:scale-[0.99] flex items-start space-x-2 shadow">
+          <span class="text-cyan-400 font-bold flex-shrink-0 mt-0.5">▶</span>
+          <span class="leading-relaxed">${opt.text}</span>
+        </button>
+      `).join('');
+
+      // 隐藏旧反馈
+      const fbBox = document.getElementById('feedback-box');
+      fbBox.classList.add('hidden');
+    }
+
+    function handleDeductionChoice(choiceIdx) {
+      const q = CHRONO_CASE_ROUNDS[currentChronoState.roundIndex];
+      const opt = q.options[choiceIdx];
+      const fbBox = document.getElementById('feedback-box');
+      fbBox.classList.remove('hidden');
+
+      if (opt.correct) {
+        fbBox.className = 'p-3.5 rounded-2xl text-xs bg-emerald-950/80 border border-emerald-500/50 text-emerald-200 leading-relaxed shadow-lg';
+        fbBox.innerHTML = `
+          <div class="font-bold text-emerald-300 mb-1 flex items-center gap-1.5">
+            <span>🎯</span>
+            <span>破绽识破！逻辑严密！</span>
+          </div>
+          <div>${q.correctFeedback}</div>
+          <div class="mt-2.5 text-right">
+            <button onclick="advanceNextChronoRound()" class="px-4 py-1.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 font-black text-xs shadow-md active:scale-95 transition">
+              ${currentChronoState.roundIndex < 2 ? '锁定该破绽，继续审讯 ➔' : '🏆 突破心理防线，结案！➔'}
+            </button>
+          </div>
+        `;
+      } else {
+        fbBox.className = 'p-3.5 rounded-2xl text-xs bg-amber-950/80 border border-amber-500/50 text-amber-200 leading-relaxed shadow-lg';
+        fbBox.innerHTML = `
+          <div class="font-bold text-amber-300 mb-1 flex items-center gap-1.5">
+            <span>🎧</span>
+            <span>战术耳机提示（逻辑推导有误）</span>
+          </div>
+          <div>${q.hintFeedback}</div>
+          <div class="mt-2 text-right">
+            <span class="text-[10px] text-amber-400/80">无需自责，重新选择答案即可破防！</span>
+          </div>
+        `;
+      }
+    }
+
+    function advanceNextChronoRound() {
+      // 成功解开一条线索
+      const clueTag = document.getElementById(`clue-tag-${currentChronoState.roundIndex}`);
+      if (clueTag) {
+        clueTag.classList.remove('text-slate-500');
+        clueTag.classList.add('text-emerald-300', 'border-emerald-500/50', 'bg-emerald-950/30');
+      }
+
+      currentChronoState.solvedClues++;
+      document.getElementById('clue-unlocked-count').innerText = `线索破译：${currentChronoState.solvedClues} / 3`;
+
+      if (currentChronoState.roundIndex < 2) {
+        currentChronoState.roundIndex++;
+        renderChronoRound();
+      } else {
+        // 完成全部 3 关，结案！
+        currentChronoState.isCompleted = true;
+        document.getElementById('suspect-mood-badge').innerText = '防线瓦解 · 伏法认罪';
+        document.getElementById('suspect-mood-badge').className = 'px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-300 text-[10px] font-bold';
+        document.getElementById('suspect-avatar').innerText = '🙇‍♂️';
+        document.getElementById('dash-case-status-badge').innerText = '✓ 今日案卷已破译';
+        document.getElementById('dash-case-status-badge').className = 'text-[10px] text-emerald-400 font-bold hidden sm:inline text-center';
+
+        // 弹出结案大捷弹窗
+        document.getElementById('case-victory-modal').classList.remove('hidden');
+      }
+    }
+
+    function confirmCaseVictory() {
+      document.getElementById('case-victory-modal').classList.add('hidden');
+      // 给张安泽增发 50 心愿币奖励并更新顶栏
+      if (currentChildData) {
+        currentChildData.wishBalance = (currentChildData.wishBalance || 680) + 50;
+        currentChildData.xp = (currentChildData.xp || 1850) + 100;
+        document.getElementById('top-coins').innerText = currentChildData.wishBalance;
+        document.getElementById('case-coins-badge').innerText = currentChildData.wishBalance;
+        document.getElementById('top-xp-text').innerText = `${currentChildData.xp} XP`;
+      }
+      try {
+        localStorage.setItem('case_042_cleared', 'true');
+      } catch (e) {}
+      alert('🎉 破案战利品已入账！+50 心愿币已添加至安泽的愿望储蓄池中！');
+    }
+
+    function resetCaseDeduction() {
+      currentChronoState = {
+        roundIndex: 0,
+        solvedClues: 0,
+        hp: 100,
+        isCompleted: false
+      };
+      document.getElementById('suspect-avatar').innerText = '🧔🏻‍♂️';
+      document.getElementById('suspect-mood-badge').innerText = '顽固抗辩中';
+      document.getElementById('suspect-mood-badge').className = 'px-1.5 py-0.2 rounded bg-red-500/20 text-red-300 text-[10px] font-bold';
+      document.getElementById('clue-unlocked-count').innerText = '线索破译：0 / 3';
+      
+      for (let i = 0; i < 3; i++) {
+        const ct = document.getElementById(`clue-tag-${i}`);
+        if (ct) {
+          ct.className = `p-2 rounded-xl bg-slate-800/80 border border-slate-700 ${i === 0 ? 'text-slate-300' : 'text-slate-500'} flex items-center space-x-2`;
+        }
+      }
+      renderChronoRound();
+    }
+
+    function openKnowledgeModal(subjectKey) {
+      const data = CHRONO_CASE_KNOWLEDGE[subjectKey];
+      if (!data) return;
+
+      document.getElementById('modal-card-icon').innerText = data.icon;
+      document.getElementById('modal-card-subject').innerText = data.subject;
+      document.getElementById('modal-card-title').innerText = data.title;
+
+      const contentBox = document.getElementById('modal-card-content');
+      contentBox.innerHTML = data.layers.map(layer => `
+        <div class="p-3.5 rounded-2xl bg-slate-800/70 border border-slate-700/80 space-y-1">
+          <div class="font-extrabold text-cyan-300 text-xs">${layer.tag}</div>
+          <div class="text-slate-200 leading-relaxed whitespace-pre-line text-[11px] sm:text-xs">${layer.content}</div>
+        </div>
+      `).join('');
+
+      document.getElementById('case-knowledge-modal').classList.remove('hidden');
+    }
+
+    function closeKnowledgeModal() {
+      document.getElementById('case-knowledge-modal').classList.add('hidden');
+    }
+
     function interactWithPet() {
       alert('🐾 小拓高兴地跳了起来：“安泽今天也要元气满满地探索大世界哦！”');
     }
 
     window.addEventListener('DOMContentLoaded', () => {
       loadWorkspaceData();
+      renderChronoRound();
+      if (localStorage.getItem('case_042_cleared') === 'true') {
+        const badge = document.getElementById('dash-case-status-badge');
+        if (badge) {
+          badge.innerText = '✓ 今日案卷已破译';
+          badge.className = 'text-[10px] text-emerald-400 font-bold hidden sm:inline text-center';
+        }
+      }
 
       const player = document.getElementById('global-audio-element');
       if (player) {
