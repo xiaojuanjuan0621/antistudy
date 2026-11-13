@@ -1,0 +1,98 @@
+[FRAME] '首页' id=14:2 x=0 y=0 w=2848 h=1603 fill=#ffffff
+  [RECTANGLE] '背景 · 独立图片' id=26:78 x=0 y=0 w=2848 h=1600 fill=IMG:e917d56ace4c906f
+  [RECTANGLE] '查看豆包额度的方法 2' id=13:33 x=226 y=75 w=814 h=1381 fill=IMG:d3e910b0f7936ba8
+  [RECTANGLE] '查看豆包额度的方法 (1) 1' id=13:39 x=734 y=667 w=573 h=774 fill=IMG:a97ba32ce36a712b
+  [RECTANGLE] '天气图标 · 图片' id=26:124 x=612 y=47 w=144 h=120 fill=IMG:a64faf26b9bbcf3c
+  [FRAME] '语文课程' id=17:11 x=1252 y=206 w=751 h=417
+    [RECTANGLE] '语文卡片 · 图片' id=26:104 x=1252 y=206 w=734 h=396 r=60.0 fill=IMG:8b4118ca003083e7
+    [TEXT] '语文' id=17:49 x=1327 y=253 w=156 h=93 fill=#ffffff TEXT='语文' fs=77.875 fw=700 lh=93.45000457763672 ls=0.0 ff=Noto Sans SC align=None
+    [TEXT] '学而思语文' id=17:50 x=1327 y=367 w=223 h=53 fill=#ffffff TEXT='学而思语文' fs=44.5 fw=400 lh=53.400001525878906 ls=0.0 ff=Noto Sans SC align=None
+    [FRAME] '去看课 · 可编辑按钮' id=17:51 x=1321 y=471 w=214 h=81 r=41.71875 fill=#f7fffa
+      [TEXT] '去看课' id=17:52 x=1352 y=488 w=109 h=43 fill=#3692ff TEXT='去看课' fs=36.15625 fw=700 lh=43.38750076293945 ls=0.0 ff=Noto Sans SC align=None
+      [TEXT] '›' id=17:53 x=1485 y=462 w=23 h=83 fill=#3692ff TEXT='›' fs=69.53125 fw=700 lh=83.4375 ls=0.0 ff=Noto Sans SC align=None
+  [FRAME] '英语课程' id=17:12 x=2025 y=206 w=756 h=417
+    [RECTANGLE] '英语卡片 · 图片' id=26:106 x=2025 y=206 w=734 h=396 r=60.0 fill=IMG:38d38a07fed96cc1
+    [TEXT] '英语' id=17:54 x=2100 y=253 w=156 h=93 fill=#ffffff TEXT='英语' fs=77.875 fw=700 lh=93.45000457763672 ls=0.0 ff=Noto Sans SC align=None
+    [TEXT] '连续打卡7天' id=17:55 x=2100 y=367 w=248 h=53 fill=#ffffff TEXT='连续打卡7天' fs=44.5 fw=400 lh=53.400001525878906 ls=0.0 ff=Noto Sans SC align=None
+    [FRAME] '去巩固 · 可编辑按钮' id=17:56 x=2091 y=471 w=214 h=81 r=41.71875 fill=#f7fffa
+      [TEXT] '去巩固' id=17:57 x=2122 y=485 w=109 h=43 fill=#ff8c26 TEXT='去巩固' fs=36.15625 fw=700 lh=43.38750076293945 ls=0.0 ff=Noto Sans SC align=None
+      [TEXT] '›' id=17:58 x=2255 y=468 w=23 h=83 fill=#ff8c26 TEXT='›' fs=69.53125 fw=700 lh=83.4375 ls=0.0 ff=Noto Sans SC align=None
+  [FRAME] '数学课程' id=17:14 x=1252 y=648 w=751 h=389
+    [RECTANGLE] '数学卡片 · 图片' id=26:108 x=1252 y=648 w=734 h=364 r=60.0 fill=IMG:2ec1dfd50b0fc3df
+    [TEXT] '数学' id=17:59 x=1327 y=695 w=156 h=93 fill=#ffffff TEXT='数学' fs=77.875 fw=700 lh=93.45000457763672 ls=0.0 ff=Noto Sans SC align=None
+    [TEXT] '乐读数学' id=17:60 x=1327 y=809 w=178 h=53 fill=#ffffff TEXT='乐读数学' fs=44.5 fw=400 lh=53.400001525878906 ls=0.0 ff=Noto Sans SC align=None
+    [FRAME] '去探索 · 可编辑按钮' id=17:61 x=1327 y=901 w=214 h=81 r=41.71875 fill=#f7fffa
+      [TEXT] '去探索' id=17:62 x=1357 y=915 w=109 h=43 fill=#2fc56e TEXT='去探索' fs=36.15625 fw=700 lh=43.38750076293945 ls=0.0 ff=Noto Sans SC align=None
+      [TEXT] '›' id=17:63 x=1491 y=898 w=23 h=83 fill=#2fc56e TEXT='›' fs=69.53125 fw=700 lh=83.4375 ls=0.0 ff=Noto Sans SC align=None
+  [FRAME] '科普课程' id=17:16 x=2025 y=648 w=756 h=389
+    [RECTANGLE] '科普卡片 · 图片' id=26:110 x=2025 y=648 w=734 h=364 r=60.0 fill=IMG:a3b58de8818b8a7a
+    [TEXT] '科普' id=17:64 x=2100 y=695 w=156 h=93 fill=#ffffff TEXT='科普' fs=77.875 fw=700 lh=93.45000457763672 ls=0.0 ff=Noto Sans SC align=None
+    [TEXT] '科普合集' id=17:65 x=2100 y=809 w=178 h=53 fill=#ffffff TEXT='科普合集' fs=44.5 fw=400 lh=53.400001525878906 ls=0.0 ff=Noto Sans SC align=None
+    [FRAME] '去看看 · 可编辑按钮' id=17:66 x=2100 y=901 w=214 h=81 r=41.71875 fill=#f7fffa
+      [TEXT] '去看看' id=17:67 x=2130 y=915 w=109 h=43 fill=#a539f3 TEXT='去看看' fs=36.15625 fw=700 lh=43.38750076293945 ls=0.0 ff=Noto Sans SC align=None
+      [TEXT] '›' id=17:68 x=2264 y=898 w=23 h=83 fill=#a539f3 TEXT='›' fs=69.53125 fw=700 lh=83.4375 ls=0.0 ff=Noto Sans SC align=None
+  [TEXT] '09:30' id=17:18 x=78 y=39 w=334 h=135 fill=#11284f TEXT='09:30' fs=111.25 fw=700 lh=134.63778686523438 ls=0.0 ff=Inter align=None
+  [TEXT] '01/18' id=17:19 x=434 y=56 w=99 h=44 fill=#11284f TEXT='01/18' fs=36.15625 fw=700 lh=43.75727844238281 ls=0.0 ff=Inter align=None
+  [TEXT] '星期六' id=17:20 x=434 y=117 w=109 h=43 fill=#11284f TEXT='星期六' fs=36.15625 fw=700 lh=43.38750076293945 ls=0.0 ff=Noto Sans SC align=None
+  [RECTANGLE] '日期分隔线' id=17:21 x=584 y=67 w=3 h=92 fill=#b8d6ef
+  [TEXT] '12°C' id=17:22 x=793 y=53 w=123 h=64 fill=#11284f TEXT='12°C' fs=52.84375 fw=700 lh=63.952945709228516 ls=0.0 ff=Inter align=None
+  [TEXT] '晴转多云' id=17:23 x=793 y=122 w=134 h=40 fill=#11284f TEXT='晴转多云' fs=33.375 fw=700 lh=40.05000305175781 ls=0.0 ff=Noto Sans SC align=None
+  [FRAME] '连续打卡按钮' id=17:24 x=2061 y=61 w=342 h=97
+    [RECTANGLE] '按钮底形' id=17:25 x=2061 y=61 w=342 h=97 r=48.671875 fill=#eaf6ff
+    [TEXT] '连续打卡XX天' id=17:26 x=2158 y=90 w=209 h=40 fill=#4a93fe TEXT='连续打卡XX天' fs=33.375 fw=700 lh=40.05000305175781 ls=0.0 ff=Noto Sans SC align=None
+  [COMPONENT] 'Calendar (日历)' id=26:91 x=2094 y=88 w=48 h=48
+  [FRAME] '用户菜单按钮' id=17:34 x=2445 y=61 w=328 h=97
+    [RECTANGLE] '按钮底形' id=17:35 x=2445 y=61 w=328 h=97 r=48.671875 fill=#f1f0ff
+    [TEXT] '小星星  ⌄' id=17:36 x=2578 y=90 w=101 h=40 fill=#11284f TEXT='小星星  ' fs=33.375 fw=700 lh=40.05000305175781 ls=0.0 ff=Noto Sans SC align=None
+    [GROUP] 'Mask group' id=26:131 x=2461 y=70 w=80 h=80
+      [ELLIPSE] 'Ellipse 1' id=26:126 x=2461 y=70 w=80 h=80 fill=#cecffd stroke=#ffffff/4.0
+      [ELLIPSE] 'Ellipse 2' id=26:132 x=2461 y=70 w=80 h=80 fill=#c4c4c4 stroke=#ffffff/4.0
+      [RECTANGLE] '查看豆包额度的方法 2' id=26:129 x=2455 y=65 w=92 h=156 fill=IMG:d3e910b0f7936ba8
+  [FRAME] '破壳进度' id=17:41 x=873 y=559 w=345 h=248
+    [RECTANGLE] '进度面板' id=17:42 x=873 y=586 w=345 h=221 r=52.84375 fill=#f8f9ff stroke=#ffffff/3.893749952316284 fx=DROP_SHADOW(#6b54d8 a=0.14 off={'x': 0.0, 'y': 8.34375} r=19.46875)
+    [TEXT] '破壳进度' id=17:43 x=946 y=616 w=201 h=60 fill=#7438ff TEXT='破壳进度' fs=50.0625 fw=700 lh=60.07500076293945 ls=0.0 ff=Noto Sans SC align=None
+    [RECTANGLE] '进度条底' id=17:44 x=904 y=698 w=286 h=67 r=33.375 fill=linear(GRADIENT_LINEAR)(#bd5dff 0%, #6737ff 100%)
+    [TEXT] '68%' id=17:45 x=988 y=687 w=128 h=71 fill=#ffffff TEXT='68%' fs=58.40625 fw=700 lh=70.6848373413086 ls=0.0 ff=Inter align=None
+    [RECTANGLE] '进度轨道' id=17:46 x=923 y=745 w=245 h=17 r=8.34375 fill=#6c70ff
+    [RECTANGLE] '进度 68%' id=17:47 x=923 y=745 w=167 h=17 r=8.34375 fill=#35dffc
+    [RECTANGLE] '进度亮点' id=17:48 x=1071 y=744 w=19 h=19 r=11.125 fill=#eee3ff
+  [RECTANGLE] '语文课时角标底' id=17:69 x=1897 y=239 w=61 h=64 r=11.125 fill=#ffffff
+  [TEXT] '12' id=17:70 x=1905 y=239 w=47 h=50 fill=#7183ff TEXT='12' fs=41.71875 fw=700 lh=50.489166259765625 ls=0.0 ff=Inter align=None
+  [RECTANGLE] '工具栏底板 · 可编辑' id=17:71 x=1371 y=1071 w=1402 h=245 r=69.53125 fill=#f8fcff stroke=#ffffff/3.893749952316284 fx=DROP_SHADOW(#6b54d8 a=0.14 off={'x': 0.0, 'y': 8.34375} r=19.46875)
+  [RECTANGLE] 'AI伙伴图标 · 图片' id=26:112 x=1418 y=1090 w=152 h=130 fill=IMG:6e1609e61ffc9266
+  [TEXT] 'AI伙伴' id=17:73 x=1446 y=1240 w=100 h=40 fill=#11284f TEXT='AI伙伴' fs=33.375 fw=700 lh=40.05000305175781 ls=0.0 ff=Noto Sans SC align=None
+  [RECTANGLE] '绘本馆图标 · 图片' id=26:114 x=1666 y=1110 w=132 h=114 fill=IMG:9a5925313c3cbc80
+  [TEXT] '绘本馆' id=17:75 x=1680 y=1240 w=101 h=40 fill=#11284f TEXT='绘本馆' fs=33.375 fw=700 lh=40.05000305175781 ls=0.0 ff=Noto Sans SC align=None
+  [RECTANGLE] '音乐图标 · 图片' id=26:116 x=1897 y=1104 w=116 h=116 fill=IMG:a6317cc6a0a84cf8
+  [TEXT] '音乐馆' id=17:77 x=1905 y=1240 w=101 h=40 fill=#11284f TEXT='音乐馆' fs=33.375 fw=700 lh=40.05000305175781 ls=0.0 ff=Noto Sans SC align=None
+  [RECTANGLE] '动画图标 · 图片' id=26:118 x=2117 y=1110 w=132 h=110 fill=IMG:e49df34563d03dd4
+  [TEXT] '动画馆' id=17:79 x=2128 y=1240 w=101 h=40 fill=#11284f TEXT='动画馆' fs=33.375 fw=700 lh=40.05000305175781 ls=0.0 ff=Noto Sans SC align=None
+  [RECTANGLE] '收藏图标 · 图片' id=26:120 x=2345 y=1104 w=130 h=118 fill=IMG:6994e804115634be
+  [TEXT] '收藏夹' id=17:81 x=2353 y=1240 w=101 h=40 fill=#11284f TEXT='收藏夹' fs=33.375 fw=700 lh=40.05000305175781 ls=0.0 ff=Noto Sans SC align=None
+  [RECTANGLE] '更多图标 · 图片' id=26:122 x=2575 y=1110 w=104 h=106 fill=IMG:9d1a96935b754d2b
+  [TEXT] '更多' id=17:83 x=2587 y=1240 w=67 h=40 fill=#11284f TEXT='更多' fs=33.375 fw=700 lh=40.05000305175781 ls=0.0 ff=Noto Sans SC align=None
+  [RECTANGLE] '工具分隔线' id=17:84 x=1613 y=1132 w=2 h=97 fill=#e0e5ff
+  [RECTANGLE] '工具分隔线' id=17:85 x=1838 y=1132 w=2 h=97 fill=#e0e5ff
+  [RECTANGLE] '工具分隔线' id=17:86 x=2064 y=1132 w=2 h=97 fill=#e0e5ff
+  [RECTANGLE] '工具分隔线' id=17:87 x=2292 y=1132 w=2 h=97 fill=#e0e5ff
+  [RECTANGLE] '工具分隔线' id=17:88 x=2520 y=1132 w=2 h=97 fill=#e0e5ff
+  [RECTANGLE] '底部导航底板 · 可编辑' id=17:95 x=136 y=1380 w=2584 h=289 r=130.71875 fill=#f6f6ff stroke=#ffffff/3.893749952316284 fx=DROP_SHADOW(#6b54d8 a=0.14 off={'x': 0.0, 'y': 8.34375} r=19.46875)
+  [RECTANGLE] '首页图标 · 图片' id=17:96 x=348 y=1424 w=106 h=103 fill=IMG:c03f489787a450a7
+  [TEXT] '首页' id=17:97 x=470 y=1456 w=96 h=58 fill=#7438ff TEXT='首页' fs=48.0 fw=700 lh=57.60000228881836 ls=0.0 ff=Noto Sans SC align=None
+  [RECTANGLE] '课程图标 · 图片' id=17:98 x=851 y=1435 w=89 h=92 fill=IMG:c03f489787a450a7
+  [TEXT] '课程' id=17:99 x=965 y=1456 w=96 h=58 fill=#858fc7 TEXT='学习' fs=48.0 fw=700 lh=57.60000228881836 ls=0.0 ff=Noto Sans SC align=None
+  [RECTANGLE] '发现图标 · 图片' id=17:100 x=1774 y=1432 w=92 h=95 fill=IMG:c03f489787a450a7
+  [TEXT] '发现' id=17:101 x=1888 y=1456 w=96 h=58 fill=#858fc7 TEXT='发现' fs=48.0 fw=700 lh=57.60000228881836 ls=0.0 ff=Noto Sans SC align=None
+  [RECTANGLE] '我的图标 · 图片' id=17:102 x=2292 y=1432 w=97 h=95 fill=IMG:c03f489787a450a7
+  [TEXT] '我的' id=17:103 x=2403 y=1456 w=96 h=58 fill=#858fc7 TEXT='我的' fs=48.0 fw=700 lh=57.60000228881836 ls=0.0 ff=Noto Sans SC align=None
+  [RECTANGLE] '中央星星按钮 · 图片' id=17:104 x=1316 y=1341 w=217 h=242 fill=IMG:c03f489787a450a7
+  [FRAME] 'Frame 1' id=26:76 x=68 y=303 w=241 h=837 LAYOUT=VERTICAL gap=14.375438690185547
+    [GROUP] 'Group 6' id=26:73 x=68 y=303 w=241 h=274
+      [GROUP] 'Group 3' id=26:56 x=93 y=436 w=193 h=141 r=52.428070068359375
+      [RECTANGLE] '查看豆包额度的方法 (3) 1' id=26:57 x=68 y=303 w=241 h=222 fill=IMG:360e017367dd17f9
+    [GROUP] 'Group 7' id=26:74 x=68 y=591 w=232 h=271
+      [GROUP] 'Group 4' id=26:59 x=87 y=721 w=193 h=141 r=52.428070068359375
+      [RECTANGLE] '查看豆包额度的方法 (3) 2' id=26:63 x=68 y=591 w=232 h=215 fill=IMG:360e017367dd17f9
+    [GROUP] 'Group 8' id=26:75 x=68 y=876 w=237 h=264
+      [GROUP] 'Group 5' id=26:65 x=93 y=999 w=193 h=141 r=52.428070068359375
+      [RECTANGLE] '查看豆包额度的方法 (3) 3' id=26:69 x=68 y=876 w=237 h=221 fill=IMG:360e017367dd17f9

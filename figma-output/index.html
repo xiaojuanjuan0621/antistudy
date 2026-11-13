@@ -1,0 +1,1213 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#dceaff">
+<meta name="format-detection" content="telephone=no">
+<title>知识冒险岛 · 首页</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@600;700;800&family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  /* 设计基准：Figma 2848×1603 @2x → 逻辑 1424×801.5，所有数值 = Figma 值 / 2 */
+  :root{
+    --ink:#11284f;
+    --violet:#7438ff;
+    --muted:#858fc7;
+    --ff-cn:"Noto Sans SC","Noto Sans Hans","PingFang SC","Microsoft YaHei",sans-serif;
+    --ff-num:"Inter",-apple-system,"Helvetica Neue",Arial,sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html{height:100%;-webkit-text-size-adjust:100%}
+  html,body{height:100%;overflow:hidden;overscroll-behavior:none}
+  body{
+    display:flex;align-items:center;justify-content:center;
+    background:#dceaff url("images/bg-main.png") no-repeat center center/100% 100%;
+    overflow:hidden;touch-action:manipulation;
+    font-family:var(--ff-cn);color:var(--ink);
+    -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
+    -webkit-user-select:none;user-select:none;
+  }
+  @supports (height:100dvh){ html,body{height:100dvh} }
+  .stage{
+    position:relative;flex:0 0 auto;
+    width:1424px;height:801.5px;
+    transform-origin:center center;
+  }
+  .stage img{display:block;user-select:none;-webkit-user-drag:none}
+  .a{position:absolute}
+  .tx{position:absolute;white-space:nowrap;pointer-events:none}
+
+  /* ===== 背景与装饰（图层顺序同 Figma）===== */
+  .boy{left:113px;top:37.5px;width:407px;height:690.5px;object-fit:contain}
+  .egg{left:367px;top:333.5px;width:286.5px;height:387px;object-fit:contain}
+  .weather{left:306px;top:23.5px;width:72px;height:60px;object-fit:contain}
+
+  /* ===== 顶部信息 ===== */
+  .clock{left:39px;top:19.5px;font:700 55.6px/67.3px var(--ff-num);letter-spacing:0}
+  .date{left:217px;top:28px;font:700 18.08px/21.88px var(--ff-num);letter-spacing:.5px}
+  .weekday{left:217px;top:58.5px;font:700 18.08px/21.69px var(--ff-cn)}
+  .vline{left:292px;top:33.5px;width:1.5px;height:46px;background:rgba(184,214,239,.8)}
+  .temp{left:396.5px;top:25.5px;font:700 26.42px/31.98px var(--ff-num);letter-spacing:.65px}
+  .wdesc{left:396.5px;top:61px;font:700 16.69px/20.03px var(--ff-cn)}
+
+  .checkin{left:1030.5px;top:30.5px;width:171px;height:48.5px;border-radius:24.34px;background:#eaf6ff}
+  .checkin img{left:16.5px;top:13.5px;width:24px;height:24px}
+  .checkin span{left:48.5px;top:13.5px;font:700 16.69px/20.03px var(--ff-cn);color:#4a93fe}
+
+  .user{left:1222.5px;top:30.5px;width:164px;height:48.5px;border-radius:24.34px;background:#f1f0ff}
+  .user img{left:8px;top:4.5px;width:40px;height:40px;border-radius:50%;object-fit:cover}
+  .user b{left:67.5px;top:13.5px;font:700 16.69px/20.03px var(--ff-cn);color:var(--ink)}
+
+  /* ===== 课程卡片 ===== */
+  .card{position:absolute;border-radius:30px;overflow:hidden;cursor:pointer;
+    transition:transform .16s ease,filter .16s ease}
+  .card img{width:100%;height:100%;object-fit:cover;border-radius:30px}
+  .card:hover{filter:brightness(1.03)}
+  .card:active{transform:scale(.982)}
+  .cardbtn{position:absolute;border-radius:20.86px;background:#F7FFFA;pointer-events:none}
+  .h{font:700 38.94px/46.73px var(--ff-cn);color:#fff;white-space:nowrap}
+  .s{font:400 22.25px/26.7px var(--ff-cn);color:#fff;white-space:nowrap}
+  .b{font:700 18.08px/21.69px var(--ff-cn);white-space:nowrap}
+  .c{font:700 34.77px/41.72px var(--ff-cn);white-space:nowrap}
+
+  .c1{left:626px;top:103px;width:367px;height:198px}
+  .c2{left:1012.5px;top:103px;width:367px;height:198px}
+  .c3{left:626px;top:324px;width:367px;height:182px}
+  .c4{left:1012.5px;top:324px;width:367px;height:182px}
+
+  .badge{left:948.5px;top:119.5px;width:30.5px;height:32px;border-radius:5.56px;background:#fff;pointer-events:none}
+  .badge span{left:4px;top:0;width:23.5px;height:25px;font:700 20.86px/25.24px var(--ff-num);color:#7183ff;text-align:center}
+
+  /* ===== 破壳进度 ===== */
+  .prog{left:436.5px;top:293px;width:172.5px;height:110.5px;border-radius:26.42px;background:rgba(248,249,255,.87);
+    box-shadow:0 4.17px 9.73px rgba(107,84,216,.14),inset 0 0 0 1.95px rgba(255,255,255,.95)}
+  .prog .t1{left:36.5px;top:15px;font:700 25.03px/30.04px var(--ff-cn);color:var(--violet)}
+  .prog .pill{left:15.5px;top:56px;width:143.2px;height:33.4px;border-radius:16.69px;
+    background:linear-gradient(180deg,#BD5DFF 0%,#6737FF 100%)}
+  .prog .pill b{left:42px;top:-5.5px;width:64px;height:35.5px;font:700 29.2px/35.34px var(--ff-num);color:#fff;
+    text-align:center}
+  .prog .track{left:25px;top:79.5px;width:122.5px;height:8.5px;border-radius:4.17px;background:#6c70ff}
+  .prog .bar{left:25px;top:79.5px;width:83.5px;height:8.5px;border-radius:4.17px;background:#35dffc}
+  .prog .dot{left:99px;top:79px;width:9.5px;height:9.5px;border-radius:50%;background:#eee3ff;
+    box-shadow:0 1px 3px rgba(120,80,255,.45)}
+
+  /* ===== 工具栏 ===== */
+  .tools{left:685.5px;top:535.5px;width:701px;height:122.5px;border-radius:34.77px;background:rgba(248,252,255,.90);
+    box-shadow:0 4.17px 9.73px rgba(107,84,216,.14),inset 0 0 0 1.95px rgba(255,255,255,.95)}
+  .tools .ic{position:absolute;object-fit:contain}
+  .tools .lb{position:absolute;font:700 16.69px/20.03px var(--ff-cn);color:var(--ink)}
+  .tools .dv{position:absolute;top:30.5px;width:1px;height:48.5px;background:#e0e5ff}
+
+  /* ===== 底部导航 ===== */
+  .nav{left:68px;top:690px;width:1292px;height:144.5px;border-radius:65.36px;background:rgba(246,246,255,.88);
+    box-shadow:0 4.17px 9.73px rgba(107,84,216,.14),inset 0 0 0 1.95px rgba(255,255,255,.95)}
+  .nav .ic{position:absolute;object-fit:contain}
+  .nav .lb{position:absolute;font:700 24px/28.8px var(--ff-cn);color:var(--muted)}
+  .star{left:658px;top:670.5px;width:108.5px;height:121px;object-fit:contain}
+
+  /* ===== 左侧竖排（最上层，标签在图片之下）===== */
+  .side-item{position:absolute}
+  .side-item .tag{position:absolute;border-radius:26.21px}
+  .side-item .tag span{position:absolute;font:700 14.11px/17.02px var(--ff-cn);color:#fff;white-space:nowrap}
+
+
+  /* ===== 视图切换 ===== */
+  .view{display:none}
+  .view.on{display:block}
+  .nav .lb.on{color:var(--violet)}
+
+  /* ================= 课程页（深蓝星空 · 参照 Figma） ================= */
+  #stageCourse,#stageShop,#stageBag{
+    background:
+      radial-gradient(85% 62% at 50% -6%, #27459e 0%, rgba(39,69,158,0) 62%),
+      radial-gradient(58% 52% at 94% 4%, #1c58b0 0%, rgba(28,88,176,0) 58%),
+      linear-gradient(180deg,#13265f 0%,#0c1841 50%,#070e2b 100%);
+    box-shadow:0 0 0 200vmax #070e2b;
+    overflow:hidden;
+  }
+  #stageCourse::after,#stageShop::after,#stageBag::after{
+    content:"";position:absolute;inset:0;pointer-events:none;
+    background-image:
+      radial-gradient(circle at 5% 12%,#fff .9px,transparent 1.5px),
+      radial-gradient(circle at 14% 36%,rgba(255,255,255,.7) .8px,transparent 1.4px),
+      radial-gradient(circle at 23% 8%,rgba(255,255,255,.55) 1px,transparent 1.6px),
+      radial-gradient(circle at 32% 26%,rgba(255,255,255,.5) .7px,transparent 1.3px),
+      radial-gradient(circle at 46% 11%,rgba(255,255,255,.8) .9px,transparent 1.5px),
+      radial-gradient(circle at 57% 31%,rgba(255,255,255,.5) .8px,transparent 1.4px),
+      radial-gradient(circle at 65% 7%,rgba(255,255,255,.7) .9px,transparent 1.5px),
+      radial-gradient(circle at 74% 22%,rgba(255,255,255,.45) .7px,transparent 1.3px),
+      radial-gradient(circle at 83% 10%,rgba(255,255,255,.85) .9px,transparent 1.5px),
+      radial-gradient(circle at 92% 28%,rgba(255,255,255,.55) .8px,transparent 1.4px),
+      radial-gradient(circle at 9% 58%,rgba(255,255,255,.4) .8px,transparent 1.4px),
+      radial-gradient(circle at 88% 62%,rgba(255,255,255,.45) .8px,transparent 1.4px);
+  }
+
+  #stageCourse .cs{position:absolute;inset:0;z-index:1;display:flex;flex-direction:column;
+    padding:0 55px 0 29px}
+
+  /* ---- 顶部 ---- */
+  #stageCourse .cs-head{flex:0 0 auto;height:92px;display:flex;align-items:center;gap:23px;
+    padding-right:26px}
+  #stageCourse .cs-back{flex:0 0 auto;width:50px;height:50px;border:1.5px solid rgba(140,175,255,.38);
+    border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;
+    background:linear-gradient(180deg,rgba(56,92,200,.9),rgba(26,46,124,.95));
+    box-shadow:0 6px 16px rgba(4,10,34,.45);transition:transform .16s ease}
+  #stageCourse .cs-back:active{transform:scale(.94)}
+  #stageCourse .cs-title{font:900 36px/1 var(--ff-cn);color:#fff;letter-spacing:1.5px}
+  #stageCourse .cs-right{margin-left:auto;display:flex;align-items:center;gap:14px}
+  #stageCourse .chip{display:flex;align-items:center;gap:9px;height:44px;padding:0 18px;border-radius:22px;
+    background:linear-gradient(180deg,rgba(48,84,182,.9),rgba(24,44,118,.95));
+    border:1.5px solid rgba(120,160,255,.3);font:700 17px/1 var(--ff-cn);color:#eaf1ff;
+    box-shadow:0 6px 16px rgba(4,10,34,.4)}
+  #stageCourse .chip img{width:24px;height:24px;object-fit:contain}
+  #stageCourse .chip em{font-style:normal;color:#ffd257}
+  .gem{width:22px;height:22px;border-radius:7px;
+    background:linear-gradient(160deg,#8ff0ff,#3b8bff 60%,#7a4dff);
+    box-shadow:0 0 12px rgba(96,180,255,.75)}
+
+  /* ---- 主体 ---- */
+  #stageCourse .cs-body{flex:1 1 auto;min-height:0;display:flex;gap:19px;padding-left:38px}
+
+  /* 左侧等级栏 */
+  #stageCourse .cs-side{flex:0 0 auto;width:246px;display:flex}
+  #stageCourse .side-card{width:100%;display:flex;flex-direction:column;overflow:hidden;border-radius:24px;
+    background:linear-gradient(180deg,rgba(32,58,140,.86),rgba(16,30,82,.92));
+    border:1.5px solid rgba(110,150,255,.22);box-shadow:0 10px 26px rgba(3,8,30,.42)}
+  #stageCourse .side-hero{position:relative;flex:0 0 auto;height:158px;overflow:hidden;
+    background:url("images/cs-hero.png") center top/100% 100% no-repeat}
+  #stageCourse .lvl{flex:0 0 auto;height:46px;padding:0 18px;display:flex;align-items:center;gap:10px;
+    background:linear-gradient(180deg,rgba(26,52,138,.92),rgba(19,40,108,.92))}
+  #stageCourse .lvl b{font:800 21px/1 var(--ff-num);color:#fff}
+  #stageCourse .lvl span{font:700 17px/1 var(--ff-cn);color:#e3ecff}
+  #stageCourse .side-prog{flex:0 0 auto;margin:10px 11px 0;padding:12px 15px 14px;border-radius:16px;
+    background:linear-gradient(180deg,rgba(48,98,228,.96),rgba(29,64,176,.96));
+    box-shadow:0 6px 16px rgba(6,16,50,.42),inset 0 1px 0 rgba(160,200,255,.35)}
+  #stageCourse .side-prog .row{display:flex;align-items:center;justify-content:space-between;
+    font:700 18px/1 var(--ff-cn);color:#eaf1ff}
+  #stageCourse .side-prog .row b{font:800 19px/1 var(--ff-num);color:#ffd257}
+  #stageCourse .side-prog .bar{margin-top:11px;height:16px;border-radius:9px;overflow:hidden;
+    background:rgba(15,34,92,.55)}
+  #stageCourse .side-prog .bar i{display:block;height:100%;width:0;border-radius:9px;
+    background:linear-gradient(90deg,#2fd06b,#6bf5a4);transition:width .45s ease}
+  #stageCourse .stats{flex:1 1 auto;list-style:none;padding:10px 12px 12px;display:flex;
+    flex-direction:column;gap:12px;justify-content:center}
+  #stageCourse .stat{display:flex;align-items:center;gap:8px;padding:4px 12px;border-radius:14px;
+    min-height:76px;background:rgba(24,44,110,.8);border:1.5px solid rgba(100,145,255,.18)}
+  #stageCourse .stat i{flex:0 0 auto;width:36px;height:70px;display:flex;
+    align-items:center;justify-content:center}
+  #stageCourse .stat i img{width:100%;height:100%;object-fit:contain;display:block}
+  #stageCourse .stat div{display:flex;flex-direction:column;gap:5px;min-width:0}
+  #stageCourse .stat .k{font:700 14px/1 var(--ff-cn);color:#c3d2fb;white-space:nowrap}
+  #stageCourse .stat .v{font:800 15px/1 var(--ff-num);color:#fff;white-space:nowrap}
+  #stageCourse .stat .v b{font:700 12px/1 var(--ff-num);color:#8fa6e0;margin-left:4px}
+
+  /* 主区 */
+  #stageCourse .cs-main{flex:1 1 auto;min-width:0;display:flex;flex-direction:column}
+
+  /* 进阶周计划 */
+  #stageCourse .week{flex:0 0 auto;height:106px;padding:14px 22px 0;border-radius:22px;
+    background:linear-gradient(180deg,rgba(30,56,138,.86),rgba(16,30,82,.92));
+    border:1.5px solid rgba(110,150,255,.22);box-shadow:0 8px 22px rgba(3,8,30,.4)}
+  #stageCourse .week h2{font:800 24px/1 var(--ff-cn);color:#fff}
+  #stageCourse .week-line{position:relative;margin-top:13px;height:42px;display:flex;align-items:center;
+    justify-content:space-between;padding:0 4px}
+  #stageCourse .wl-track{position:absolute;left:16px;right:16px;top:50%;height:8px;margin-top:-4px;
+    border-radius:5px;background:#3a5398}
+  #stageCourse .wl-fill{position:absolute;left:16px;top:50%;height:8px;margin-top:-4px;border-radius:5px;
+    width:0;background:linear-gradient(90deg,#2fd67c,#5df0a0);box-shadow:0 0 10px rgba(47,214,124,.5);
+    transition:width .45s ease}
+  #stageCourse .wn{position:relative;z-index:1;flex:0 0 auto;width:34px;height:34px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center}
+  #stageCourse .wn.done{background:linear-gradient(180deg,#43e08a,#20b866);
+    box-shadow:0 0 0 3px rgba(47,197,110,.22)}
+  #stageCourse .wn.todo{background:#3d5499;border:3px solid #5c79c2;
+    box-shadow:0 0 0 2px rgba(120,160,255,.14)}
+  #stageCourse .wn.chest,#stageCourse .wn.locked{width:56px;height:56px;background:none;border:0}
+  #stageCourse .wn svg{display:block}
+  #stageCourse .wn img{width:100%;height:100%;object-fit:contain;display:block}
+
+  /* 年级切换条 */
+  #stageCourse .tabs{flex:0 0 auto;height:47px;margin-top:5px;display:flex;align-items:center;gap:14px}
+  #stageCourse .tab-list{display:flex;gap:12px}
+  #stageCourse .tab{height:47px;padding:0 32px;border-radius:13px;cursor:pointer;
+    border:1.5px solid rgba(110,150,255,.2);transition:all .16s ease;
+    background:linear-gradient(180deg,rgba(34,60,145,.9),rgba(20,36,96,.95));
+    font:800 21px/1 var(--ff-cn);color:#a9bde8}
+  #stageCourse .tab.on{color:#fff;border-color:rgba(150,190,255,.6);
+    background:linear-gradient(180deg,#3f7dff,#2a5be0);box-shadow:0 6px 18px rgba(30,80,220,.45)}
+  #stageCourse .grade{margin-left:auto;height:47px;padding:0 18px;border-radius:14px;cursor:pointer;
+    display:flex;align-items:center;gap:9px;border:1.5px solid rgba(120,170,255,.4);
+    background:linear-gradient(180deg,rgba(46,86,190,.9),rgba(24,44,116,.95));
+    font:800 20px/1 var(--ff-cn);color:#eef4ff;transition:transform .16s ease}
+  #stageCourse .grade:active{transform:scale(.97)}
+
+  /* 当前课程 + 视频 */
+  #stageCourse .focus{flex:0 0 auto;height:223px;margin-top:53px;display:grid;
+    grid-template-columns:minmax(0,1fr) 1.36fr;gap:24px;align-items:stretch}
+  #stageCourse .focus-txt{display:flex;flex-direction:column;justify-content:center;min-width:0}
+  #stageCourse .focus-txt em{font:700 20px/1 var(--ff-num);font-style:normal;color:#93a9e6;letter-spacing:1.5px}
+  #stageCourse .focus-txt h3{margin-top:15px;font:900 40px/1.28 var(--ff-cn);color:#fff;
+    overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;line-clamp:2;-webkit-box-orient:vertical}
+  #stageCourse .focus-txt p{margin-top:13px;font:500 20px/1.3 var(--ff-cn);color:#9fb2e2}
+  #stageCourse .player{position:relative;height:100%;border-radius:18px;overflow:hidden;cursor:pointer;
+    background:#0d1a42 center/cover no-repeat;
+    box-shadow:0 12px 30px rgba(4,10,32,.55)}
+  #stageCourse .player video{width:100%;height:100%;object-fit:cover;display:block}
+  #stageCourse .bigplay{display:none}
+  #stageCourse .vbar{position:absolute;left:0;right:0;bottom:0;height:5px;
+    background:rgba(255,255,255,.16);opacity:0;transition:opacity .2s}
+  #stageCourse .player.playing .vbar{opacity:1}
+  #stageCourse .vbar i{display:block;height:100%;width:0;
+    background:linear-gradient(90deg,#ffb53d,#ff8a1f)}
+  #stageCourse .note{position:absolute;right:12px;top:12px;display:none;padding:6px 11px;
+    border-radius:8px;background:rgba(8,14,40,.62);font:600 13px/1 var(--ff-cn);color:#ffb4b4}
+  #stageCourse .player.failed .note{display:block}
+
+  /* 讲次卡片 */
+  #stageCourse .lec-row{flex:0 0 auto;height:127px;margin-top:37px;display:flex;gap:14px}
+  #stageCourse .lec{position:relative;flex:1 1 0;min-width:0;border-radius:18px;padding:20px 18px;
+    display:flex;flex-direction:column;justify-content:center;overflow:hidden;cursor:pointer;
+    border:2px solid transparent;transition:transform .16s ease,box-shadow .16s ease}
+  #stageCourse .lec:hover{transform:translateY(-3px)}
+  #stageCourse .lec .no{font:800 18px/1 var(--ff-cn);color:rgba(255,255,255,.92)}
+  #stageCourse .lec .tt{margin-top:10px;font:900 22px/1.3 var(--ff-cn);color:#fff;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  #stageCourse .lec .tag{position:absolute;right:0;top:0;padding:6px 13px;border-radius:0 15px 0 14px;
+    font:700 14px/1 var(--ff-cn);color:#fff}
+  #stageCourse .lec .pic{position:absolute;right:14px;bottom:14px;width:38px;height:38px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.94)}
+  #stageCourse .lec.done{background:linear-gradient(150deg,#93f3c6,#37d98b);
+    box-shadow:0 10px 24px rgba(40,200,120,.26)}
+  #stageCourse .lec.done .no,#stageCourse .lec.done .tt{color:#0a5c31}
+  #stageCourse .lec.done .tag{background:#25c477}
+  #stageCourse .lec.done .pic{background:#fff}
+  #stageCourse .lec.open{background:linear-gradient(150deg,#4d9bff,#2b6ff0);
+    box-shadow:0 10px 24px rgba(40,110,240,.3)}
+  #stageCourse .lec.open .tag{background:#ffa32b}
+  #stageCourse .lec.now{background:linear-gradient(150deg,#ffb347,#ff8a1f);
+    box-shadow:0 10px 24px rgba(255,140,30,.3)}
+  #stageCourse .lec.now .tag{background:#ff6a00}
+  #stageCourse .lec.locked{cursor:default;
+    background:linear-gradient(150deg,rgba(44,68,146,.88),rgba(20,36,92,.92));
+    border-color:rgba(110,150,255,.2)}
+  #stageCourse .lec.locked .no,#stageCourse .lec.locked .tt{color:#a2b4e2}
+  #stageCourse .lec.locked .tag{background:rgba(255,255,255,.12);color:#c7d5f5}
+  #stageCourse .lec.locked .pic{background:rgba(255,255,255,.14)}
+  #stageCourse .lec.on{box-shadow:0 0 0 3px rgba(255,255,255,.55),0 12px 26px rgba(6,16,50,.4)}
+
+  /* 底部导航（设计稿整条切图 + 透明热区） */
+  #stageCourse .cs-nav{flex:0 0 auto;height:96px;margin:0 -55px 0 -29px;display:flex;align-items:center;
+    background:url("images/cs-nav.png") center bottom/100% 100% no-repeat}
+  #stageCourse .cs-nav .item{flex:1 1 0;height:100%;cursor:pointer}
+
+  /* ================= 储物袋 / 灵石商城（二级页） ================= */
+  .pg{position:absolute;inset:0;z-index:1;display:flex;flex-direction:column;
+    padding:0 55px 26px 29px}
+  .pg-head{flex:0 0 auto;height:92px;display:flex;align-items:center;gap:23px;padding-right:26px}
+  .pg-back{flex:0 0 auto;width:50px;height:50px;border:1.5px solid rgba(140,175,255,.38);
+    border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;
+    background:linear-gradient(180deg,rgba(56,92,200,.9),rgba(26,46,124,.95));
+    box-shadow:0 6px 16px rgba(4,10,34,.45);transition:transform .16s ease}
+  .pg-back:active{transform:scale(.94)}
+  .pg-title{font:900 36px/1 var(--ff-cn);color:#fff;letter-spacing:1.5px}
+  .pg-gems{margin-left:auto;display:flex;align-items:center;gap:10px;height:46px;padding:0 20px;
+    border-radius:23px;background:linear-gradient(180deg,rgba(48,84,182,.9),rgba(24,44,118,.95));
+    border:1.5px solid rgba(120,160,255,.3);box-shadow:0 6px 16px rgba(4,10,34,.4);
+    font:800 20px/1 var(--ff-num);color:#fff}
+
+  .pg-tabs{flex:0 0 auto;display:flex;gap:12px}
+  .pg-tab{height:50px;padding:0 30px;border-radius:13px;cursor:pointer;
+    border:1.5px solid rgba(110,150,255,.2);transition:all .16s ease;
+    background:linear-gradient(180deg,rgba(34,60,145,.9),rgba(20,36,96,.95));
+    font:800 20px/1 var(--ff-cn);color:#a9bde8}
+  .pg-tab.on{color:#fff;border-color:rgba(150,190,255,.6);
+    background:linear-gradient(180deg,#3f7dff,#2a5be0);box-shadow:0 6px 18px rgba(30,80,220,.45)}
+
+  .pg-grid{flex:1 1 auto;min-height:0;margin-top:24px;display:grid;
+    grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(2,252px);
+    align-content:center;gap:20px}
+  .item{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:9px;padding:14px;border-radius:20px;overflow:hidden;cursor:pointer;
+    background:linear-gradient(180deg,rgba(34,62,148,.86),rgba(16,30,82,.92));
+    border:2px solid rgba(110,150,255,.2);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.08);
+    transition:transform .16s ease,box-shadow .16s ease}
+  .item:hover{transform:translateY(-4px);box-shadow:0 12px 26px rgba(4,10,32,.5)}
+  .item .ico{width:84px;height:84px;border-radius:24px;display:flex;align-items:center;justify-content:center;
+    font-size:46px;line-height:1;background:linear-gradient(160deg,rgba(90,140,255,.35),rgba(40,70,170,.35));
+    box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.1),0 8px 20px rgba(4,10,32,.32)}
+  .item .nm{font:700 19px/1.25 var(--ff-cn);color:#eaf1ff;text-align:center}
+  .item .rr{padding:4px 11px;border-radius:9px;background:rgba(255,255,255,.07);
+    font:700 13px/1 var(--ff-cn);letter-spacing:1px}
+  .item .qt{position:absolute;right:12px;top:12px;height:26px;padding:0 9px;border-radius:13px;
+    background:rgba(8,16,44,.7);font:800 14px/26px var(--ff-num);color:#cfe0ff}
+  .item.rare{border-color:rgba(160,110,255,.7)}
+  .item.rare .ico{background:linear-gradient(160deg,rgba(160,110,255,.42),rgba(80,40,160,.42))}
+  .item.epic{border-color:rgba(255,205,90,.7)}
+  .item.epic .ico{background:linear-gradient(160deg,rgba(255,205,90,.34),rgba(180,120,20,.34))}
+  .item.legend{border-color:rgba(255,150,70,.8);box-shadow:0 0 0 3px rgba(255,150,70,.12)}
+  .item.legend .ico{background:linear-gradient(160deg,rgba(255,150,70,.4),rgba(180,60,10,.4))}
+  .pg-empty{grid-column:1/-1;grid-row:1/-1;display:flex;align-items:center;justify-content:center;
+    font:600 20px/1.7 var(--ff-cn);color:#8fa6e0;text-align:center}
+
+  /* 商城 */
+  .shop-banner{flex:0 0 auto;position:relative;height:150px;margin-top:20px;border-radius:22px;
+    overflow:hidden;padding:0 44px;display:flex;flex-direction:column;justify-content:center;gap:14px;
+    background:linear-gradient(115deg,#4a2fd6 0%,#7a3bff 42%,#2f8bff 100%);
+    box-shadow:0 14px 32px rgba(60,30,180,.4)}
+  .shop-banner::after{content:"";position:absolute;right:-40px;top:-70px;width:300px;height:300px;
+    border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.3),transparent 68%)}
+  .shop-banner h2{font:900 34px/1 var(--ff-cn);color:#fff}
+  .shop-banner p{font:500 18px/1 var(--ff-cn);color:rgba(255,255,255,.84)}
+  .shop-banner .off{position:absolute;right:44px;top:50%;transform:translateY(-50%);
+    padding:15px 28px;border-radius:16px;background:rgba(255,255,255,.16);
+    border:1.5px solid rgba(255,255,255,.45);font:800 22px/1 var(--ff-cn);color:#fff}
+
+  .pg-grid.shop{grid-template-rows:repeat(2,1fr);align-content:stretch;gap:16px}
+  .pg-grid.shop .ico{width:66px;height:66px;font-size:36px;border-radius:18px}
+  .pg-grid.shop .nm{font-size:18px}
+  .goods .buy{margin-top:2px;height:42px;padding:0 20px;border:0;border-radius:12px;cursor:pointer;
+    display:flex;align-items:center;gap:8px;font:800 18px/1 var(--ff-num);color:#fff;
+    background:linear-gradient(180deg,#ffb53d,#ff8a1f);
+    box-shadow:0 6px 16px rgba(255,140,30,.34);transition:transform .14s ease}
+  .goods .buy:active{transform:scale(.95)}
+  .mini-gem{width:13px;height:13px;border-radius:4px;transform:rotate(45deg);
+    background:linear-gradient(160deg,#d8f6ff,#5ab6ff)}
+
+  /* 轻提示 */
+  .toast{position:fixed;left:50%;bottom:28px;z-index:99;padding:13px 26px;border-radius:999px;
+    background:rgba(10,20,50,.94);border:1.5px solid rgba(120,160,255,.35);color:#fff;
+    font:700 16px/1 var(--ff-cn);opacity:0;pointer-events:none;
+    transform:translateX(-50%) translateY(12px);transition:opacity .24s ease,transform .24s ease}
+  .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  /* ===== iPad 竖屏轻提示（不遮挡内容）===== */
+  .hint-rotate{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);
+    padding:10px 20px;border-radius:999px;background:rgba(28,42,80,.82);color:#fff;
+    font:700 14px/1 var(--ff-cn);letter-spacing:.5px;opacity:0;pointer-events:none;z-index:60}
+  @media (orientation:portrait){ .hint-rotate{animation:hint 6s ease forwards} }
+  @keyframes hint{0%{opacity:0}8%,72%{opacity:1}100%{opacity:0}}
+</style>
+</head>
+<body>
+
+<div class="stage view on" id="stageHome">
+
+  <!-- 男孩 / 破壳蛋 / 天气图标（背景已改为 body 满屏铺底） -->
+  <img class="a boy" src="images/deco-left-1.png" alt="">
+  <img class="a egg" src="images/deco-left-2.png" alt="">
+  <img class="a weather" src="images/icon-weather.png" alt="">
+
+  <!-- 语文 -->
+  <div class="card c1" data-subject="chinese" role="button" tabindex="0" aria-label="进入语文课程"><img src="images/card-chinese.png" alt="语文"></div>
+  <div class="tx h" style="left:663.5px;top:125.5px">语文</div>
+  <div class="tx s" style="left:663.5px;top:181.5px">学而思语文</div>
+  <div class="a cardbtn" style="left:660.5px;top:235.5px;width:107.1px;height:40.3px"></div>
+  <div class="tx b" style="left:676px;top:244px;color:#3692ff">去看课</div>
+  <div class="tx c" style="left:742.5px;top:231px;color:#3692ff">›</div>
+
+  <!-- 英语 -->
+  <div class="card c2" data-subject="english" role="button" tabindex="0" aria-label="进入英语课程"><img src="images/card-english.png" alt="英语"></div>
+  <div class="tx h" style="left:1050px;top:125.5px">英语</div>
+  <div class="tx s" style="left:1050px;top:181.5px">连续打卡7天</div>
+  <div class="a cardbtn" style="left:1045.5px;top:235.5px;width:107.1px;height:40.3px"></div>
+  <div class="tx b" style="left:1061px;top:244px;color:#ff8c26">去巩固</div>
+  <div class="tx c" style="left:1127.5px;top:231px;color:#ff8c26">›</div>
+
+  <!-- 数学 -->
+  <div class="card c3" data-subject="math" role="button" tabindex="0" aria-label="进入数学课程"><img src="images/card-math.png" alt="数学"></div>
+  <div class="tx h" style="left:663.5px;top:346.5px">数学</div>
+  <div class="tx s" style="left:663.5px;top:403.5px">乐读数学</div>
+  <div class="a cardbtn" style="left:656.5px;top:450px;width:105.5px;height:39.5px;border-radius:19.75px"></div>
+  <div class="tx b" style="left:671.5px;top:459.5px;color:#2fc56e">去探索</div>
+  <div class="tx c" style="left:738.5px;top:448px;color:#2fc56e">›</div>
+
+  <!-- 科普 -->
+  <div class="card c4" data-subject="science" role="button" tabindex="0" aria-label="进入科普课程"><img src="images/card-science.png" alt="科普"></div>
+  <div class="tx h" style="left:1050px;top:346.5px">科普</div>
+  <div class="tx s" style="left:1050px;top:403.5px">科普合集</div>
+  <div class="a cardbtn" style="left:1049.9px;top:450.6px;width:107.1px;height:40.3px"></div>
+  <div class="tx b" style="left:1065px;top:456.5px;color:#a539f3">去看看</div>
+  <div class="tx c" style="left:1131.5px;top:448px;color:#a539f3">›</div>
+
+  <!-- 顶部信息 -->
+  <div class="tx clock">09:30</div>
+  <div class="tx date">01/18</div>
+  <div class="tx weekday">星期六</div>
+  <div class="a vline"></div>
+  <div class="tx temp">12°C</div>
+  <div class="tx wdesc">晴转多云</div>
+
+  <!-- 连续打卡 -->
+  <div class="a checkin">
+    <img class="a" src="images/icon-calendar.png" alt="">
+    <span class="a">连续打卡<em style="font-style:normal;color:#FE7D4A">XX</em>天</span>
+  </div>
+
+  <!-- 用户菜单 -->
+  <div class="a user">
+    <img class="a" src="images/avatar.png" alt="小星星">
+    <b class="a">小星星</b>
+  </div>
+
+  <!-- 破壳进度 -->
+  <div class="a prog">
+    <div class="tx t1">破壳进度</div>
+    <div class="a pill"><b class="tx">68%</b></div>
+    <div class="a track"></div>
+    <div class="a bar"></div>
+    <div class="a dot"></div>
+  </div>
+
+  <!-- 角标 12 -->
+  <div class="a badge"><span class="a">12</span></div>
+
+  <!-- 工具栏 -->
+  <div class="a tools">
+    <img class="ic" src="images/icon-ai.png"        style="left:23.5px;top:9.5px;width:76px;height:65px" alt="">
+    <div class="lb" style="left:37.5px;top:84.5px;width:50px;text-align:center">AI伙伴</div>
+    <div class="dv" style="left:121px"></div>
+    <img class="ic" src="images/icon-books.png"     style="left:147.5px;top:19.5px;width:66px;height:57px" alt="">
+    <div class="lb" style="left:154.5px;top:84.5px;width:50.5px;text-align:center">绘本馆</div>
+    <div class="dv" style="left:233.5px"></div>
+    <img class="ic" src="images/icon-music.png"     style="left:263px;top:16.5px;width:58px;height:58px" alt="">
+    <div class="lb" style="left:267px;top:84.5px;width:50.5px;text-align:center">音乐馆</div>
+    <div class="dv" style="left:346.5px"></div>
+    <img class="ic" src="images/icon-animation.png" style="left:373px;top:19.5px;width:66px;height:55px" alt="">
+    <div class="lb" style="left:378.5px;top:84.5px;width:50.5px;text-align:center">动画馆</div>
+    <div class="dv" style="left:460.5px"></div>
+    <img class="ic" src="images/icon-fav.png"       style="left:487px;top:16.5px;width:65px;height:59px" alt="">
+    <div class="lb" style="left:491px;top:84.5px;width:50.5px;text-align:center">收藏夹</div>
+    <div class="dv" style="left:574.5px"></div>
+    <img class="ic" src="images/icon-more.png"      style="left:602px;top:19.5px;width:52px;height:53px" alt="">
+    <div class="lb" style="left:608px;top:84.5px;width:33.5px;text-align:center">更多</div>
+  </div>
+
+  <!-- 底部导航 -->
+  <div class="a nav">
+    <img class="ic" src="images/nav-home.png"     style="left:106px;top:22px;width:53px;height:51.5px" alt="">
+    <div class="lb" style="left:167px;top:39px;width:48px;text-align:center;color:#7438ff">首页</div>
+    <img class="ic" src="images/nav-course.png"   style="left:357.5px;top:27.5px;width:44.5px;height:46px" alt="">
+    <div class="lb" id="navLearn" style="left:414.5px;top:39px;width:48px;text-align:center">学习</div>
+    <img class="ic" src="images/nav-discover.png" style="left:819px;top:26px;width:46px;height:47.5px" alt="">
+    <div class="lb" style="left:876px;top:39px;width:48px;text-align:center">发现</div>
+    <img class="ic" src="images/nav-mine.png"     style="left:1078px;top:26px;width:48.5px;height:47.5px" alt="">
+    <div class="lb" style="left:1133.5px;top:39px;width:48px;text-align:center">我的</div>
+  </div>
+  <img class="a star" src="images/nav-star.png" alt="开始学习">
+
+  <!-- 左侧竖排（标签在下层，图片在上层，与 Figma 一致） -->
+  <div class="side-item" id="shopEntry" role="button" tabindex="0" aria-label="进入灵石商城" style="left:34px;top:151.5px;width:120.5px;height:137px">
+    <div class="tag" style="left:12.5px;top:66.5px;width:96.5px;height:70.5px;background:linear-gradient(180deg,#B264F1 58.7%,#663A8B 123.1%)">
+      <span style="left:19.5px;top:44.5px">灵石商城</span>
+    </div>
+    <img class="a" src="images/side-shop.png" style="left:0;top:0;width:120.5px;height:111px" alt="">
+  </div>
+
+  <div class="side-item" id="bagEntry" role="button" tabindex="0" aria-label="进入储物袋" style="left:34px;top:295.5px;width:116px;height:135.5px">
+    <div class="tag" style="left:9.5px;top:65px;width:96.5px;height:70.5px;background:linear-gradient(180deg,#FF9A48 58.7%,#E12D0C 123.1%)">
+      <span style="left:27.5px;top:44.5px">储物袋</span>
+    </div>
+    <img class="a" src="images/side-bag.png" style="left:0;top:0;width:116px;height:107.5px" alt="">
+  </div>
+
+  <div class="side-item" style="left:34px;top:438px;width:118.5px;height:132px">
+    <div class="tag" style="left:12.5px;top:61.5px;width:96.5px;height:70.5px;background:linear-gradient(180deg,#60BEFE 58.7%,#419EFB 105.1%)">
+      <span style="left:33.5px;top:45.5px">灵宠</span>
+    </div>
+    <img class="a" src="images/side-pet.png" style="left:0;top:0;width:118.5px;height:110.5px" alt="">
+  </div>
+
+</div>
+
+<!-- ================= 课程页（同一页面内切换，不跳转） ================= -->
+<div class="stage view" id="stageCourse">
+
+  <div class="cs">
+
+    <!-- 顶部：返回 / 标题 / 打卡与灵石 -->
+    <div class="cs-head">
+      <button class="cs-back" id="backBtn" type="button" aria-label="返回首页">
+        <svg width="12" height="21" viewBox="0 0 12 21" fill="none" aria-hidden="true">
+          <path d="M10 2 2 10.5 10 19" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <h1 class="cs-title" id="csTitle">数学课程</h1>
+      <div class="cs-right">
+        <div class="chip">
+          <img src="images/icon-calendar.png" alt="">
+          <span>连续打卡<em>XXX</em></span>
+        </div>
+        <div class="chip">
+          <i class="gem"></i>
+          <span>灵石 <b id="csGem">1,220</b></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="cs-body">
+
+      <!-- 左侧等级栏 -->
+      <aside class="cs-side">
+        <div class="side-card">
+          <div class="side-hero"></div>
+          <div class="lvl"><b id="csLevel">Level 5</b><span id="csLevelTag">数学逻辑</span></div>
+          <div class="side-prog">
+            <div class="row"><span>进阶进度</span><b id="csProgress">68%</b></div>
+            <div class="bar"><i id="csProgressBar"></i></div>
+          </div>
+          <ul class="stats" id="csStats"></ul>
+        </div>
+      </aside>
+
+      <!-- 右侧主区 -->
+      <main class="cs-main">
+
+        <section class="week">
+          <h2>进阶周计划</h2>
+          <div class="week-line" id="weekLine">
+            <div class="wl-track"></div>
+            <div class="wl-fill" id="wlFill"></div>
+          </div>
+        </section>
+
+        <div class="tabs">
+          <div class="tab-list" id="tabList"></div>
+          <button class="grade" id="gradeBtn" type="button">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M12 3 22 8l-10 5L2 8l10-5Z" fill="#d3e2ff"/>
+              <path d="M5 10.6V16c0 1.7 3.1 3 7 3s7-1.3 7-3v-5.4" stroke="#d3e2ff" stroke-width="1.9" stroke-linecap="round"/>
+            </svg>
+            <b id="csGrade">四年级</b>
+            <svg width="12" height="8" viewBox="0 0 12 8" fill="none" aria-hidden="true">
+              <path d="M1 1.5 6 6.5l5-5" stroke="#d3e2ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+        </div>
+
+        <section class="focus">
+          <div class="focus-txt">
+            <em id="ptag">Level 5</em>
+            <h3 id="ptitle">第3讲 数的奇妙世界</h3>
+            <p id="pmeta">认识更大的数</p>
+          </div>
+          <div class="player" id="player">
+            <video id="videoC" playsinline preload="metadata" poster="images/cs-cover.png"></video>
+            <button class="bigplay" id="playBtn" type="button" aria-label="播放">
+              <svg width="28" height="32" viewBox="0 0 28 32" fill="none"><path d="M28 16 1 31.5V.5L28 16Z" fill="#fff"/></svg>
+            </button>
+            <div class="vbar"><i id="vfill"></i></div>
+            <div class="note">视频加载失败，请检查网络</div>
+          </div>
+        </section>
+
+        <section class="lec-row" id="rows"></section>
+
+      </main>
+    </div>
+
+    <!-- 底部导航 -->
+    <nav class="cs-nav">
+      <div class="item on" id="navHomeC" role="button" tabindex="0" aria-label="首页"></div>
+      <div class="item" role="button" tabindex="0" aria-label="今日任务"></div>
+      <div class="item" role="button" tabindex="0" aria-label="宠物"></div>
+      <div class="item" id="navBagC" role="button" tabindex="0" aria-label="储物袋"></div>
+      <div class="item" role="button" tabindex="0" aria-label="我的"></div>
+    </nav>
+
+  </div>
+</div>
+
+<!-- ================= 储物袋 ================= -->
+<div class="stage view" id="stageBag">
+  <div class="pg">
+    <div class="pg-head">
+      <button class="pg-back" id="bagBack" type="button" aria-label="返回">
+        <svg width="12" height="21" viewBox="0 0 12 21" fill="none" aria-hidden="true">
+          <path d="M10 2 2 10.5 10 19" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <h1 class="pg-title">储物袋</h1>
+      <div class="pg-gems"><i class="gem"></i><span id="bagGem">1,220</span></div>
+    </div>
+
+    <div class="pg-tabs" id="bagTabs">
+      <button class="pg-tab on" type="button" data-cat="all">全部</button>
+      <button class="pg-tab" type="button" data-cat="tool">学习道具</button>
+      <button class="pg-tab" type="button" data-cat="card">收藏卡</button>
+      <button class="pg-tab" type="button" data-cat="pet">灵宠食物</button>
+    </div>
+
+    <div class="pg-grid" id="bagGrid"></div>
+  </div>
+</div>
+
+<!-- ================= 灵石商城 ================= -->
+<div class="stage view" id="stageShop">
+  <div class="pg">
+    <div class="pg-head">
+      <button class="pg-back" id="shopBack" type="button" aria-label="返回">
+        <svg width="12" height="21" viewBox="0 0 12 21" fill="none" aria-hidden="true">
+          <path d="M10 2 2 10.5 10 19" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <h1 class="pg-title">灵石商城</h1>
+      <div class="pg-gems"><i class="gem"></i><span id="shopGem">1,220</span></div>
+    </div>
+
+    <div class="shop-banner">
+      <h2>今日成长特惠</h2>
+      <p>专注沙漏 · 智慧之书 限时折扣，学完今天的课再来兑换更划算</p>
+      <div class="off">限时 6 折</div>
+    </div>
+
+    <div class="pg-grid shop" id="shopGrid"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<div class="hint-rotate">横屏使用，体验更佳</div>
+
+<script>
+  (function () {
+    /* ---------- iPad 自适应：等比缩放铺满可视区（背景满屏，内容居中不裁切）---------- */
+    var stageHome = document.getElementById('stageHome');
+    var stageCourse = document.getElementById('stageCourse');
+    function fit() {
+      var vw = (window.visualViewport && window.visualViewport.width) || window.innerWidth;
+      var vh = (window.visualViewport && window.visualViewport.height) || window.innerHeight;
+      var s = Math.min(vw / 1424, vh / 801.5);
+      stageHome.style.transform = 'scale(' + s + ')';
+      stageCourse.style.transform = 'scale(' + s + ')';
+    }
+    fit();
+    window.addEventListener('resize', fit);
+    window.addEventListener('orientationchange', function () { setTimeout(fit, 260); });
+    if (window.visualViewport) window.visualViewport.addEventListener('resize', fit);
+
+    /* ================= 课程页（同一页面内切换） ================= */
+    /* 课程视频：暂时沿用项目 uploads 里的本地样例，接入真实课程时替换即可 */
+    var V1 = '../uploads/video-1789009813864-446762340.mp4';
+    var V2 = '../uploads/video-1789009813810-423615199.mp4';
+    var V3 = '../uploads/video-1789009813863-237460597.mp4';
+    var V4 = V1;
+
+    var COVERS = {
+      math: 'images/cs-cover.png',
+      chinese: 'images/card-chinese.png',
+      english: 'images/card-english.png',
+      science: 'images/card-science.png'
+    };
+
+    var SUBJECTS = {
+      math: {
+        title: '数学课程', level: 'Level 5', levelTag: '数学逻辑', progress: 68,
+        stats: [
+          { k: '共学习', v: '28个视频', sub: '28/40' },
+          { k: '总时长', v: '12.6h', sub: '12.6/20h' },
+          { k: '连续学习', v: '7天', sub: '12.6/20h' }
+        ],
+        tabs: ['清华数学', '乐读数学'], activeTab: 1, grade: '四年级',
+        week: ['done', 'done', 'chest', 'todo', 'todo', 'locked'], weekFill: 0.6,
+        lectures: [
+          { t: '用字母表示数', d: '认识代数式的起点', state: 'done', src: V1 },
+          { t: '等式性质', d: '等式两边同时加与减', state: 'open', src: V2 },
+          { t: '数的奇妙世界', d: '认识更大的数', state: 'now', src: V3 },
+          { t: '列方程解决问题', d: '综合应用闯关', state: 'locked', src: V4 }
+        ]
+      },
+      chinese: {
+        title: '语文课程', level: 'Level 3', levelTag: '阅读表达', progress: 52,
+        stats: [
+          { k: '共学习', v: '16个视频', sub: '16/32' },
+          { k: '总时长', v: '8.2h', sub: '8.2/18h' },
+          { k: '连续学习', v: '4天', sub: '4/7天' }
+        ],
+        tabs: ['基础阅读', '乐读语文'], activeTab: 1, grade: '三年级',
+        week: ['done', 'chest', 'todo', 'todo', 'todo', 'locked'], weekFill: 0.35,
+        lectures: [
+          { t: '古诗三首', d: '静夜思 · 春晓 · 咏柳', state: 'done', src: V2 },
+          { t: '抓住关键句', d: '阅读理解的第一步', state: 'now', src: V3 },
+          { t: '写人记事', d: '把故事讲清楚', state: 'open', src: V4 },
+          { t: '习作：我的乐园', d: '单元写作训练', state: 'locked', src: V1 }
+        ]
+      },
+      english: {
+        title: '英语课程', level: 'Level 4', levelTag: '自然拼读', progress: 74,
+        stats: [
+          { k: '共学习', v: '22个视频', sub: '22/40' },
+          { k: '总时长', v: '10.4h', sub: '10.4/20h' },
+          { k: '连续学习', v: '9天', sub: '9/14天' }
+        ],
+        tabs: ['剑桥英语', '自然拼读'], activeTab: 1, grade: '四年级',
+        week: ['done', 'done', 'done', 'chest', 'todo', 'locked'], weekFill: 0.78,
+        lectures: [
+          { t: 'Magic e 规则', d: 'a-e / i-e / o-e', state: 'done', src: V3 },
+          { t: '常见字母组合', d: 'sh / ch / th', state: 'done', src: V4 },
+          { t: '单词闯关', d: '高频词快速记忆', state: 'now', src: V1 },
+          { t: '句型小剧场', d: '情景对话练习', state: 'locked', src: V2 }
+        ]
+      },
+      science: {
+        title: '科普课程', level: 'Level 2', levelTag: '科学探究', progress: 41,
+        stats: [
+          { k: '共学习', v: '12个视频', sub: '12/30' },
+          { k: '总时长', v: '5.6h', sub: '5.6/16h' },
+          { k: '连续学习', v: '3天', sub: '3/7天' }
+        ],
+        tabs: ['万物有理', '科普合集'], activeTab: 0, grade: '四年级',
+        week: ['done', 'chest', 'todo', 'todo', 'todo', 'locked'], weekFill: 0.32,
+        lectures: [
+          { t: '观察与提问', d: '像科学家一样思考', state: 'done', src: V4 },
+          { t: '会跳舞的牛奶', d: '表面张力的秘密', state: 'now', src: V1 },
+          { t: '太阳系一日游', d: '八大行星有多远', state: 'open', src: V2 },
+          { t: '动手做实验', d: '家庭小实验合集', state: 'locked', src: V3 }
+        ]
+      }
+    };
+
+    var video = document.getElementById('videoC');
+    var player = document.getElementById('player');
+    var ptagEl = document.getElementById('ptag');
+    var ptitle = document.getElementById('ptitle');
+    var pmeta = document.getElementById('pmeta');
+    var rowsEl = document.getElementById('rows');
+    var playBtn = document.getElementById('playBtn');
+    var vfill = document.getElementById('vfill');
+    var csTitle = document.getElementById('csTitle');
+    var csLevel = document.getElementById('csLevel');
+    var csLevelTag = document.getElementById('csLevelTag');
+    var csProgress = document.getElementById('csProgress');
+    var csProgressBar = document.getElementById('csProgressBar');
+    var csStats = document.getElementById('csStats');
+    var csGrade = document.getElementById('csGrade');
+    var tabList = document.getElementById('tabList');
+    var weekLine = document.getElementById('weekLine');
+    var wlFill = document.getElementById('wlFill');
+
+    /* 统计图标与宝箱均取自 Figma 设计稿切图 */
+    var STAT_ICONS = [
+      '<img src="images/cs-ico-book.png" alt="">',
+      '<img src="images/cs-ico-clock.png" alt="">',
+      '<img src="images/cs-ico-cal.png" alt="">'
+    ];
+    var TAG_TEXT = { done: '已完成', open: '可学习', now: '进行中', locked: '未解锁' };
+    var CHECK_SVG = '<svg width="18" height="14" viewBox="0 0 18 14" fill="none"><path d="M1.8 7.4 6.6 12.2 16.2 1.8" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    var CHEST_SVG = '<img src="images/cs-chest.png" alt="">';
+    var CHEST_LOCK_SVG = '<img src="images/cs-chest-lock.png" alt="">';
+    var PIC_SVG = {
+      done: '<svg width="19" height="15" viewBox="0 0 19 15" fill="none"><path d="M2 7.6 7 12.6 17 2" stroke="#2fc56e" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+      open: '<svg width="14" height="16" viewBox="0 0 14 16" fill="none"><path d="M14 8 1 15.5V.5L14 8Z" fill="#ff9a2b"/></svg>',
+      now: '<svg width="14" height="16" viewBox="0 0 14 16" fill="none"><path d="M14 8 1 15.5V.5L14 8Z" fill="#ff6a00"/></svg>',
+      locked: '<svg width="16" height="18" viewBox="0 0 16 18" fill="none"><rect x="1" y="7.4" width="14" height="9.6" rx="3" fill="#c9d6f2"/><path d="M4.2 7.4V5.2a3.8 3.8 0 0 1 7.6 0v2.2" stroke="#c9d6f2" stroke-width="2.2"/></svg>'
+    };
+
+    var lessons = [], curIndex = -1, curKey = 'math', courseInited = false, watchdog = 0;
+
+    function setPlaying(on) { player.classList.toggle('playing', on); }
+
+    function failVideo() {
+      clearTimeout(watchdog);
+      setPlaying(false);
+      player.classList.add('failed');
+      try { video.pause(); } catch (e) {}
+    }
+    function pauseVideo() { try { video.pause(); } catch (e) {} setPlaying(false); }
+
+    function toggleVideo() {
+      if (curIndex < 0 || !lessons[curIndex]) return;
+      if (video.paused) {
+        video.play().then(function () { setPlaying(true); }).catch(function () {});
+      } else {
+        video.pause();
+        setPlaying(false);
+      }
+    }
+
+    function selectLesson(i, autoplay) {
+      var lec = lessons[i];
+      if (!lec || lec.state === 'locked') return;
+      curIndex = i;
+      ptagEl.textContent = SUBJECTS[curKey].level;
+      ptitle.textContent = '第' + (i + 1) + '讲 ' + lec.t;
+      pmeta.textContent = lec.d || '';
+      Array.prototype.forEach.call(rowsEl.children, function (r, j) {
+        r.classList.toggle('on', j === i);
+      });
+      player.classList.remove('failed');
+      setPlaying(false);
+      vfill.style.width = '0%';
+      if (lec.src) { video.src = lec.src; video.load(); }
+      if (autoplay) {
+        video.play().then(function () { setPlaying(true); }).catch(function () { setPlaying(false); });
+      }
+    }
+
+    function buildWeek(cfg) {
+      Array.prototype.forEach.call(weekLine.querySelectorAll('.wn'), function (n) { n.parentNode.removeChild(n); });
+      cfg.week.forEach(function (st) {
+        var d = document.createElement('div');
+        d.className = 'wn ' + st;
+        if (st === 'done') d.innerHTML = CHECK_SVG;
+        else if (st === 'chest') d.innerHTML = CHEST_SVG;
+        else if (st === 'locked') d.innerHTML = CHEST_LOCK_SVG;
+        weekLine.appendChild(d);
+      });
+      wlFill.style.width = 'calc((100% - 32px) * ' + cfg.weekFill + ')';
+    }
+
+    function initCourse() {
+      if (courseInited) return;
+      courseInited = true;
+
+      rowsEl.addEventListener('click', function (e) {
+        var r = e.target.closest ? e.target.closest('.lec') : null;
+        if (r) selectLesson(parseInt(r.getAttribute('data-i'), 10), true);
+      });
+      playBtn.addEventListener('click', function (e) { e.stopPropagation(); toggleVideo(); });
+      player.addEventListener('click', toggleVideo);
+      document.getElementById('backBtn').addEventListener('click', closeCourse);
+      document.getElementById('navHomeC').addEventListener('click', closeCourse);
+
+      tabList.addEventListener('click', function (e) {
+        var t = e.target.closest ? e.target.closest('.tab') : null;
+        if (!t) return;
+        Array.prototype.forEach.call(tabList.children, function (b) { b.classList.remove('on'); });
+        t.classList.add('on');
+      });
+
+      video.addEventListener('loadeddata', function () { clearTimeout(watchdog); player.classList.remove('failed'); });
+      video.addEventListener('error', failVideo);
+      video.addEventListener('play', function () {
+        setPlaying(true);
+        clearTimeout(watchdog);
+        watchdog = setTimeout(function () { if (video.readyState < 2) failVideo(); }, 9000);
+      });
+      video.addEventListener('pause', function () { setPlaying(false); });
+      video.addEventListener('ended', function () { setPlaying(false); });
+      video.addEventListener('timeupdate', function () {
+        if (video.duration) vfill.style.width = (video.currentTime / video.duration * 100) + '%';
+      });
+    }
+
+    function applySubject(key) {
+      var cfg = SUBJECTS[key] || SUBJECTS.math;
+      curKey = SUBJECTS[key] ? key : 'math';
+
+      /* 视频封面：数学用设计稿切图，其它科目沿用首页卡片插画 */
+      var cover = COVERS[curKey] || COVERS.math;
+      player.style.backgroundImage = 'url("' + cover + '")';
+      video.setAttribute('poster', cover);
+
+      csTitle.textContent = cfg.title;
+      csLevel.textContent = cfg.level;
+      csLevelTag.textContent = cfg.levelTag;
+      csProgress.textContent = cfg.progress + '%';
+      csProgressBar.style.width = cfg.progress + '%';
+      csGrade.textContent = cfg.grade;
+
+      csStats.innerHTML = cfg.stats.map(function (s, i) {
+        return '<li class="stat"><i>' + STAT_ICONS[i % STAT_ICONS.length] + '</i><div>' +
+          '<span class="k">' + s.k + '</span>' +
+          '<span class="v">' + s.v + (s.sub ? '<b>' + s.sub + '</b>' : '') + '</span></div></li>';
+      }).join('');
+
+      tabList.innerHTML = cfg.tabs.map(function (t, i) {
+        return '<button type="button" class="tab' + (i === cfg.activeTab ? ' on' : '') + '">' + t + '</button>';
+      }).join('');
+
+      buildWeek(cfg);
+
+      lessons = cfg.lectures || [];
+      curIndex = -1;
+      rowsEl.innerHTML = lessons.map(function (l, i) {
+        return '<div class="lec ' + l.state + '" data-i="' + i + '">' +
+          '<span class="tag">' + (TAG_TEXT[l.state] || '') + '</span>' +
+          '<span class="no">第' + (i + 1) + '讲</span>' +
+          '<b class="tt">' + l.t + '</b>' +
+          '<span class="pic">' + (PIC_SVG[l.state] || '') + '</span>' +
+          '</div>';
+      }).join('');
+
+      var pick = -1;
+      lessons.forEach(function (l, i) { if (pick < 0 && l.state === 'now') pick = i; });
+      if (pick < 0) {
+        for (var k = 0; k < lessons.length; k++) {
+          if (lessons[k].state !== 'locked') { pick = k; break; }
+        }
+      }
+      if (pick >= 0) selectLesson(pick, false);
+    }
+
+    function openCourse(key) {
+      initCourse();
+      applySubject(key || 'math');
+      stageHome.classList.remove('on');
+      stageCourse.classList.add('on');
+      fit();
+      try { window.scrollTo(0, 0); } catch (e) {}
+    }
+    function closeCourse() {
+      pauseVideo();
+      try { video.pause(); } catch (e) {}
+      stageCourse.classList.remove('on');
+      stageHome.classList.add('on');
+      fit();
+    }
+
+    /* ---------- 首页交互：卡片 / 底部「学习」 ---------- */
+    var cards = document.querySelectorAll('.card[data-subject]');
+    Array.prototype.forEach.call(cards, function (el) {
+      function go() { openCourse(el.getAttribute('data-subject')); }
+      el.addEventListener('click', go);
+      el.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); } });
+    });
+
+    var navLearn = document.getElementById('navLearn');
+    if (navLearn) {
+      navLearn.style.cursor = 'pointer';
+      navLearn.addEventListener('click', function () { openCourse('math'); });
+    }
+
+    /* ---------- 支持直接带参打开课程：index.html?subject=math ---------- */
+    try {
+      var qs = new URLSearchParams(location.search).get('subject');
+      if (qs && SUBJECTS[qs]) openCourse(qs);
+    } catch (e) {}
+
+    /* ================= 储物袋 / 灵石商城 ================= */
+    var stageBagEl = document.getElementById('stageBag');
+    var stageShopEl = document.getElementById('stageShop');
+    var bagGrid = document.getElementById('bagGrid');
+    var shopGrid = document.getElementById('shopGrid');
+    var bagGemEl = document.getElementById('bagGem');
+    var shopGemEl = document.getElementById('shopGem');
+    var bagTabsEl = document.getElementById('bagTabs');
+    var toastEl = document.getElementById('toast');
+
+    var GEM = 1220;
+    var pageFrom = 'home';
+    var bagCat = 'all';
+
+    var RARITY = {
+      normal: { t: '普通', c: '#9fb2e2' },
+      rare:   { t: '稀有', c: '#b98bff' },
+      epic:   { t: '史诗', c: '#ffd257' },
+      legend: { t: '传说', c: '#ff9a4d' }
+    };
+
+    var BAG = [
+      { k: '💎', nm: '知识宝石', q: 12, r: 'rare',   cat: 'tool' },
+      { k: '📘', nm: '智慧之书', q: 5,  r: 'epic',   cat: 'tool' },
+      { k: '⭐', nm: '星星碎片', q: 37, r: 'normal', cat: 'card' },
+      { k: '🛡️', nm: '护盾符文', q: 3,  r: 'rare',   cat: 'tool' },
+      { k: '🥚', nm: '恐龙蛋',   q: 1,  r: 'legend', cat: 'pet' },
+      { k: '🎵', nm: '音乐徽章', q: 8,  r: 'normal', cat: 'card' },
+      { k: '⏳', nm: '专注沙漏', q: 4,  r: 'rare',   cat: 'tool' },
+      { k: '🍪', nm: '灵宠饼干', q: 15, r: 'normal', cat: 'pet' }
+    ];
+
+    var GOODS = [
+      { k: '⏳', nm: '专注沙漏', p: 120,  n: 1,  r: 'rare',   cat: 'tool' },
+      { k: '📘', nm: '智慧之书', p: 260,  n: 1,  r: 'epic',   cat: 'tool' },
+      { k: '🎴', nm: '稀有卡包', p: 480,  n: 1,  r: 'epic',   cat: 'card' },
+      { k: '🥚', nm: '恐龙蛋',   p: 1200, n: 1,  r: 'legend', cat: 'pet' },
+      { k: '⭐', nm: '星星碎片', p: 60,   n: 10, r: 'normal', cat: 'card' },
+      { k: '🍪', nm: '灵宠饼干', p: 90,   n: 1,  r: 'normal', cat: 'pet' },
+      { k: '🛡️', nm: '护盾符文', p: 200,  n: 1,  r: 'rare',   cat: 'tool' },
+      { k: '🎁', nm: '成长礼包', p: 888,  n: 1,  r: 'legend', cat: 'tool' }
+    ];
+
+    function fmtGem(n) { return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ','); }
+
+    function syncGem() {
+      var t = fmtGem(GEM);
+      bagGemEl.textContent = t;
+      shopGemEl.textContent = t;
+      var csg = document.getElementById('csGem');
+      if (csg) csg.textContent = t;
+    }
+
+    var toastTimer = 0;
+    function toast(msg) {
+      toastEl.textContent = msg;
+      toastEl.classList.add('on');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(function () { toastEl.classList.remove('on'); }, 1900);
+    }
+
+    function renderBag() {
+      var list = BAG.filter(function (it) { return bagCat === 'all' || it.cat === bagCat; });
+      if (!list.length) {
+        bagGrid.innerHTML = '<div class="pg-empty">这个分类还空着<br>去灵石商城逛逛吧</div>';
+        return;
+      }
+      bagGrid.innerHTML = list.map(function (it) {
+        var r = RARITY[it.r] || RARITY.normal;
+        return '<div class="item ' + it.r + '">' +
+          '<span class="qt">×' + it.q + '</span>' +
+          '<span class="ico">' + it.k + '</span>' +
+          '<b class="nm">' + it.nm + '</b>' +
+          '<span class="rr" style="color:' + r.c + '">' + r.t + '</span>' +
+          '</div>';
+      }).join('');
+    }
+
+    function renderShop() {
+      shopGrid.innerHTML = GOODS.map(function (g, i) {
+        var r = RARITY[g.r] || RARITY.normal;
+        return '<div class="item goods ' + g.r + '">' +
+          '<span class="ico">' + g.k + '</span>' +
+          '<b class="nm">' + g.nm + (g.n > 1 ? ' ×' + g.n : '') + '</b>' +
+          '<span class="rr" style="color:' + r.c + '">' + r.t + '</span>' +
+          '<button class="buy" type="button" data-i="' + i + '"><i class="mini-gem"></i>' + g.p + '</button>' +
+          '</div>';
+      }).join('');
+    }
+
+    function addToBag(g) {
+      var hit = null;
+      for (var i = 0; i < BAG.length; i++) if (BAG[i].nm === g.nm) { hit = BAG[i]; break; }
+      if (hit) hit.q += g.n;
+      else BAG.push({ k: g.k, nm: g.nm, q: g.n, r: g.r, cat: g.cat });
+      renderBag();
+    }
+
+    function showPage(el, from) {
+      pageFrom = from || 'home';
+      stageHome.classList.remove('on');
+      stageCourse.classList.remove('on');
+      stageBagEl.classList.remove('on');
+      stageShopEl.classList.remove('on');
+      el.classList.add('on');
+      fit();
+      try { window.scrollTo(0, 0); } catch (e) {}
+    }
+    function hidePage() {
+      stageBagEl.classList.remove('on');
+      stageShopEl.classList.remove('on');
+      if (pageFrom === 'course') stageCourse.classList.add('on');
+      else stageHome.classList.add('on');
+      fit();
+    }
+
+    document.getElementById('bagBack').addEventListener('click', hidePage);
+    document.getElementById('shopBack').addEventListener('click', hidePage);
+
+    bagTabsEl.addEventListener('click', function (e) {
+      var t = e.target.closest ? e.target.closest('.pg-tab') : null;
+      if (!t) return;
+      bagCat = t.getAttribute('data-cat');
+      Array.prototype.forEach.call(bagTabsEl.children, function (b) { b.classList.toggle('on', b === t); });
+      renderBag();
+    });
+
+    shopGrid.addEventListener('click', function (e) {
+      var b = e.target.closest ? e.target.closest('.buy') : null;
+      if (!b) return;
+      var g = GOODS[parseInt(b.getAttribute('data-i'), 10)];
+      if (!g) return;
+      if (GEM < g.p) { toast('灵石不够啦，再去学习攒一点吧'); return; }
+      GEM -= g.p;
+      syncGem();
+      addToBag(g);
+      toast('已放入储物袋：' + g.nm);
+    });
+
+    function bindEntry(el, fn) {
+      if (!el) return;
+      el.style.cursor = 'pointer';
+      el.addEventListener('click', fn);
+      el.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fn(); }
+      });
+    }
+    bindEntry(document.getElementById('shopEntry'), function () { showPage(stageShopEl, 'home'); });
+    bindEntry(document.getElementById('bagEntry'), function () { showPage(stageBagEl, 'home'); });
+
+    var navBagC = document.getElementById('navBagC');
+    if (navBagC) navBagC.addEventListener('click', function () { showPage(stageBagEl, 'course'); });
+
+    syncGem();
+    renderBag();
+    renderShop();
+
+    /* ---------- 上海时间 ---------- */
+    var elClock = document.querySelector('.clock');
+    var elDate = document.querySelector('.date');
+    var elWeek = document.querySelector('.weekday');
+    var WD = { Sun: '星期日', Mon: '星期一', Tue: '星期二', Wed: '星期三', Thu: '星期四', Fri: '星期五', Sat: '星期六' };
+    var fmt = new Intl.DateTimeFormat('en-US', {
+      timeZone: 'Asia/Shanghai', hour12: false,
+      hour: '2-digit', minute: '2-digit', month: '2-digit', day: '2-digit', weekday: 'short'
+    });
+    function tick() {
+      var o = {};
+      fmt.formatToParts(new Date()).forEach(function (p) { o[p.type] = p.value; });
+      elClock.textContent = (o.hour === '24' ? '00' : o.hour) + ':' + o.minute;
+      elDate.textContent = o.month + '/' + o.day;
+      elWeek.textContent = WD[o.weekday] || '';
+    }
+    tick();
+    setInterval(tick, 1000);
+
+    /* ---------- 上海实时天气（Open-Meteo，10 分钟缓存，离线降级）---------- */
+    var elTemp = document.querySelector('.temp');
+    var elDesc = document.querySelector('.wdesc');
+    var WMO = {
+      0: '晴', 1: '晴间多云', 2: '多云', 3: '阴', 45: '有雾', 48: '雾凇',
+      51: '毛毛雨', 53: '毛毛雨', 55: '毛毛雨', 56: '冻雨', 57: '冻雨',
+      61: '小雨', 63: '中雨', 65: '大雨', 66: '冻雨', 67: '冻雨',
+      71: '小雪', 73: '中雪', 75: '大雪', 77: '雪粒',
+      80: '阵雨', 81: '强阵雨', 82: '暴雨', 85: '阵雪', 86: '阵雪',
+      95: '雷阵雨', 96: '雷阵雨', 99: '雷阵雨'
+    };
+    var WX_URL = 'https://api.open-meteo.com/v1/forecast?latitude=31.2304&longitude=121.4737' +
+      '&current=temperature_2m,weather_code&timezone=Asia%2FShanghai';
+    var CACHE_KEY = 'kx_wx_shanghai_v1';
+    var TTL = 10 * 60 * 1000;
+
+    function paintWeather(t, code) {
+      elTemp.textContent = Math.round(t) + '°C';
+      elDesc.textContent = WMO[code] || '多云';
+    }
+    function fromCache() {
+      try {
+        var c = JSON.parse(localStorage.getItem(CACHE_KEY) || 'null');
+        if (c && typeof c.t === 'number') { paintWeather(c.t, c.code); return c.ts; }
+      } catch (e) {}
+      return 0;
+    }
+    function loadWeather() {
+      var last = fromCache();
+      if (Date.now() - last < TTL) return;
+      if (!window.fetch) return;
+      var ctrl = window.AbortController ? new AbortController() : null;
+      var timer = ctrl ? setTimeout(function () { ctrl.abort(); }, 8000) : 0;
+      fetch(WX_URL, ctrl ? { signal: ctrl.signal } : {})
+        .then(function (r) { return r.json(); })
+        .then(function (d) {
+          var cur = d && d.current;
+          if (!cur || typeof cur.temperature_2m !== 'number') return;
+          paintWeather(cur.temperature_2m, cur.weather_code);
+          try {
+            localStorage.setItem(CACHE_KEY, JSON.stringify({ t: cur.temperature_2m, code: cur.weather_code, ts: Date.now() }));
+          } catch (e) {}
+        })
+        .catch(function () {
+          if (!last) { elTemp.textContent = '--°C'; elDesc.textContent = '无法获取'; }
+        })
+        .then(function () { if (timer) clearTimeout(timer); });
+    }
+    loadWeather();
+    setInterval(loadWeather, TTL);
+    document.addEventListener('visibilitychange', function () { if (!document.hidden) loadWeather(); });
+  })();
+</script>
+</body>
+</html>

@@ -22,3 +22,6 @@ dist/
 .env
 .DS_Store
 Thumbs.db
+
+# 本地验证探针脚本（不进仓库）
+.probe-*.js

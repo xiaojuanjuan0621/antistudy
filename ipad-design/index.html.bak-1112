@@ -1,0 +1,639 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>知识冒险岛 · 四页 iPad 交互预览</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%;overflow:hidden;background:#081430;font-family:"Noto Sans SC","PingFang SC",sans-serif}
+  .bar{height:52px;display:flex;align-items:center;gap:8px;padding:0 16px;background:#0d1e42;border-bottom:1px solid rgba(255,255,255,.12)}
+  .bar button,.bar select{padding:7px 16px;border-radius:8px;border:1px solid rgba(255,255,255,.2);background:transparent;color:#cbdcf7;font-size:13px;cursor:pointer;font-family:inherit}
+  .bar select{margin-left:12px}
+  .bar select option{color:#111;background:#fff}
+  .bar button.on{background:#2f6fe4;border-color:#2f6fe4;color:#fff}
+  .bar .tip{margin-left:auto;color:#7f96bd;font-size:12px}
+  .view{position:relative;width:100%;height:calc(100% - 52px);overflow:hidden}
+  .stage{position:absolute;left:50%;top:50%;transform-origin:center center}
+  .stage[hidden]{display:none}
+  .stage *{position:absolute}
+  .stage .bg{position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden}
+  .stage .bg img{position:static;width:100%;height:100%;object-fit:cover;display:block}
+  .stage .content{position:absolute;left:0;top:0;width:2730px;height:1835px;transform-origin:top left}
+  .stage .content *{position:absolute}
+  .stage .content .inner{position:absolute;left:0;top:0;width:2848px;height:1600px;transform:scale(.95857);transform-origin:top left}
+  .stage .content .img{position:static;width:100%;height:100%;object-fit:fill;display:block}
+  .stage .content .txt{display:flex;align-items:center;justify-content:center;white-space:nowrap;color:#fff}
+  .stage .content .hot{z-index:120;cursor:pointer;border-radius:40px;background:transparent;transition:background .15s,box-shadow .15s}
+  .stage .content .hot:hover{background:rgba(255,255,255,.16);box-shadow:0 0 0 3px rgba(255,255,255,.35)}
+  .stage .content .hot.sel{background:rgba(255,235,120,.28);box-shadow:0 0 0 4px #FFE36E}
+  .stage .content .mall-card.hide{display:none}
+  .stage .content .tab-btn.dim{filter:brightness(.65)}
+  .stroke{-webkit-text-stroke:3.2px #244578;text-shadow:0 5.3px 5.3px rgba(20,42,102,.6)}
+  .shadow-cyan{box-shadow:0 10.6px 48px 0 rgba(0,231,255,.85)}
+  .shadow-blue{box-shadow:0 10.6px 16px 0 rgba(17,45,152,.4)}
+  .btn-nav{border:4.3px solid #4389ED;border-radius:69.3px;background:linear-gradient(180deg,#2F67E2,#2448AC)}
+  #toast{position:absolute;right:24px;bottom:24px;z-index:999;padding:14px 22px;border-radius:12px;
+    background:rgba(12,28,64,.94);border:1px solid rgba(120,180,255,.5);color:#fff;font-size:15px;
+    opacity:0;transform:translateY(12px);transition:opacity .2s,transform .2s;pointer-events:none}
+  #toast.show{opacity:1;transform:translateY(0)}
+  #mask{position:absolute;left:0;top:0;width:100%;height:100%;z-index:900;background:rgba(6,16,42,.62)}
+  #mask[hidden]{display:none}
+  #panel{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:620px;max-height:78%;
+    overflow:auto;background:#102451;border:2px solid #5B8FE8;border-radius:28px;padding:32px 36px;
+    color:#eaf3ff;font-size:16px;line-height:1.7;box-shadow:0 24px 70px rgba(0,0,0,.45)}
+  #panel h3{font-size:26px;margin-bottom:16px;color:#fff;font-weight:700}
+  #panel p{margin:8px 0;color:#b9cdf0}
+  #panel .row{display:flex;align-items:center;gap:14px;padding:12px 16px;margin:8px 0;
+    background:rgba(255,255,255,.07);border-radius:14px;font-size:17px}
+  #panel .bar{height:14px;border-radius:7px;background:#25406f;overflow:hidden;margin:6px 0 16px}
+  #panel .bar i{display:block;height:100%;border-radius:7px;background:linear-gradient(90deg,#4FA8FF,#7CE0FF)}
+  #panel button{margin-top:18px;padding:12px 26px;border:0;border-radius:14px;background:#3B7BE8;
+    color:#fff;font-size:17px;cursor:pointer;font-family:inherit}
+  #panel .close{position:absolute;right:22px;top:18px;width:38px;height:38px;border-radius:50%;
+    background:rgba(255,255,255,.14);color:#fff;font-size:20px;line-height:38px;text-align:center;cursor:pointer}
+  #player{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:760px;
+    background:#081a3c;border:2px solid #5B8FE8;border-radius:24px;padding:24px;color:#fff}
+  #player .screen{height:340px;border-radius:16px;background:linear-gradient(160deg,#1b3a72,#0c2049);
+    display:flex;align-items:center;justify-content:center;font-size:30px;margin-bottom:16px}
+  #player .track{height:12px;border-radius:6px;background:#25406f;overflow:hidden}
+  #player .track i{display:block;width:36%;height:100%;background:#FFCB51}
+</style>
+</head>
+<body>
+<div class="bar">
+  <button class="on" data-p="home">首页</button>
+  <button data-p="course">课程</button>
+  <button data-p="bag">储物袋</button>
+  <button data-p="mall">灵石商城</button>
+  <select id="dev">
+    <option value="2732,2048">iPad Pro 12.9″ · 2732 × 2048</option>
+    <option value="2388,1668">iPad Pro 11″ / Air · 2388 × 1668</option>
+    <option value="2160,1620">iPad 10.2″ · 2160 × 1620</option>
+  </select>
+  <span class="tip" id="dim">四页同一坐标系 · 点元素可交互</span>
+</div>
+<div class="view">
+  <div class="stage" id="home">
+    <div class="bg"><img src="assets/home-bg.png" alt=""></div>
+    <div class="content"><div class="inner">
+<div style="left:0px;top:0px;width:2848px;height:1600px;"><img class="img" src="assets/home-bg.png" alt=""></div>
+      <div style="left:226px;top:75px;width:814px;height:1381px;"><img class="img" src="assets/home-hero-4656a3.png" alt=""></div>
+      <div style="left:734px;top:667px;width:573px;height:774px;"><img class="img" src="assets/home-pet-11199f.png" alt=""></div>
+      <div style="left:611.88px;top:47.28px;width:144px;height:120px;"><img class="img" src="assets/home-weather.png" alt=""></div>
+      <div class="txt" style="left:77.88px;top:38.94px;width:334px;height:135px;font-size:111px;font-weight:700;color:#11284F;justify-content:flex-start;">09:30</div>
+      <div class="txt" style="left:433.88px;top:55.63px;width:160px;height:60px;font-size:36px;font-weight:700;color:#11284F;justify-content:flex-start;">01/18</div>
+      <div class="txt" style="left:433.88px;top:116.81px;width:160px;height:60px;font-size:36px;font-weight:700;color:#11284F;justify-content:flex-start;">星期六</div>
+      <div class="" style="left:584.06px;top:66.75px;width:2.78px;height:91.78px;background:rgba(184,214,239,.8)"></div>
+      <div class="txt" style="left:792.66px;top:52.84px;width:200px;height:70px;font-size:53px;font-weight:700;color:#11284F;justify-content:flex-start;">12°C</div>
+      <div class="txt" style="left:792.66px;top:122.38px;width:220px;height:55px;font-size:33px;font-weight:700;color:#11284F;justify-content:flex-start;">晴转多云</div>
+      <div style="left:1251.56px;top:205.81px;width:750.94px;height:396px;border-radius:60px;overflow:hidden"><img class="img" src="assets/home-card-chinese.png" alt=""></div>
+      <div class="txt" style="left:1326.6499999999999px;top:253.09px;width:300px;height:100px;font-size:78px;font-weight:700;color:#fff;justify-content:flex-start;">语文</div>
+      <div class="txt" style="left:1326.6499999999999px;top:367.12px;width:320px;height:65px;font-size:44px;font-weight:400;color:#fff;justify-content:flex-start;">学而思语文</div>
+      <div class="" style="left:1321.0px;top:471.0px;width:214.16px;height:80.66px;background:#F7FFFA;border-radius:41.7px"></div>
+      <div class="txt" style="left:1351.59px;top:488.0px;width:140px;height:50px;font-size:36px;font-weight:700;color:#3692FF;justify-content:flex-start;">去看课</div>
+      <div class="txt" style="left:1485.0px;top:462.0px;width:23px;height:83px;font-size:69px;font-weight:700;color:#3692FF;justify-content:flex-start;">›</div>
+      <div style="left:2024.75px;top:205.81px;width:756.5px;height:396px;border-radius:60px;overflow:hidden"><img class="img" src="assets/home-card-english.png" alt=""></div>
+      <div class="txt" style="left:2099.84px;top:253.09px;width:300px;height:100px;font-size:78px;font-weight:700;color:#fff;justify-content:flex-start;">英语</div>
+      <div class="txt" style="left:2099.84px;top:367.12px;width:320px;height:65px;font-size:44px;font-weight:400;color:#fff;justify-content:flex-start;">连续打卡7天</div>
+      <div class="" style="left:2091.0px;top:471.0px;width:214.16px;height:80.66px;background:#F7FFFA;border-radius:41.7px"></div>
+      <div class="txt" style="left:2121.59px;top:488.0px;width:140px;height:50px;font-size:36px;font-weight:700;color:#FF8C26;justify-content:flex-start;">去巩固</div>
+      <div class="txt" style="left:2255.0px;top:462.0px;width:23px;height:83px;font-size:69px;font-weight:700;color:#FF8C26;justify-content:flex-start;">›</div>
+      <div style="left:1251.56px;top:648.03px;width:750.94px;height:364px;border-radius:60px;overflow:hidden"><img class="img" src="assets/home-card-math.png" alt=""></div>
+      <div class="txt" style="left:1326.6499999999999px;top:695.31px;width:300px;height:100px;font-size:78px;font-weight:700;color:#fff;justify-content:flex-start;">数学</div>
+      <div class="txt" style="left:1326.6499999999999px;top:809.3399999999999px;width:320px;height:65px;font-size:44px;font-weight:400;color:#fff;justify-content:flex-start;">乐读数学</div>
+      <div class="" style="left:1313.0px;top:899.0px;width:214.16px;height:80.66px;background:#F7FFFA;border-radius:41.7px"></div>
+      <div class="txt" style="left:1343.59px;top:916.0px;width:140px;height:50px;font-size:36px;font-weight:700;color:#2FC56E;justify-content:flex-start;">去探索</div>
+      <div class="txt" style="left:1477.0px;top:890.0px;width:23px;height:83px;font-size:69px;font-weight:700;color:#2FC56E;justify-content:flex-start;">›</div>
+      <div style="left:2024.75px;top:648.03px;width:756.5px;height:364px;border-radius:60px;overflow:hidden"><img class="img" src="assets/home-card-science.png" alt=""></div>
+      <div class="txt" style="left:2099.84px;top:695.31px;width:300px;height:100px;font-size:78px;font-weight:700;color:#fff;justify-content:flex-start;">科普</div>
+      <div class="txt" style="left:2099.84px;top:809.3399999999999px;width:320px;height:65px;font-size:44px;font-weight:400;color:#fff;justify-content:flex-start;">科普合集</div>
+      <div class="" style="left:2099.84px;top:899.0px;width:214.16px;height:80.66px;background:#F7FFFA;border-radius:41.7px"></div>
+      <div class="txt" style="left:2130.4300000000003px;top:916.0px;width:140px;height:50px;font-size:36px;font-weight:700;color:#A539F3;justify-content:flex-start;">去看看</div>
+      <div class="txt" style="left:2263.84px;top:890.0px;width:23px;height:83px;font-size:69px;font-weight:700;color:#A539F3;justify-content:flex-start;">›</div>
+      <div class="" style="left:2061px;top:61.19px;width:342.09px;height:97.34px;background:#EAF6FF;border-radius:48.7px"></div>
+      <div class="txt" id="hStreak" style="left:2158px;top:89.86px;width:230px;height:44px;font-size:33px;font-weight:700;color:#4A93FE;justify-content:flex-start;">连续打卡 7 天</div>
+      <div class="" style="left:2444.72px;top:61.19px;width:328.19px;height:97.34px;background:#F1F0FF;border-radius:48.7px"></div>
+      <div class="" style="left:2461px;top:70px;width:80px;height:80px;background:#CECFFD;border:4px solid #fff;border-radius:50%"></div>
+      <div class="txt" style="left:2578px;top:89.86px;width:180px;height:44px;font-size:33px;font-weight:700;color:#11284F;justify-content:flex-start;">小星星</div>
+      <div class="" style="left:873px;top:586px;width:345px;height:221px;background:rgba(248,249,255,.87);border:3.9px solid rgba(255,255,255,.85);border-radius:52.8px"></div>
+      <div class="txt" style="left:946px;top:616px;width:240px;height:70px;font-size:50px;font-weight:700;color:#7438FF;justify-content:flex-start;">破壳进度</div>
+      <div class="" style="left:903px;top:698px;width:286.47px;height:66.75px;background:linear-gradient(180deg,#BD5DFF,#6737FF);border-radius:33.4px"></div>
+      <div class="txt" id="hHatch" style="left:988px;top:687px;width:150px;height:80px;font-size:58px;font-weight:700;color:#fff;justify-content:flex-start;">68%</div>
+      <div class="" style="left:923px;top:745px;width:244.75px;height:16.69px;background:#6C70FF;border-radius:8.3px"></div>
+      <div class="" id="hHatchBar" style="left:923px;top:745px;width:166.88px;height:16.69px;background:#35DFFC;border-radius:8.3px"></div>
+      <div class="" style="left:1371.16px;top:1070.78px;width:1401.75px;height:244.75px;background:rgba(248,252,255,.9);border:3.9px solid rgba(255,255,255,.85);border-radius:69.5px"></div>
+      <div style="left:1418.44px;top:1090.25px;width:152px;height:130px;"><img class="img" src="assets/home-ico-ai.png" alt=""></div>
+      <div class="txt" style="left:1446.25px;top:1240.44px;width:140px;height:45px;font-size:33px;font-weight:700;color:#11284F;justify-content:flex-start;">AI伙伴</div>
+      <a class="hot" data-act="panel" data-key="AI伙伴" style="left:1406.44px;top:1078.25px;width:176px;height:220px" href="javascript:void(0)"></a>
+      <div style="left:1665.97px;top:1109.72px;width:132px;height:114px;"><img class="img" src="assets/home-ico-book.png" alt=""></div>
+      <div class="txt" style="left:1679.88px;top:1240.44px;width:140px;height:45px;font-size:33px;font-weight:700;color:#11284F;justify-content:flex-start;">绘本馆</div>
+      <a class="hot" data-act="panel" data-key="绘本馆" style="left:1653.97px;top:1097.72px;width:156px;height:204px" href="javascript:void(0)"></a>
+      <div style="left:1896.81px;top:1104.16px;width:116px;height:116px;"><img class="img" src="assets/home-ico-music.png" alt=""></div>
+      <div class="txt" style="left:1905.16px;top:1240.44px;width:140px;height:45px;font-size:33px;font-weight:700;color:#11284F;justify-content:flex-start;">音乐馆</div>
+      <a class="hot" data-act="panel" data-key="音乐馆" style="left:1884.81px;top:1092.16px;width:140px;height:206px" href="javascript:void(0)"></a>
+      <div style="left:2116.53px;top:1109.72px;width:132px;height:110px;"><img class="img" src="assets/home-ico-video.png" alt=""></div>
+      <div class="txt" style="left:2127.66px;top:1240.44px;width:140px;height:45px;font-size:33px;font-weight:700;color:#11284F;justify-content:flex-start;">动画馆</div>
+      <a class="hot" data-act="panel" data-key="动画馆" style="left:2104.53px;top:1097.72px;width:156px;height:200px" href="javascript:void(0)"></a>
+      <div style="left:2344.59px;top:1104.16px;width:130px;height:118px;"><img class="img" src="assets/home-ico-star.png" alt=""></div>
+      <div class="txt" style="left:2352.94px;top:1240.44px;width:140px;height:45px;font-size:33px;font-weight:700;color:#11284F;justify-content:flex-start;">收藏夹</div>
+      <a class="hot" data-act="panel" data-key="收藏夹" style="left:2332.59px;top:1092.16px;width:154px;height:208px" href="javascript:void(0)"></a>
+      <div style="left:2575.44px;top:1109.72px;width:104px;height:106px;"><img class="img" src="assets/home-ico-more.png" alt=""></div>
+      <div class="txt" style="left:2586.56px;top:1240.44px;width:140px;height:45px;font-size:33px;font-weight:700;color:#11284F;justify-content:flex-start;">更多</div>
+      <a class="hot" data-act="panel" data-key="更多" style="left:2563.44px;top:1097.72px;width:128px;height:196px" href="javascript:void(0)"></a>
+      <div style="left:63px;top:303px;width:241px;height:274px;border-radius:52px"><img class="img" src="assets/home-entry-shop-358d2a.png" alt=""></div>
+      <div class="" style="left:83px;top:435px;width:193px;height:141px;background:linear-gradient(180deg,#B264F1,#663A8B);border-radius:52px"></div>
+      <div class="txt" style="left:93px;top:525px;width:180px;height:45px;font-size:28px;font-weight:700;color:#fff;justify-content:center;">灵石商城</div>
+      <a class="hot" data-go="mall" style="left:63px;top:303px;width:241px;height:274px" href="javascript:void(0)"></a>
+      <div style="left:63px;top:596px;width:232px;height:271px;border-radius:52px"><img class="img" src="assets/home-entry-bag-93d3b4.png" alt=""></div>
+      background:linear-gradient(180deg,#FF9A48,#E12D0C);border-radius:52px
+      <div class="txt" style="left:93px;top:818px;width:180px;height:45px;font-size:28px;font-weight:700;color:#fff;justify-content:center;">储物袋</div>
+      <a class="hot" data-go="bag" style="left:63px;top:596px;width:232px;height:271px" href="javascript:void(0)"></a>
+      <div style="left:63px;top:886px;width:238px;height:264px;border-radius:52px"><img class="img" src="assets/home-entry-pet-6b2dd5.png" alt=""></div>
+      background:linear-gradient(176deg,#60BEFE,#419EFB);border-radius:52px
+      <div class="txt" style="left:93px;top:1108px;width:180px;height:45px;font-size:28px;font-weight:700;color:#fff;justify-content:center;">灵宠</div>
+      <a class="hot" data-act="panel" data-key="灵宠" style="left:63px;top:886px;width:238px;height:264px" href="javascript:void(0)"></a>
+      <div class="" style="left:144px;top:1406px;width:2560px;height:299px;background:#F0F2FF;border:8px solid #fff;border-radius:120px"></div>
+      <div class="" style="left:362.28px;top:1472px;width:106px;height:102px;background:#E7E4FF;border-radius:26px"></div>
+      <div class="txt" style="left:488.28px;top:1486px;width:190px;height:60px;font-size:44px;font-weight:700;color:#7A50C5;justify-content:flex-start;">首页</div>
+      <a class="hot" data-go="home" style="left:362.28px;top:1440px;width:336px;height:150px" href="javascript:void(0)"></a>
+      <div class="" style="left:866.28px;top:1472px;width:106px;height:102px;background:#E7E4FF;border-radius:26px"></div>
+      <div class="txt" style="left:992.28px;top:1486px;width:190px;height:60px;font-size:44px;font-weight:700;color:#666D95;justify-content:flex-start;">今日任务</div>
+      <a class="hot" data-go="course" style="left:866.28px;top:1440px;width:336px;height:150px" href="javascript:void(0)"></a>
+      <div class="" style="left:1756.28px;top:1472px;width:106px;height:102px;background:#E7E4FF;border-radius:26px"></div>
+      <div class="txt" style="left:1882.28px;top:1486px;width:190px;height:60px;font-size:44px;font-weight:700;color:#666D95;justify-content:flex-start;">学习</div>
+      <a class="hot" data-go="course" style="left:1756.28px;top:1440px;width:336px;height:150px" href="javascript:void(0)"></a>
+      <div class="" style="left:2276.28px;top:1472px;width:106px;height:102px;background:#E7E4FF;border-radius:26px"></div>
+      <div class="txt" style="left:2402.28px;top:1486px;width:190px;height:60px;font-size:44px;font-weight:700;color:#666D95;justify-content:flex-start;">我的</div>
+      <a class="hot" data-act="panel" data-key="我的" style="left:2276.28px;top:1440px;width:336px;height:150px" href="javascript:void(0)"></a>
+      <div style="left:1322px;top:1368px;width:223px;height:227px;"><img class="img" src="assets/home-nav-star.png" alt=""></div>
+      <a class="hot" data-act="panel" data-key="今日航线" style="left:1322px;top:1368px;width:223px;height:227px" href="javascript:void(0)"></a>
+      <a class="hot" data-go="course" data-subject="语文" style="left:1251.56px;top:205.81px;width:750.94px;height:417.19px" href="javascript:void(0)"></a>
+      <a class="hot" data-go="course" data-subject="英语" style="left:2024.75px;top:205.81px;width:756.5px;height:417.19px" href="javascript:void(0)"></a>
+      <a class="hot" data-go="course" data-subject="数学" style="left:1251.56px;top:648.03px;width:750.94px;height:389.38px" href="javascript:void(0)"></a>
+      <a class="hot" data-go="course" data-subject="科普" style="left:2024.75px;top:648.03px;width:756.5px;height:389.38px" href="javascript:void(0)"></a>
+      <a class="hot" data-act="checkin" style="left:2061px;top:61.19px;width:342.09px;height:97.34px" href="javascript:void(0)"></a>
+      <a class="hot" data-act="panel" data-key="我的" style="left:2444.72px;top:61.19px;width:328.19px;height:97.34px" href="javascript:void(0)"></a>
+      <a class="hot" data-act="feed" style="left:873px;top:559px;width:345px;height:248px" href="javascript:void(0)"></a>
+    </div></div>
+  </div>
+  <div class="stage" id="course" hidden>
+    <div class="bg"><img src="assets/course-bg.png" alt=""></div>
+    <div class="content">
+<div style="left:0px;top:0px;width:2730px;height:1535.63px;"><img class="img" src="assets/course-bg.png" alt=""></div>
+      <div class="" style="left:106.64px;top:39.99px;width:87.98px;height:82.65px;background:linear-gradient(180deg,#2766DC,#1542AD);border:3.2px solid #2766DC;border-radius:42.7px"></div>
+      <div class="txt" style="left:115px;top:52px;width:74px;height:66px;font-size:62px;font-weight:700;color:#fff;justify-content:center;">‹</div>
+      <div class="txt" id="cTitle" style="left:231.94px;top:50.65px;width:400px;height:75px;font-size:56px;font-weight:700;color:#fff;justify-content:flex-start;">数学课程</div>
+      <div class="" style="left:1938.19px;top:45.32px;width:362.58px;height:74.65px;background:linear-gradient(180deg,#102D80,#102267);border:3.2px solid #102D80;border-radius:37.3px"></div>
+      <div style="left:1943.52px;top:45.32px;width:71.98px;height:74.65px;"><img class="img" src="assets/course-sign.png" alt=""></div>
+      <div class="txt" style="left:2020.84px;top:61.32px;width:260px;height:48px;font-size:35px;font-weight:700;color:#fff;justify-content:flex-start;">连续打卡 7 天</div>
+      <div class="" style="left:2340.76px;top:45.32px;width:301.26px;height:74.65px;background:linear-gradient(180deg,#183B8B,#102968);border:3.2px solid #183B8B;border-radius:37.3px"></div>
+      <div style="left:2343.43px;top:45.32px;width:71.98px;height:74.65px;"><img class="img" src="assets/course-stone.png" alt=""></div>
+      <div class="txt" id="cStones" style="left:2420.74px;top:61.32px;width:220px;height:48px;font-size:37px;font-weight:700;color:#fff;justify-content:flex-start;">灵石 1,220</div>
+      <div style="left:106.64px;top:186.62px;width:490.55px;height:1154.38px;border-radius:48px;overflow:hidden"><img class="img" src="assets/course-profile.png" alt=""></div>
+      <div style="left:218.61px;top:208px;width:298.59px;height:261.33px;"><img class="img" src="assets/course-boy.png" alt=""></div>
+      <div style="left:498.54px;top:583.86px;width:69.32px;height:87.98px;"><img class="img" src="assets/course-badge.png" alt=""></div>
+      <div style="left:175.96px;top:786.47px;width:75px;height:75px;"><img class="img" src="assets/course-i1.png" alt=""></div>
+      <div style="left:175.96px;top:858.46px;width:75px;height:75px;"><img class="img" src="assets/course-i2.png" alt=""></div>
+      <div style="left:175.96px;top:965.1px;width:75px;height:75px;"><img class="img" src="assets/course-i3.png" alt=""></div>
+      <div style="left:175.96px;top:1042.41px;width:75px;height:75px;"><img class="img" src="assets/course-i4.png" alt=""></div>
+      <div style="left:175.96px;top:1146.39px;width:75px;height:75px;"><img class="img" src="assets/course-i5.png" alt=""></div>
+      <div style="left:175.96px;top:1226.37px;width:75px;height:75px;"><img class="img" src="assets/course-i6.png" alt=""></div>
+      <div class="txt" style="left:189.29px;top:498.54px;width:200px;height:60px;font-size:43px;font-weight:700;color:#fff;justify-content:flex-start;">Level 5</div>
+      <div class="txt" style="left:373.24px;top:501.21px;width:220px;height:60px;font-size:40px;font-weight:700;color:#fff;justify-content:flex-start;">数学逻辑</div>
+      <div class="txt" style="left:183.95px;top:607.85px;width:220px;height:60px;font-size:40px;font-weight:700;color:#fff;justify-content:flex-start;">进阶进度</div>
+      <div class="txt" style="left:349.25px;top:607.85px;width:120px;height:60px;font-size:43px;font-weight:700;color:#FFF046;justify-content:flex-start;">68%</div>
+      <div class="" style="left:183.95px;top:674.5px;width:370.58px;height:42.66px;background:#1756AF;border-radius:21.3px"></div>
+      <div class="" style="left:183.95px;top:674.5px;width:290.6px;height:42.66px;background:linear-gradient(180deg,#36FF80,#12DE69);border-radius:21.3px"></div>
+      <div class="txt" style="left:263.93px;top:802.47px;width:160px;height:52px;font-size:37px;font-weight:700;color:#fff;justify-content:flex-start;">共学习</div>
+      <div class="txt" style="left:263.93px;top:869.12px;width:200px;height:50px;font-size:35px;font-weight:700;color:#fff;justify-content:flex-start;">28个视频</div>
+      <div class="txt" style="left:445.22px;top:874.45px;width:130px;height:45px;font-size:32px;font-weight:400;color:#B1C8F4;justify-content:flex-start;">28/40</div>
+      <div class="txt" style="left:263.93px;top:983.76px;width:160px;height:52px;font-size:37px;font-weight:700;color:#fff;justify-content:flex-start;">总时长</div>
+      <div class="txt" style="left:263.93px;top:1050.41px;width:160px;height:52px;font-size:37px;font-weight:700;color:#FFE161;justify-content:flex-start;">12.6h</div>
+      <div class="txt" style="left:407.9px;top:1055.74px;width:170px;height:45px;font-size:32px;font-weight:400;color:#B1C8F4;justify-content:flex-start;">12.6/20h</div>
+      <div class="txt" style="left:263.93px;top:1165.05px;width:180px;height:52px;font-size:37px;font-weight:700;color:#fff;justify-content:flex-start;">连续学习</div>
+      <div class="txt" style="left:263.93px;top:1234.36px;width:100px;height:52px;font-size:37px;font-weight:700;color:#fff;justify-content:flex-start;">7天</div>
+      <div class="" style="left:637px;top:168px;width:1987px;height:233px;background:#092467;border-radius:35px"></div>
+      <div class="txt" style="left:693px;top:208px;width:300px;height:70px;font-size:51px;font-weight:700;color:#fff;justify-content:flex-start;">进阶周计划</div>
+      <div class="" style="left:714px;top:320px;width:1628px;height:16px;background:#36569A;border-radius:8px"></div>
+      <div class="" style="left:714px;top:320px;width:760px;height:16px;background:linear-gradient(180deg,#0E8A8C,#5FFF92);border-radius:8px"></div>
+      <div style="left:842px;top:274px;width:75px;height:75px;"><img class="img" src="assets/course-week1.png" alt=""></div>
+      <div style="left:1114px;top:274px;width:75px;height:75px;"><img class="img" src="assets/course-week2.png" alt=""></div>
+      <div style="left:1386px;top:274px;width:75px;height:75px;"><img class="img" src="assets/course-week3.png" alt=""></div>
+      <div style="left:1658px;top:274px;width:75px;height:75px;"><img class="img" src="assets/course-week4.png" alt=""></div>
+      <div style="left:1930px;top:274px;width:75px;height:75px;"><img class="img" src="assets/course-week4.png" alt=""></div>
+      <div style="left:2202px;top:274px;width:75px;height:75px;"><img class="img" src="assets/course-week3.png" alt=""></div>
+      <div class="" style="left:637px;top:434px;width:1987px;height:607px;background:#092467;border-radius:35px"></div>
+      <div class="" style="left:1472px;top:583px;width:1115px;height:438px;background:#D9D9D9;border-radius:42px;overflow:hidden"></div>
+      <div style="left:695px;top:441px;width:1999.51px;height:621.18px;border-radius:48px"><img class="img" src="assets/course-board.png" alt=""></div>
+      <div style="left:2094.66px;top:555.77px;width:367.91px;height:453.33px;"><img class="img" src="assets/course-board-boy.png" alt=""></div>
+      <div class="txt" style="left:1902.71px;top:720.93px;width:400px;height:70px;font-size:48px;font-weight:400;color:#fff;justify-content:flex-start;">123 + 456 = ?</div>
+      <div class="tab-btn on" style="left:663.84px;top:463.89px;width:330.59px;height:114.64px;background:linear-gradient(180deg,#208DFF,#075DD6);border:3.2px solid #208DFF;border-radius:29.3px"></div>
+      <div class="tab-btn" style="left:1010.42px;top:463.89px;width:327.92px;height:114.64px;background:linear-gradient(180deg,#314C9C,#243C81);border:3.2px solid #314C9C;border-radius:29.3px"></div>
+      <div class="txt" style="left:760px;top:493.1px;width:200px;height:60px;font-size:45px;font-weight:700;color:#fff;justify-content:flex-start;">清华数学</div>
+      <div class="txt" style="left:1079.74px;top:493.1px;width:200px;height:60px;font-size:45px;font-weight:700;color:#AFC3F4;justify-content:flex-start;">乐读数学</div>
+      <div class="txt" style="left:738.49px;top:679.83px;width:200px;height:70px;font-size:51px;font-weight:700;color:#fff;justify-content:flex-start;">Level 5</div>
+      <div class="txt" style="left:738.49px;top:767.81px;width:80px;height:80px;font-size:61px;font-weight:700;color:#fff;justify-content:flex-start;">第</div>
+      <div class="txt" style="left:805.14px;top:759.81px;width:130px;height:90px;font-size:69px;font-weight:700;color:#BAFF55;justify-content:flex-start;">3讲</div>
+      <div class="txt" style="left:943.77px;top:767.81px;width:400px;height:80px;font-size:59px;font-weight:700;color:#fff;justify-content:flex-start;">数的奇妙世界</div>
+      <div class="txt" style="left:741.15px;top:885.12px;width:320px;height:60px;font-size:43px;font-weight:700;color:#fff;justify-content:flex-start;">认识更大的数</div>
+      <div class="" style="left:1684.92px;top:727.82px;width:151.96px;height:151.96px;background:linear-gradient(180deg,#FFCB51,#FF8000);border:3.2px solid #FFCB51;border-radius:76px"></div>
+      <div class="txt" style="left:1700px;top:760px;width:122px;height:90px;font-size:62px;font-weight:700;color:#fff;justify-content:center;">▶</div>
+      <div class="" style="left:2242px;top:464px;width:319.92px;height:103.97px;background:linear-gradient(180deg,#1858D6,#102A82);border:3.2px solid #1858D6;border-radius:53.3px"></div>
+      <div style="left:2265.99px;top:472px;width:85.31px;height:82.65px;"><img class="img" src="assets/course-hat.png" alt=""></div>
+      <div class="txt" id="cGrade" style="left:2367.3px;top:490.66px;width:160px;height:60px;font-size:43px;font-weight:700;color:#fff;justify-content:flex-start;">四年级</div>
+      <div class="txt" style="left:2505.94px;top:494.65px;width:40px;height:40px;font-size:34px;font-weight:700;color:#fff;justify-content:flex-start;">▾</div>
+      <div style="left:637.18px;top:1086px;width:474.55px;height:261px;border-radius:46px;overflow:hidden"><img class="img" src="assets/course-lesson1.png" alt=""></div>
+      <div class="txt" style="left:698.5px;top:1125.06px;width:160px;height:65px;font-size:48px;font-weight:700;color:#24412F;justify-content:flex-start;">第1讲</div>
+      <div class="txt" style="left:698.5px;top:1205.06px;width:300px;height:60px;font-size:45px;font-weight:700;color:#24412F;justify-content:flex-start;">用字母表示数</div>
+      <div class="" style="left:937.18px;top:1069px;width:155px;height:107px;background:linear-gradient(180deg,#2CE86F,#0CBA4A);border:3.2px solid #2CE86F;border-radius:29.3px"></div>
+      <div class="txt" style="left:950.18px;top:1202px;width:130px;height:55px;font-size:43px;font-weight:700;color:#fff;justify-content:center;">已完成</div>
+      <div style="left:1136.0px;top:1086px;width:482px;height:229px;border-radius:46px;overflow:hidden"><img class="img" src="assets/course-lesson2-2e76f4.png" alt=""></div>
+      <div class="txt" style="left:1183.71px;top:1122.39px;width:160px;height:65px;font-size:48px;font-weight:700;color:#fff;justify-content:flex-start;">第2讲</div>
+      <div class="txt" style="left:1183.71px;top:1202.39px;width:300px;height:60px;font-size:45px;font-weight:700;color:#fff;justify-content:flex-start;">等式性质</div>
+      <div class="" style="left:1436.0px;top:1069px;width:155px;height:107px;background:linear-gradient(180deg,#FFA83A,#FF7B04);border:3.2px solid #FFA83A;border-radius:29.3px"></div>
+      <div class="txt" style="left:1449.0px;top:1202px;width:130px;height:55px;font-size:43px;font-weight:700;color:#fff;justify-content:center;">可学习</div>
+      <div style="left:1648.0px;top:1086px;width:490px;height:229px;border-radius:46px;overflow:hidden"><img class="img" src="assets/course-lesson3-3bef41.png" alt=""></div>
+      <div class="txt" style="left:1695.5900000000001px;top:1122.39px;width:160px;height:65px;font-size:48px;font-weight:700;color:#fff;justify-content:flex-start;">第3讲</div>
+      <div class="txt" style="left:1695.5900000000001px;top:1202.39px;width:300px;height:60px;font-size:45px;font-weight:700;color:#fff;justify-content:flex-start;">解方程应用</div>
+      <div class="" style="left:1948.0px;top:1069px;width:155px;height:107px;background:linear-gradient(180deg,#FFA83A,#FF7B04);border:3.2px solid #FFA83A;border-radius:29.3px"></div>
+      <div class="txt" style="left:1961.0px;top:1202px;width:130px;height:55px;font-size:43px;font-weight:700;color:#fff;justify-content:center;">进行中</div>
+      <div class="" style="left:2181px;top:1066px;width:443px;height:249px;background:#092467;border-radius:35px"></div>
+      <div style="left:2364px;top:1111.73px;width:77.31px;height:82.65px;"><img class="img" src="assets/course-lock-big.png" alt=""></div>
+      <div class="txt" style="left:2307px;top:1199.71px;width:200px;height:60px;font-size:43px;font-weight:700;color:#DEE6FF;justify-content:center;">未解锁</div>
+      <div style="left:245px;top:1373px;width:96px;height:91px;"><img class="img" src="assets/course-nav1.png" alt=""></div>
+      <div class="txt" style="left:245px;top:1471.97px;width:140px;height:48px;font-size:35px;font-weight:700;color:#91FF9C;justify-content:flex-start;">首页</div>
+      <a class="hot" data-go="home" style="left:237px;top:1368px;width:150px;height:150px" href="javascript:void(0)"></a>
+      <div style="left:802.2px;top:1373px;width:96px;height:91px;"><img class="img" src="assets/course-nav2.png" alt=""></div>
+      <div class="txt" style="left:802.2px;top:1471.97px;width:140px;height:48px;font-size:35px;font-weight:700;color:#fff;justify-content:flex-start;">今日任务</div>
+      <a class="hot" data-go="course" style="left:794.2px;top:1368px;width:150px;height:150px" href="javascript:void(0)"></a>
+      <div style="left:1311.41px;top:1373px;width:96px;height:91px;"><img class="img" src="assets/course-nav3.png" alt=""></div>
+      <div class="txt" style="left:1311.41px;top:1471.97px;width:140px;height:48px;font-size:35px;font-weight:700;color:#fff;justify-content:flex-start;">宠物</div>
+      <a class="hot" data-act="panel" data-key="宠物" style="left:1303.41px;top:1368px;width:150px;height:150px" href="javascript:void(0)"></a>
+      <div style="left:1868.6px;top:1373px;width:96px;height:91px;"><img class="img" src="assets/course-nav4.png" alt=""></div>
+      <div class="txt" style="left:1868.6px;top:1471.97px;width:140px;height:48px;font-size:35px;font-weight:700;color:#fff;justify-content:flex-start;">学习</div>
+      <a class="hot" data-go="bag" style="left:1860.6px;top:1368px;width:150px;height:150px" href="javascript:void(0)"></a>
+      <div style="left:2388px;top:1373px;width:96px;height:91px;"><img class="img" src="assets/course-nav5-4121f6.png" alt=""></div>
+      <div class="txt" style="left:2388px;top:1471.97px;width:140px;height:48px;font-size:35px;font-weight:700;color:#fff;justify-content:flex-start;">我的</div>
+      <a class="hot" data-act="panel" data-key="我的" style="left:2380px;top:1368px;width:150px;height:150px" href="javascript:void(0)"></a>
+      <a class="hot" data-go="home" style="left:106.64px;top:39.99px;width:87.98px;height:82.65px" href="javascript:void(0)"></a>
+      <a class="hot" data-act="tab" data-key="清华数学" style="left:663.84px;top:463.89px;width:330.59px;height:114.64px" href="javascript:void(0)"></a>
+      <a class="hot" data-act="tab" data-key="乐读数学" style="left:1010.42px;top:463.89px;width:327.92px;height:114.64px" href="javascript:void(0)"></a>
+      <a class="hot" data-act="grade" style="left:2242px;top:464px;width:319.92px;height:103.97px" href="javascript:void(0)"></a>
+      <a class="hot" data-act="player" style="left:1684.92px;top:727.82px;width:151.96px;height:151.96px" href="javascript:void(0)"></a>
+      <a class="hot" data-act="checkin" style="left:1938.19px;top:45.32px;width:362.58px;height:74.65px" href="javascript:void(0)"></a>
+      <a class="hot" data-go="mall" style="left:2340.76px;top:45.32px;width:301.26px;height:74.65px" href="javascript:void(0)"></a>
+      <a class="hot" data-act="lesson" data-num="第1讲" data-title="用字母表示数" data-status="已完成" style="left:637.18px;top:1066px;width:474px;height:262px" href="javascript:void(0)"></a>
+      <a class="hot" data-act="lesson" data-num="第2讲" data-title="等式性质" data-status="可学习" style="left:1136.0px;top:1066px;width:474px;height:262px" href="javascript:void(0)"></a>
+      <a class="hot" data-act="lesson" data-num="第3讲" data-title="解方程应用" data-status="进行中" style="left:1648.0px;top:1066px;width:474px;height:262px" href="javascript:void(0)"></a>
+      <a class="hot" data-act="toast" data-msg="第4讲未解锁 · 先完成第3讲" style="left:2181px;top:1066px;width:443px;height:249px" href="javascript:void(0)"></a>
+    </div>
+  </div>
+  <div class="stage" id="bag" hidden>
+    <div class="bg"><img src="assets/bg.png" alt=""></div>
+    <div class="content">
+
+
+
+
+  <div style="left:1540.96px;top:356.36px;width:1146.39px;height:1366.94px;opacity:.85"><img class="img" src="assets/panel.png" alt=""></div>
+
+  <div style="left:1599.61px;top:510.61px;width:319.92px;height:377.64px;border-radius:69.3px;
+       background:linear-gradient(180deg,#65C7FF 0%,#1167FF 100%);
+       border:8.5px solid #C2FFFF" class="shadow-cyan"></div>
+  <div style="left:1962.19px;top:510.61px;width:319.92px;height:377.64px;border-radius:55px;overflow:hidden"><img class="img" src="assets/card2.png" alt=""></div>
+  <div style="left:2322px;top:511px;width:317px;height:377px;border-radius:54px;overflow:hidden"><img class="img" src="assets/card3-1d2041.png" alt=""></div>
+  <div style="left:1600px;top:949px;width:320px;height:423px;overflow:hidden"><img class="img" src="assets/card4-557094.png" alt=""></div>
+  <div style="left:1962px;top:949px;width:320px;height:423px;overflow:hidden"><img class="img" src="assets/card5-191cfd.png" alt=""></div>
+  <div style="left:2319px;top:950px;width:320px;height:422px;overflow:hidden"><img class="img" src="assets/card6-387987.png" alt=""></div>
+
+  <div style="left:90.64px;top:69.15px;width:895.78px;height:202.12px;border-radius:101.3px;background:rgba(7,60,173,.55)"></div>
+
+  <div style="left:1615.61px;top:90.42px;width:533.2px;height:154.25px;border-radius:80px;
+       background:rgba(2,56,149,.85);border:3.7px solid #246DE1"></div>
+  <div style="left:1636px;top:103px;width:150px;height:140px"><img class="img" src="assets/stone-icon.png" alt=""></div>
+  <div class="txt" style="left:1786.23px;top:111.7px;width:218.61px;height:106.38px;font-size:74.6px;font-weight:700">1280</div>
+  <div style="left:2020.84px;top:106.38px;width:106.64px;height:122.33px;border-radius:58.7px;
+       background:linear-gradient(180deg,#347FF6 0%,#0746BA 100%)"></div>
+  <div class="txt" style="left:2020.84px;top:95.74px;width:106.64px;height:132.97px;font-size:117.3px;font-weight:500">+</div>
+
+  <div style="left:2218.13px;top:90.42px;width:442.56px;height:154.25px;border-radius:80px;
+       background:rgba(2,56,149,.85);border:3.7px solid #246DE1"></div>
+  <div style="left:2240px;top:101px;width:130px;height:127px"><img class="img" src="assets/potion-icon.png" alt=""></div>
+  <div class="txt" style="left:2410.08px;top:111.7px;width:122.64px;height:106.38px;font-size:74.6px;font-weight:700">12</div>
+  <div style="left:2554.04px;top:111.7px;width:106.64px;height:122.33px;border-radius:58.7px;
+       background:linear-gradient(180deg,#347FF6 0%,#0746BA 100%)"></div>
+  <div class="txt" style="left:2554.04px;top:101.06px;width:106.64px;height:132.97px;font-size:117.3px;font-weight:500">+</div>
+
+  <div style="left:101.31px;top:79.78px;width:191.95px;height:186.16px;border-radius:96px;
+       background:linear-gradient(180deg,#73D6FF 0%,#1466ED 100%);border:4.3px solid #95E8FF"></div>
+  <div style="left:138.63px;top:106.38px;width:133.3px;height:127.65px"><img class="img" src="assets/icon-home.png" alt=""></div>
+
+  <div class="btn-nav shadow-blue" style="left:111.97px;top:436.15px;width:506.54px;height:260.62px"></div>
+  <div style="left:181.29px;top:489.33px;width:133.3px;height:148.93px"><img class="img" src="assets/icon-clothes.png" alt=""></div>
+  <div class="txt stroke" style="left:346.58px;top:484.01px;width:213.28px;height:154.25px;font-size:85.3px;font-weight:900">服装</div>
+
+  <div class="btn-nav shadow-blue" style="left:111.97px;top:734px;width:506.54px;height:260.62px"></div>
+  <div style="left:181.29px;top:787.19px;width:138.63px;height:148.93px"><img class="img" src="assets/icon-hair.png" alt=""></div>
+  <div class="txt stroke" style="left:346.58px;top:781.87px;width:213.28px;height:154.25px;font-size:85.3px;font-weight:900">发型</div>
+
+  <div class="btn-nav shadow-blue" style="left:111.97px;top:1026.54px;width:506.54px;height:260.62px"></div>
+  <div style="left:181.29px;top:1074.41px;width:138.63px;height:148.93px"><img class="img" src="assets/icon-acc.png" alt=""></div>
+  <div class="txt stroke" style="left:346.58px;top:1074.41px;width:213.28px;height:154.25px;font-size:85.3px;font-weight:900">配饰</div>
+
+  <div class="shadow-cyan" style="left:111.97px;top:1319.07px;width:506.54px;height:260.62px;border-radius:69.3px;
+       background:linear-gradient(180deg,#65C7FF 0%,#1167FF 100%);border:8.5px solid #C2FFFF"></div>
+  <div style="left:181.29px;top:1372.26px;width:138.63px;height:143.61px"><img class="img" src="assets/icon-pet.png" alt=""></div>
+  <div class="txt stroke" style="left:346.58px;top:1366.94px;width:213.28px;height:154.25px;font-size:85.3px;font-weight:900;color:#FFF0B0">宠物</div>
+
+  <div style="left:762.48px;top:292.54px;width:581.19px;height:1292.48px"><img class="img" src="assets/boy.png" alt=""></div>
+
+  <div class="txt stroke" style="left:325px;top:74px;width:479px;height:165px;font-size:101.3px;font-weight:900">储物袋</div>
+  <div class="txt stroke" style="left:1604.94px;top:377.64px;width:485.21px;height:106.38px;justify-content:flex-start;font-size:64px;font-weight:700">宠物背包</div>
+
+  <div style="left:1647.6px;top:537.2px;width:213.28px;height:260.62px"><img class="img" src="assets/pet-dragon.png" alt=""></div>
+  <div style="left:2026.17px;top:553.16px;width:202.62px;height:249.99px"><img class="img" src="assets/pet-egg.png" alt=""></div>
+  <div style="left:2372.75px;top:547.84px;width:213.28px;height:223.39px"><img class="img" src="assets/stone.png" alt=""></div>
+  <div style="left:1647.6px;top:973.35px;width:229.28px;height:239.35px"><img class="img" src="assets/potion.png" alt=""></div>
+  <div style="left:1999.51px;top:983.99px;width:234.61px;height:228.71px"><img class="img" src="assets/stardust.png" alt=""></div>
+  <div style="left:2356.76px;top:978.67px;width:250.61px;height:239.35px"><img class="img" src="assets/pet-clothes.png" alt=""></div>
+
+  <div class="txt stroke" style="left:1604.94px;top:797.83px;width:309.26px;height:85.1px;font-size:53.3px;font-weight:700">小龙</div>
+  <div class="txt stroke" style="left:1967.52px;top:797.83px;width:309.26px;height:85.1px;font-size:53.3px;font-weight:700">宠物蛋</div>
+  <div class="txt stroke" style="left:2324.77px;top:797.83px;width:309.26px;height:85.1px;font-size:53.3px;font-weight:700">灵石</div>
+  <div class="txt stroke" style="left:1604.94px;top:1228.65px;width:309.26px;height:85.1px;font-size:53.3px;font-weight:700">经验药水</div>
+  <div class="txt stroke" style="left:1967.52px;top:1228.65px;width:309.26px;height:85.1px;font-size:53.3px;font-weight:700">星尘碎片</div>
+  <div class="txt stroke" style="left:2324.77px;top:1228.65px;width:309.26px;height:85.1px;font-size:53.3px;font-weight:700">宠物服装</div>
+
+  <div class="txt stroke" style="left:1828.89px;top:728.68px;width:90.64px;height:69.14px;font-size:48px;font-weight:700">x1</div>
+  <div class="txt stroke" style="left:2548.71px;top:728.68px;width:90.64px;height:69.14px;font-size:48px;font-weight:700">x3</div>
+  <div class="txt stroke" style="left:1828.89px;top:1159.51px;width:90.64px;height:69.14px;font-size:48px;font-weight:700">x3</div>
+  <div class="txt stroke" style="left:2175.47px;top:1159.51px;width:90.64px;height:69.14px;font-size:48px;font-weight:700">x10</div>
+
+  <div style="left:1828.89px;top:1430.77px;width:655.84px;height:218.07px;border-radius:112px;
+       background:linear-gradient(180deg,#FFF568 0%,#FFBE00 100%);border:8px solid #FFF4A2;
+       box-shadow:0 16px 16px 0 rgba(108,61,0,.5)"></div>
+  <div class="txt" style="left:1882.21px;top:1457.36px;width:554.53px;height:154.25px;font-size:96px;font-weight:900;color:#713100">整理背包</div>
+      <a class="hot" data-go="home" style="left:100px;top:78px;width:194px;height:190px" href="javascript:void(0)"></a>
+      <a class="hot" data-act="bagtab" data-key="服装" style="left:111.97px;top:436.15px;width:506.54px;height:260.62px" href="javascript:void(0)"></a>
+      <a class="hot" data-act="bagtab" data-key="发型" style="left:111.97px;top:734px;width:506.54px;height:260.62px" href="javascript:void(0)"></a>
+      <a class="hot" data-act="bagtab" data-key="配饰" style="left:111.97px;top:1026.54px;width:506.54px;height:260.62px" href="javascript:void(0)"></a>
+      <a class="hot" data-act="bagtab" data-key="宠物" style="left:111.97px;top:1319.07px;width:506.54px;height:260.62px" href="javascript:void(0)"></a>
+      <a class="hot" data-act="sort" style="left:1828.89px;top:1430.77px;width:655.84px;height:218.07px" href="javascript:void(0)"></a>
+      <a class="hot" data-act="bagitem" data-idx="1" style="left:1599.61px;top:510.61px;width:320px;height:400px" href="javascript:void(0)"></a>
+      <a class="hot" data-act="bagitem" data-idx="2" style="left:1962.19px;top:510.61px;width:320px;height:400px" href="javascript:void(0)"></a>
+      <a class="hot" data-act="bagitem" data-idx="3" style="left:2322px;top:511px;width:320px;height:400px" href="javascript:void(0)"></a>
+      <a class="hot" data-act="bagitem" data-idx="4" style="left:1600px;top:949px;width:320px;height:400px" href="javascript:void(0)"></a>
+      <a class="hot" data-act="bagitem" data-idx="5" style="left:1962px;top:949px;width:320px;height:400px" href="javascript:void(0)"></a>
+      <a class="hot" data-act="bagitem" data-idx="6" style="left:2319px;top:950px;width:320px;height:400px" href="javascript:void(0)"></a>
+    </div>
+  </div>
+  <div class="stage" id="mall" hidden>
+    <div class="bg"><img src="assets/mall-bg.png" alt=""></div>
+    <div class="content">
+
+
+  <div class="" style="left:74.65px;top:0px;width:741.15px;height:255.94px;border-radius:106.64px;background:linear-gradient(180deg,#1739AA,#0B2788);opacity:.75"></div>
+  <div style="left:79.98px;top:58.65px;width:186.62px;height:191.95px;"><img class="img" src="assets/mall-icon-home.png" alt=""></div>
+  <div class="txt" style="left:309.26px;top:74.65px;width:490.55px;height:138.63px;font-size:101.3px;font-weight:900;color:#fff;justify-content:flex-start;">灵石商城</div>
+  <div class="" style="left:1615.61px;top:74.65px;width:522.54px;height:159.96px;border-radius:79.98px;background:linear-gradient(180deg,#093CA5,#05277B);border:3.2px solid rgba(71,116,214,.5)"></div>
+  <div style="left:1631.6px;top:79.98px;width:150px;height:140px;"><img class="img" src="assets/mall-icon-stone.png" alt=""></div>
+  <div class="txt" style="left:1791.56px;top:90.64px;width:197.29px;height:122.64px;font-size:79.98px;font-weight:700;color:#fff;justify-content:center;" id="mStones">1280</div>
+  <div class="" style="left:2010.18px;top:95.98px;width:101.31px;height:111.97px;border-radius:53.32px;background:linear-gradient(180deg,#3195FF,#0651DD)"></div>
+  <div class="txt" style="left:2010.18px;top:90.65px;width:101.31px;height:111.97px;font-size:106.64px;font-weight:700;color:#fff;justify-content:center;">+</div>
+  <div class="" style="left:2207.46px;top:74.65px;width:431.89px;height:159.96px;border-radius:79.98px;background:linear-gradient(180deg,#FFE275,#FF990A);border:4.27px solid #FFF0A8;box-shadow:0 0 26.66px 5.33px rgba(68,154,255,.75)"></div>
+  <div style="left:2228.79px;top:95.98px;width:149.3px;height:127.97px;"><img class="img" src="assets/mall-icon-cart.png" alt=""></div>
+  <div class="txt" style="left:2388.75px;top:90.65px;width:207.95px;height:122.64px;font-size:74.65px;font-weight:700;color:#fff;justify-content:center;">商城</div>
+  <div class="" style="left:90.64px;top:298.59px;width:405.23px;height:170.63px;border-radius:53.32px;background:linear-gradient(180deg,#FFFFFF,#9EEAFF);border:5.87px solid #D9FFFF;box-shadow:0 0 31.99px 5.33px rgba(70,235,255,.95)"></div>
+  <div class="txt" style="left:90.64px;top:314.59px;width:405.23px;height:133.3px;font-size:74.65px;font-weight:700;color:#112B65;justify-content:center;">全部</div>
+  <div class="" style="left:501.21px;top:298.59px;width:351.91px;height:170.63px;border-radius:53.32px;background:linear-gradient(180deg,#2859CE,#1744B0);border:2.67px solid rgba(99,134,220,.3)"></div>
+  <div class="txt" style="left:501.21px;top:314.59px;width:351.91px;height:133.3px;font-size:74.65px;font-weight:700;color:#fff;justify-content:center;">道具</div>
+  <div class="" style="left:853.13px;top:298.59px;width:351.91px;height:170.63px;border-radius:53.32px;background:linear-gradient(180deg,#2859CE,#1744B0);border:2.67px solid rgba(99,134,220,.3)"></div>
+  <div class="txt" style="left:853.13px;top:314.59px;width:351.91px;height:133.3px;font-size:74.65px;font-weight:700;color:#fff;justify-content:center;">装备</div>
+  <div class="" style="left:1205.04px;top:298.59px;width:351.91px;height:170.63px;border-radius:53.32px;background:linear-gradient(180deg,#2859CE,#1744B0);border:2.67px solid rgba(99,134,220,.3)"></div>
+  <div class="txt" style="left:1205.04px;top:314.59px;width:351.91px;height:133.3px;font-size:74.65px;font-weight:700;color:#fff;justify-content:center;">服装</div>
+  <div class="" style="left:1556.95px;top:298.59px;width:330.59px;height:170.63px;border-radius:53.32px;background:linear-gradient(180deg,#2859CE,#1744B0);border:2.67px solid rgba(99,134,220,.3)"></div>
+  <div class="txt" style="left:1556.95px;top:314.59px;width:330.59px;height:133.3px;font-size:74.65px;font-weight:700;color:#fff;justify-content:center;">宠物</div>
+  <div style="left:1946.19px;top:389.24px;width:719.82px;height:1077.07px;"><img class="img" src="assets/mall-boy.png" alt=""></div>
+  <div style="left:106.64px;top:543.87px;width:394.57px;height:522.54px" class="mall-card" data-cat="道具 宠物"><div style="left:0px;top:0px;width:394.57px;height:522.54px;border-radius:58.65px;overflow:hidden"><img class="img" src="assets/mall-card-base.png" alt=""></div><div style="left:47.99px;top:42.66px;width:309.26px;height:287.93px;"><img class="img" src="assets/mall-icon-stone.png" alt=""></div><div class="txt" style="left:0px;top:341.25px;width:394.57px;height:95.98px;font-size:69.3px;font-weight:700;color:#fff;justify-content:center;text-shadow:0 5.33px 5.33px rgba(8,28,114,.9);">灵石</div><div class="txt" style="left:0px;top:421.23px;width:394.57px;height:74.65px;font-size:58.65px;font-weight:700;color:#fff;justify-content:center;">x100</div></div>
+  <div style="left:549.2px;top:543.87px;width:394.57px;height:522.54px" class="mall-card" data-cat="道具 宠物"><div style="left:0px;top:0px;width:394.57px;height:522.54px;border-radius:58.65px;overflow:hidden"><img class="img" src="assets/mall-card-base.png" alt=""></div><div style="left:47.99px;top:37.32px;width:309.26px;height:293.26px;"><img class="img" src="assets/mall-icon-star.png" alt=""></div><div class="txt" style="left:0px;top:341.25px;width:394.57px;height:95.98px;font-size:69.3px;font-weight:700;color:#fff;justify-content:center;text-shadow:0 5.33px 5.33px rgba(8,28,114,.9);">星星卡</div><div class="txt" style="left:0px;top:421.23px;width:394.57px;height:74.65px;font-size:58.65px;font-weight:700;color:#fff;justify-content:center;">x5</div></div>
+  <div style="left:991.76px;top:543.87px;width:394.57px;height:522.54px" class="mall-card" data-cat="道具"><div style="left:0px;top:0px;width:394.57px;height:522.54px;border-radius:58.65px;overflow:hidden"><img class="img" src="assets/mall-card-base.png" alt=""></div><div style="left:53.32px;top:37.32px;width:298.59px;height:293.26px;"><img class="img" src="assets/mall-icon-potion.png" alt=""></div><div class="txt" style="left:0px;top:341.25px;width:394.57px;height:95.98px;font-size:69.3px;font-weight:700;color:#fff;justify-content:center;text-shadow:0 5.33px 5.33px rgba(8,28,114,.9);">经验药水</div><div class="txt" style="left:0px;top:421.23px;width:394.57px;height:74.65px;font-size:58.65px;font-weight:700;color:#fff;justify-content:center;">x3</div></div>
+  <div style="left:1428.98px;top:543.87px;width:394.57px;height:522.54px" class="mall-card" data-cat="道具"><div style="left:0px;top:0px;width:394.57px;height:522.54px;border-radius:58.65px;overflow:hidden"><img class="img" src="assets/mall-card-base.png" alt=""></div><div style="left:42.66px;top:37.32px;width:314.59px;height:293.26px;"><img class="img" src="assets/mall-icon-scroll.png" alt=""></div><div class="txt" style="left:0px;top:341.25px;width:394.57px;height:95.98px;font-size:69.3px;font-weight:700;color:#fff;justify-content:center;text-shadow:0 5.33px 5.33px rgba(8,28,114,.9);">加速卷轴</div><div class="txt" style="left:0px;top:421.23px;width:394.57px;height:74.65px;font-size:58.65px;font-weight:700;color:#fff;justify-content:center;">x1</div></div>
+  <div style="left:106.64px;top:1109.06px;width:394.57px;height:522.54px" class="mall-card" data-cat="服装"><div style="left:0px;top:0px;width:394.57px;height:522.54px;border-radius:58.65px;overflow:hidden"><img class="img" src="assets/mall-card-base.png" alt=""></div><div style="left:42.66px;top:37.32px;width:314.59px;height:282.6px;"><img class="img" src="assets/mall-icon-hat.png" alt=""></div><div class="txt" style="left:0px;top:341.25px;width:394.57px;height:95.98px;font-size:69.3px;font-weight:700;color:#fff;justify-content:center;text-shadow:0 5.33px 5.33px rgba(8,28,114,.9);">活动帽</div><div class="txt" style="left:0px;top:421.23px;width:394.57px;height:74.65px;font-size:58.65px;font-weight:700;color:#fff;justify-content:center;">x1</div></div>
+  <div style="left:549.2px;top:1109.06px;width:394.57px;height:522.54px" class="mall-card" data-cat="装备 服装"><div style="left:0px;top:0px;width:394.57px;height:522.54px;border-radius:58.65px;overflow:hidden"><img class="img" src="assets/mall-card-base.png" alt=""></div><div style="left:47.99px;top:31.99px;width:309.26px;height:287.93px;"><img class="img" src="assets/mall-icon-bag.png" alt=""></div><div class="txt" style="left:0px;top:341.25px;width:394.57px;height:95.98px;font-size:69.3px;font-weight:700;color:#fff;justify-content:center;text-shadow:0 5.33px 5.33px rgba(8,28,114,.9);">酷炫书包</div><div class="txt" style="left:0px;top:421.23px;width:394.57px;height:74.65px;font-size:58.65px;font-weight:700;color:#fff;justify-content:center;">x1</div></div>
+  <div style="left:991.76px;top:1109.06px;width:394.57px;height:522.54px" class="mall-card" data-cat="服装"><div style="left:0px;top:0px;width:394.57px;height:522.54px;border-radius:58.65px;overflow:hidden"><img class="img" src="assets/mall-card-base.png" alt=""></div><div style="left:42.66px;top:37.32px;width:314.59px;height:282.6px;"><img class="img" src="assets/mall-icon-wings.png" alt=""></div><div class="txt" style="left:0px;top:341.25px;width:394.57px;height:95.98px;font-size:69.3px;font-weight:700;color:#fff;justify-content:center;text-shadow:0 5.33px 5.33px rgba(8,28,114,.9);">天使翅膀</div><div class="txt" style="left:0px;top:421.23px;width:394.57px;height:74.65px;font-size:58.65px;font-weight:700;color:#fff;justify-content:center;">x1</div></div>
+  <div style="left:1428.98px;top:1109.06px;width:394.57px;height:522.54px" class="mall-card" data-cat="装备"><div style="left:0px;top:0px;width:394.57px;height:522.54px;border-radius:58.65px;overflow:hidden"><img class="img" src="assets/mall-card-base.png" alt=""></div><div style="left:42.66px;top:37.32px;width:319.92px;height:282.6px;"><img class="img" src="assets/mall-icon-wand.png" alt=""></div><div class="txt" style="left:0px;top:341.25px;width:394.57px;height:95.98px;font-size:69.3px;font-weight:700;color:#fff;justify-content:center;text-shadow:0 5.33px 5.33px rgba(8,28,114,.9);">魔法棒</div><div class="txt" style="left:0px;top:421.23px;width:394.57px;height:74.65px;font-size:58.65px;font-weight:700;color:#fff;justify-content:center;">x1</div></div>
+  <div class="" style="left:1935.53px;top:1466.31px;width:671.84px;height:218.61px;border-radius:106.64px;background:linear-gradient(180deg,#FFF36C,#FFAD05);border:6.4px solid #FFF7A1;box-shadow:0 10.66px 0 rgba(249,153,22,.95),0 0 31.99px 5.33px rgba(201,249,255,.9)"></div>
+  <div class="txt" style="left:1935.53px;top:1487.64px;width:671.84px;height:165.29px;font-size:111.97px;font-weight:900;color:#803500;justify-content:center;">立即兑换</div>
+      <a class="hot" data-go="home" style="left:78px;top:57px;width:189px;height:194px" href="javascript:void(0)"></a>
+      <a class="hot" data-act="panel" data-key="家长确认" style="left:2010.18px;top:95.98px;width:101.31px;height:111.97px" href="javascript:void(0)"></a>
+      <a class="hot" data-act="panel" data-key="今日特惠" style="left:2207.46px;top:74.65px;width:431.89px;height:159.96px" href="javascript:void(0)"></a>
+      <a class="hot" data-act="exchange" style="left:1935.53px;top:1466.31px;width:671.84px;height:218.61px" href="javascript:void(0)"></a>
+      <a class="hot" data-act="cat" data-key="全部" style="left:90.64px;top:298.59px;width:405.23px;height:170.63px" href="javascript:void(0)"></a>
+      <a class="hot" data-act="cat" data-key="道具" style="left:501.21px;top:298.59px;width:351.91px;height:170.63px" href="javascript:void(0)"></a>
+      <a class="hot" data-act="cat" data-key="装备" style="left:853.13px;top:298.59px;width:351.91px;height:170.63px" href="javascript:void(0)"></a>
+      <a class="hot" data-act="cat" data-key="服装" style="left:1205.04px;top:298.59px;width:351.91px;height:170.63px" href="javascript:void(0)"></a>
+      <a class="hot" data-act="cat" data-key="宠物" style="left:1556.95px;top:298.59px;width:330.59px;height:170.63px" href="javascript:void(0)"></a>
+      <a class="hot" data-act="mallitem" data-idx="0" style="left:106.64px;top:543.87px;width:394.57px;height:522.54px" href="javascript:void(0)"></a>
+      <a class="hot" data-act="mallitem" data-idx="1" style="left:549.2px;top:543.87px;width:394.57px;height:522.54px" href="javascript:void(0)"></a>
+      <a class="hot" data-act="mallitem" data-idx="2" style="left:991.76px;top:543.87px;width:394.57px;height:522.54px" href="javascript:void(0)"></a>
+      <a class="hot" data-act="mallitem" data-idx="3" style="left:1428.98px;top:543.87px;width:394.57px;height:522.54px" href="javascript:void(0)"></a>
+      <a class="hot" data-act="mallitem" data-idx="4" style="left:106.64px;top:1109.06px;width:394.57px;height:522.54px" href="javascript:void(0)"></a>
+      <a class="hot" data-act="mallitem" data-idx="5" style="left:549.2px;top:1109.06px;width:394.57px;height:522.54px" href="javascript:void(0)"></a>
+      <a class="hot" data-act="mallitem" data-idx="6" style="left:991.76px;top:1109.06px;width:394.57px;height:522.54px" href="javascript:void(0)"></a>
+      <a class="hot" data-act="mallitem" data-idx="7" style="left:1428.98px;top:1109.06px;width:394.57px;height:522.54px" href="javascript:void(0)"></a>
+    </div>
+  </div>
+  <div id="toast"></div>
+  <div id="mask" hidden>
+    <div id="panel"></div>
+    <div id="player" hidden></div>
+  </div>
+</div>
+<script>
+  var W0=2730,BAR=52,CW=2732,CH=2048;
+  var state={stones:1220,streak:7,hatch:68,checkedIn:false,system:'清华数学',
+             grade:'四年级',subject:'数学',lesson:3,selected:null,items:0};
+  var GOODS=['灵石 x100','星星卡 x5','经验药水 x3','加速卷轴 x1',
+             '活动帽 x1','酷炫书包 x1','天使翅膀 x1','魔法棒 x1'];
+  var PRICES=[80,120,150,200,260,300,380,420];
+  var BAGITEMS=['小龙','宠物蛋','灵石','经验药水','星尘碎片','宠物服装'];
+  var toastEl=document.getElementById('toast'),timer=null;
+
+  function toast(msg){toastEl.textContent=msg;toastEl.classList.add('show');
+    clearTimeout(timer);timer=setTimeout(function(){toastEl.classList.remove('show')},2100);}
+  function fmt(n){return n.toLocaleString('en-US')}
+  function refresh(){
+    var e;
+    e=document.getElementById('hStreak');if(e)e.textContent='连续打卡 '+state.streak+' 天';
+    e=document.getElementById('hHatch');if(e)e.textContent=state.hatch+'%';
+    e=document.getElementById('hHatchBar');if(e)e.style.width=(state.hatch/100*166.88)+'px';
+    e=document.getElementById('cStones');if(e)e.textContent='灵石 '+fmt(state.stones);
+    e=document.getElementById('mStones');if(e)e.textContent=fmt(state.stones);
+    e=document.getElementById('cGrade');if(e)e.textContent=state.grade;
+    e=document.getElementById('cTitle');if(e)e.textContent=state.subject+'课程';
+  }
+  function rows(arr){return arr.map(function(x){return '<div class="row">'+x+'</div>'}).join('')}
+  function bars(arr){return arr.map(function(p){
+    return '<p>'+p[0]+' · '+p[1]+'%</p><div class="bar"><i style="width:'+p[1]+'%"></i></div>'}).join('')}
+  function panelBody(key,extra){
+    switch(key){
+      case '今日航线': return '<h3>今日航线 · 3 个关卡</h3>'+rows([
+        '① 语文 · 学而思大语文 第3讲 · 20 分钟',
+        '② 数学 · 清华帅爸思维 第3讲 · 18 分钟',
+        '③ 英语 · 乐读英语 第2讲 · 15 分钟'])+
+        '<p>顺序锁只在体系内生效；完成全部 3 关得 150 灵石 + 周末进化副本入场券。</p><button data-close>知道啦</button>';
+      case '灵宠': case '宠物': return '<h3>我的灵宠</h3>'+
+        '<p>一只固定伙伴，四维属性随学科成长叠加外形部件，不换本体。</p>'+
+        bars([['文心 · 语文',62],['算力 · 数学',78],['共鸣 · 英语',54],['灵感 · 探索',41]])+
+        '<p>最弱属性「灵感」喂养 ×1.5；进化用木桶门槛，只做均衡激励不做偏科惩罚。</p><button data-close>关闭</button>';
+      case '我的': return '<h3>小星星的成长档案</h3>'+rows([
+        '等级 Level 5','连续打卡 '+state.streak+' 天','灵石 '+fmt(state.stones),
+        '心愿币 680 / 1000','破壳进度 '+state.hatch+'%','已兑换道具 '+state.items+' 件'])+
+        '<button data-close>关闭</button>';
+      case 'AI伙伴': return '<h3>AI 伙伴</h3>'+rows([
+        '「今天先学哪一科？」','「第3讲没听懂，再讲一遍」','「帮我复述鸡兔同笼的解法」'])+
+        '<p>伙伴是正向陪伴，不会因为没学习就生病或变灰。</p><button data-close>关闭</button>';
+      case '绘本馆': return '<h3>绘本馆</h3>'+rows([
+        '《DK 青少年科学大百科》· 已读 12 页','《西游记 · 少年版》· 读到第 5 回','《这就是数学》· 未开始'])+
+        '<button data-close>关闭</button>';
+      case '音乐馆': return '<h3>音乐馆</h3>'+rows([
+        '英语早读 · 磨耳 15 分钟','古诗歌曲 · 3 首','睡前轻音乐 · 20 分钟'])+
+        '<button data-close>关闭</button>';
+      case '动画馆': return '<h3>动画馆</h3>'+rows([
+        '人体免疫大战 · 第2集','宇宙有多大 · 第1集','分数是怎么来的 · 第4集'])+
+        '<p>科普属于「探索」，只给灵感和稀有掉落，不参与主战力。</p><button data-close>关闭</button>';
+      case '收藏夹': return '<h3>收藏夹</h3>'+rows([
+        '知识卡 · 分数通分','成就 · 连续打卡 7 天','卡牌 · 人体细胞城堡'])+
+        '<button data-close>关闭</button>';
+      case '更多': return '<h3>更多</h3>'+rows([
+        '家长设置','学习报告','护眼提醒','关于知识冒险岛'])+
+        '<button data-close>关闭</button>';
+      case '家长确认': return '<h3>家长确认</h3>'+
+        '<p>充值入口由家长掌控，孩子端只能看到余额，不能直接加钱。</p>'+
+        rows(['完成今日全部关卡 · +150 灵石','连续打卡 7 天 · +50 灵石','周末副本奖励 · +200 灵石'])+
+        '<button data-close>明白了</button>';
+      case '今日特惠': return '<h3>今日成长特惠</h3>'+rows([
+        '专注沙漏 · 6 折 · 180 灵石','智慧之书 · 7 折 · 210 灵石','星尘碎片 x10 · 8 折 · 160 灵石'])+
+        '<p>学完今天的课再来兑换更划算。</p><button data-close>关闭</button>';
+      case '道具': var n=parseInt(extra||'1'); return '<h3>'+(BAGITEMS[n-1]||'道具')+'</h3>'+
+        rows(['类型 · 宠物/材料','数量 · x'+(n<3?1:(n<6?3:10)),'来源 · 完课掉落 / 商城兑换'])+
+        '<p>喂养灵宠会消耗道具并提升对应属性。</p><button data-close>收起</button>';
+      case '商品': var i=parseInt(extra||'0'); return '<h3>'+GOODS[i]+'</h3>'+
+        rows(['价格 · '+PRICES[i]+' 灵石','当前余额 · '+fmt(state.stones)+' 灵石','兑换后自动放入储物袋'])+
+        '<button data-act="exchange">立即兑换</button> <button data-close>再看看</button>';
+      case '背包分类': return '<h3>背包 · '+extra+'</h3>'+
+        rows(['小龙 x1 · 已装备','宠物蛋 x1 · 孵化中','灵石 x3 · 喂养材料',
+              '经验药水 x3 · 喂养材料','星尘碎片 x10 · 稀有掉落','宠物服装 x1 · 外观'])+
+        '<button data-close>收起</button>';
+      case '整理结果': return '<h3>背包已整理</h3>'+rows([
+        '按稀有度排序完成','空位 2 格','可堆叠道具已合并','灵石 x3 → 1 格'])+
+        '<button data-close>好</button>';
+      default: return '<h3>'+key+'</h3><p>内容准备中。</p><button data-close>关闭</button>';
+    }
+  }
+  function closePanel(){document.getElementById('mask').hidden=true;
+    document.getElementById('player').hidden=true;}
+  function openPanel(key,extra){
+    var pl=document.getElementById('player');pl.hidden=true;
+    var pn=document.getElementById('panel');pn.hidden=false;
+    pn.innerHTML='<div class="close" data-close>×</div>'+panelBody(key,extra);
+    document.getElementById('mask').hidden=false;
+  }
+  function openPlayer(){
+    var pn=document.getElementById('panel');pn.hidden=true;
+    var pl=document.getElementById('player');pl.hidden=false;
+    pl.innerHTML='<div class="close" data-close>×</div><h3>第'+state.lesson+'讲 · 数的奇妙世界</h3>'+
+      '<div class="screen">▶ 名师视频播放中</div><div class="track"><i></i></div>'+
+      '<p>播放进度达 95% 并完成随堂小测才解锁下一讲；完课自动喂养对应属性。</p>'+
+      '<button data-close>关闭播放器</button>';
+    document.getElementById('mask').hidden=false;
+  }
+  function fit(){
+    var s=Math.min(window.innerWidth/CW,(window.innerHeight-BAR)/CH);
+    document.querySelectorAll('.stage').forEach(function(e){
+      e.style.transform='translate(-50%,-50%) scale('+s+')';});
+  }
+  function applySize(){
+    var v=document.getElementById('dev').value.split(',');
+    CW=+v[0];CH=+v[1];var cs=CW/W0;
+    document.querySelectorAll('.stage').forEach(function(e){
+      e.style.width=CW+'px';e.style.height=CH+'px';
+      var c=e.querySelector('.content');if(c)c.style.transform='scale('+cs+')';});
+    document.getElementById('dim').textContent=CW+' × '+CH+' @2x · 四页统一 · 内容等比 '+cs.toFixed(3)+'×';
+    fit();
+  }
+  function show(p){
+    document.querySelectorAll('.stage').forEach(function(e){e.hidden=(e.id!==p)});
+    document.querySelectorAll('.bar button').forEach(function(b){b.classList.toggle('on',b.dataset.p===p)});
+    closePanel();
+  }
+  document.querySelectorAll('.bar button').forEach(function(b){
+    b.addEventListener('click',function(){show(b.dataset.p)});});
+  document.addEventListener('click',function(ev){
+    if(ev.target.id==='mask'||ev.target.hasAttribute('data-close')){closePanel();return;}
+    var el=ev.target.closest('[data-go],[data-act]');if(!el)return;
+    ev.preventDefault();
+    if(el.dataset.go){
+      if(el.dataset.subject){state.subject=el.dataset.subject;refresh();}
+      show(el.dataset.go);return;
+    }
+    var a=el.dataset.act,k=el.dataset.key||'';
+    switch(a){
+      case 'toast': toast(el.dataset.msg||'');break;
+      case 'panel': openPanel(k);break;
+      case 'checkin':
+        if(state.checkedIn){toast('今天已经打过卡了，明天再来');break;}
+        state.checkedIn=true;state.streak++;state.stones+=50;
+        state.hatch=Math.min(100,state.hatch+4);refresh();
+        toast('打卡成功 · 连续 '+state.streak+' 天 · +50 灵石');break;
+      case 'feed':
+        if(state.stones<100){toast('灵石不够，先去上课或打卡');break;}
+        state.stones-=100;state.hatch=Math.min(100,state.hatch+8);refresh();
+        toast(state.hatch>=100?'破壳啦！灵宠孵化成功':'喂养成功 · 破壳进度 +8%');break;
+      case 'player': openPlayer();break;
+      case 'lesson':
+        document.querySelectorAll('[data-act="lesson"]').forEach(function(x){x.classList.remove('sel')});
+        el.classList.add('sel');
+        state.lesson=parseInt((el.dataset.num||'3').replace(/[^0-9]/g,''))||3;
+        toast(el.dataset.num+' '+el.dataset.title+' · '+el.dataset.status);break;
+      case 'tab':
+        document.querySelectorAll('[data-act="tab"]').forEach(function(x){x.classList.remove('sel')});
+        el.classList.add('sel');state.system=k;
+        document.querySelectorAll('.tab-btn').forEach(function(x,i){
+          x.classList.toggle('dim',(k==='清华数学'?i===1:i===0))});
+        toast('已切换到 · '+k);break;
+      case 'bagtab':
+        document.querySelectorAll('[data-act="bagtab"]').forEach(function(x){x.classList.remove('sel')});
+        el.classList.add('sel');openPanel('背包分类',k);break;
+      case 'sort': openPanel('整理结果');toast('背包已整理好');break;
+      case 'bagitem': openPanel('道具',el.dataset.idx);break;
+      case 'mallitem':
+        state.selected=parseInt(el.dataset.idx||'0');
+        document.querySelectorAll('[data-act="mallitem"]').forEach(function(x){x.classList.remove('sel')});
+        el.classList.add('sel');openPanel('商品',el.dataset.idx);break;
+      case 'cat':
+        document.querySelectorAll('[data-act="cat"]').forEach(function(x){x.classList.remove('sel')});
+        el.classList.add('sel');
+        document.querySelectorAll('.mall-card').forEach(function(card){
+          var ok=(k==='全部')||(card.dataset.cat||'').indexOf(k)>=0;
+          card.classList.toggle('hide',!ok);});
+        toast('商城分类 · '+k);break;
+      case 'exchange':
+        if(state.selected===null){toast('先点一张商品卡选中它');break;}
+        var price=PRICES[state.selected];
+        if(state.stones<price){toast('灵石不够啦，还差 '+(price-state.stones));break;}
+        state.stones-=price;state.items++;refresh();closePanel();
+        toast('兑换成功 · '+GOODS[state.selected]+' · 消耗 '+price+' 灵石');break;
+      case 'grade':
+        var gs=['三年级','四年级','五年级','六年级'];
+        state.grade=gs[(gs.indexOf(state.grade)+1)%gs.length];refresh();
+        toast('年级 · '+state.grade);break;
+    }
+  });
+  document.getElementById('dev').addEventListener('change',applySize);
+  window.addEventListener('resize',fit);
+  applySize();refresh();
+</script>
+</body>
+</html>
