@@ -350,39 +350,38 @@
     }
   ];
 
+  /* 有声按「专辑 → 单集」组织，与线上内容一致 */
   var AUDIOS = [
     {
-      id: 'audio_01',
-      title: '大闹天宫：齐天大圣勇闯南天门',
-      speaker: '小拓 AI 播音员',
-      category: '名著故事',
-      cover: 'assets/hall/audio_wukong.jpg',
-      seconds: 240,
-      playCount: 42,
-      done: true,
-      url: 'https://commondatastorage.googleapis.com/codeskulptor-demos/DDR_assets/Sevish_-__nbsp_.mp3'
-    },
-    {
-      id: 'audio_02',
-      title: '宇宙探秘：黑洞到底有多神奇？',
-      speaker: '科学探索号',
-      category: '宇宙科学',
-      cover: 'assets/hall/audio_stars.jpg',
-      seconds: 180,
-      playCount: 29,
-      done: false,
-      url: 'https://commondatastorage.googleapis.com/codeskulptor-demos/DDR_assets/Kangaroo_MusiQue_-_The_Neverending_Story.mp3'
-    },
-    {
-      id: 'audio_03',
-      title: '早读古诗：春晓 & 望庐山瀑布',
-      speaker: '国学雅韵',
+      id: 'album_demo',
+      name: '经典故事 · 精选',
+      subject: '语文',
       category: '国学经典',
-      cover: 'assets/hall/audio_poem.jpg',
-      seconds: 210,
-      playCount: 35,
-      done: false,
-      url: 'https://commondatastorage.googleapis.com/codeskulptor-demos/DDR_assets/Sevish_-__nbsp_.mp3'
+      cover: 'assets/hall/audio_wukong.jpg',
+      speaker: '小拓 AI 播音员',
+      episodes: [
+        {
+          id: 'audio_01',
+          title: '大闹天宫：齐天大圣勇闯南天门',
+          speaker: '小拓 AI 播音员',
+          seconds: 240,
+          url: 'https://commondatastorage.googleapis.com/codeskulptor-demos/DDR_assets/Sevish_-__nbsp_.mp3'
+        },
+        {
+          id: 'audio_02',
+          title: '宇宙探秘：黑洞到底有多神奇？',
+          speaker: '科学探索号',
+          seconds: 180,
+          url: 'https://commondatastorage.googleapis.com/codeskulptor-demos/DDR_assets/Kangaroo_MusiQue_-_The_Neverending_Story.mp3'
+        },
+        {
+          id: 'audio_03',
+          title: '早读古诗：春晓 & 望庐山瀑布',
+          speaker: '国学雅韵',
+          seconds: 210,
+          url: 'https://commondatastorage.googleapis.com/codeskulptor-demos/DDR_assets/Sevish_-__nbsp_.mp3'
+        }
+      ]
     }
   ];
 
@@ -1104,24 +1103,36 @@
           readCount: parseInt(b.readCount, 10) || 0,
           done: !!b.done,
           summary: b.summary || '',
-          content: b.content || ''
+          content: b.content || '',
+          pdf: b.pdf || '',
+          album: b.album || ''
         });
       });
     }
 
+    /* 有声：专辑 → 单集 */
     var audios = cat.audios || [];
     if (audios.length) {
       AUDIOS.length = 0;
       audios.forEach(function (a) {
         if (!a || !a.id) return;
+        var eps = (a.episodes || []).map(function (e, i) {
+          return {
+            id: e.id || (a.id + '_' + i),
+            title: e.title || '',
+            speaker: e.speaker || a.speaker || '',
+            seconds: parseInt(e.seconds, 10) || (parseInt(e.minutes, 10) || 0) * 60,
+            url: e.url || ''
+          };
+        });
         AUDIOS.push({
-          id: a.id, title: a.title || '', speaker: a.speaker || '',
+          id: a.id,
+          name: a.name || a.title || '未命名专辑',
+          subject: a.subject || '',
           category: a.category || '故事',
           cover: a.cover || 'assets/hall/audio_wukong.jpg',
-          seconds: parseInt(a.seconds, 10) || 0,
-          playCount: parseInt(a.playCount, 10) || 0,
-          done: !!a.done,
-          url: a.url || ''
+          speaker: a.speaker || '',
+          episodes: eps
         });
       });
     }
@@ -1138,7 +1149,7 @@
           episodes: (v.episodes || []).map(function (e) {
             return {
               n: e.n, title: e.title || '', sub: e.sub || '',
-              seconds: parseInt(e.seconds, 10) || 0,
+              seconds: parseInt(e.seconds, 10) || (parseInt(e.minutes, 10) || 0) * 60,
               video: e.video || ''
             };
           })

@@ -824,23 +824,18 @@
     return shot;
   }
 
-  /* 一个「地址 + 上传 + 链接」控件，音频和视频共用 */
-  function mediaField(label, cur, kind, accept, onChange) {
-    var wrap = el('div', 'field full');
-    wrap.appendChild(el('label', null, label));
-
+  /* 「地址 + 上传 + 链接」的一行，音频 / 视频 / PDF 共用 */
+  function mediaRow(cur, kind, accept, onChange) {
     var row = el('div');
-    row.style.cssText = 'display:flex;gap:10px;align-items:center';
+    row.style.cssText = 'display:flex;gap:8px;align-items:center;min-width:0';
 
-    var name = el('div', 'vfile' + (cur ? '' : ' empty'),
-      cur ? shortName(cur) : '未设置');
+    var name = el('div', 'vfile' + (cur ? '' : ' empty'), cur ? shortName(cur) : '未设置');
     name.style.cssText = 'flex:1;margin:0;min-width:0';
     name.title = cur || '';
     row.appendChild(name);
 
     var up = el('div', 'vbtn', '上传');
-    up.style.flex = '0 0 auto';
-    up.style.width = '78px';
+    up.style.cssText = 'flex:0 0 auto;width:68px';
     up.addEventListener('click', function () {
       pickUpload(kind, accept, up, function (url) {
         onChange(url);
@@ -849,9 +844,8 @@
     });
     row.appendChild(up);
 
-    var link = el('div', 'vbtn dark', '填链接');
-    link.style.flex = '0 0 auto';
-    link.style.width = '86px';
+    var link = el('div', 'vbtn dark', '链接');
+    link.style.cssText = 'flex:0 0 auto;width:60px';
     link.addEventListener('click', function () {
       var v = prompt('填地址（可以是 uploads/ 下的文件，也可以是外链）', cur || '');
       if (v === null) return;
@@ -860,7 +854,13 @@
     });
     row.appendChild(link);
 
-    wrap.appendChild(row);
+    return row;
+  }
+
+  function mediaField(label, cur, kind, accept, onChange) {
+    var wrap = el('div', 'field full');
+    wrap.appendChild(el('label', null, label));
+    wrap.appendChild(mediaRow(cur, kind, accept, onChange));
     return wrap;
   }
 
@@ -870,7 +870,16 @@
     var head = el('div', 'ph');
     head.appendChild(el('h2', null, '内容馆'));
     head.appendChild(el('div', 'sub', '首页三个入口的内容都在这里维护'));
+
+    var bulk = el('div', 'mini solid', '⇪ 批量上传');
+    bulk.addEventListener('click', function () {
+      bulkMode = !bulkMode;
+      renderHall();
+    });
+    head.appendChild(bulk);
     pane.appendChild(head);
+
+    if (bulkMode) { renderBulk(); return; }
 
     var subs = el('div', 'subtabs');
     [['audios', '有声故事馆', '音乐馆'],
@@ -887,45 +896,333 @@
     else hallVideos();
   }
 
+  /* ---------------- 批量上传（参考旧后台 admin.html） ----------------
+   * 选类型 → 选多个文件（可选整个文件夹）→ 填目标专辑/系列 → 一次传完
+   */
+  var bulkMode = false;
+  var bulkType = 'audios';
+  var bulkTarget = '';
+  var bulkFiles = [];
+  var bulkName = '';
+
+  var BULK_TYPE = {
+    audios: { label: '有声音频', accept: 'audio/*,.mp3,.m4a,.wav,.aac', tip: '支持 mp3 / m4a / wav' },
+    books: { label: '绘本电子书', accept: '.pdf,.epub,image/*', tip: '支持 PDF / EPUB' },
+    videos: { label: '动画视频', accept: 'video/*,.mp4,.mov,.m4v', tip: '支持 mp4 / mov' }
+  };
+
+  function renderBulk() {
+    var wrap = el('div');
+
+    var back = el('div', 'mini', '‹ 返回列表');
+    back.style.marginBottom = '14px';
+    back.addEventListener('click', function () { bulkMode = false; bulkFiles = []; renderHall(); });
+    wrap.appendChild(back);
+
+    wrap.appendChild(el('div', 'hint',
+      '一次可以选很多个文件（也可以直接选整个文件夹）。教材按文件名自动排序，' +
+      '选「追加到已有」就会接在现有内容后面。'));
+
+    /* 类型 */
+    var tline = el('div', 'subtabs');
+    Object.keys(BULK_TYPE).forEach(function (k) {
+      var b = el('div', 'subtab' + (bulkType === k ? ' on' : ''), BULK_TYPE[k].label);
+      b.addEventListener('click', function () {
+        bulkType = k;
+        bulkFiles = [];
+        renderBulk();
+      });
+      tline.appendChild(b);
+    });
+    wrap.appendChild(tline);
+
+    /* 目标 */
+    var tgtBox = el('div', 'sect');
+    tgtBox.appendChild(el('h3', null, '放到哪里'));
+
+    var tgtLine = el('div', 'line');
+    tgtLine.style.flexWrap = 'wrap';
+
+    var nameIn = el('input', 'inp');
+    nameIn.placeholder = bulkType === 'audios' ? '新专辑名称，例如：凯叔三国' :
+      bulkType === 'books' ? '书系名称，例如：名著导读' : '新系列名称，例如：西游记';
+    nameIn.value = bulkName;
+    nameIn.style.maxWidth = '380px';
+    nameIn.addEventListener('input', function () { bulkName = nameIn.value; });
+    tgtLine.appendChild(nameIn);
+
+    var targets = currentTargets();
+    if (targets.length) {
+      var pick = el('select', 'sel');
+      pick.style.maxWidth = '300px';
+      var op0 = el('option', null, '＋ 新建');
+      op0.value = '';
+      pick.appendChild(op0);
+      targets.forEach(function (t) {
+        var op = el('option', null, '追加到：' + t.label);
+        op.value = t.id;
+        if (t.id === bulkTarget) op.selected = true;
+        pick.appendChild(op);
+      });
+      pick.addEventListener('change', function () { bulkTarget = pick.value; });
+      tgtLine.appendChild(pick);
+    }
+    tgtBox.appendChild(tgtLine);
+    wrap.appendChild(tgtBox);
+
+    /* 选文件 */
+    var fileBox = el('div', 'sect');
+    fileBox.appendChild(el('h3', null, '选择文件'));
+    fileBox.appendChild(el('p', null, BULK_TYPE[bulkType].tip + '，可多选，也可整个文件夹拖进来'));
+
+    var fl = el('div', 'line');
+
+    var pickFiles = el('div', 'mini solid', '选择多个文件');
+    pickFiles.addEventListener('click', function () {
+      pickFileMulti(BULK_TYPE[bulkType].accept, false).then(function (list) {
+        if (list && list.length) { bulkFiles = bulkFiles.concat(list); renderBulk(); }
+      });
+    });
+    fl.appendChild(pickFiles);
+
+    var pickFolder = el('div', 'mini', '选择整个文件夹');
+    pickFolder.addEventListener('click', function () {
+      pickFileMulti(BULK_TYPE[bulkType].accept, true).then(function (list) {
+        if (list && list.length) {
+          bulkFiles = bulkFiles.concat(list);
+          if (!bulkName && list[0].webkitRelativePath) {
+            bulkName = list[0].webkitRelativePath.split('/')[0];
+          }
+          renderBulk();
+        }
+      });
+    });
+    fl.appendChild(pickFolder);
+
+    if (bulkFiles.length) {
+      var clr = el('div', 'mini danger', '清空（' + bulkFiles.length + '）');
+      clr.addEventListener('click', function () { bulkFiles = []; renderBulk(); });
+      fl.appendChild(clr);
+    }
+    fileBox.appendChild(fl);
+
+    if (bulkFiles.length) {
+      var list = el('div');
+      list.style.marginTop = '12px';
+      bulkFiles.slice(0, 12).forEach(function (f, i) {
+        var row = el('div', 'eprow');
+        row.style.gridTemplateColumns = '36px 1fr 90px';
+        row.appendChild(el('div', 'idx', String(i + 1)));
+        var nm = el('div');
+        nm.style.cssText = 'font-size:14px;font-weight:700;color:#11284F;overflow:hidden;text-overflow:ellipsis;white-space:nowrap';
+        nm.textContent = f.name;
+        row.appendChild(nm);
+        row.appendChild(el('div', 'idx', (f.size / 1024 / 1024).toFixed(1) + 'MB'));
+        list.appendChild(row);
+      });
+      if (bulkFiles.length > 12) {
+        list.appendChild(el('div', 'sub', '…… 还有 ' + (bulkFiles.length - 12) + ' 个文件'));
+      }
+      fileBox.appendChild(list);
+    }
+    wrap.appendChild(fileBox);
+
+    /* 开始上传 */
+    var goBox = el('div', 'sect');
+    var goLine = el('div', 'line');
+
+    var prog = el('div', 'prog');
+    var bar = el('i');
+    prog.appendChild(bar);
+
+    var startBtn = el('div', 'mini solid', '开始上传（' + bulkFiles.length + ' 个）');
+    startBtn.addEventListener('click', function () {
+      if (!bulkFiles.length) { toast('先选文件'); return; }
+      startBtn.textContent = '上传中…';
+      startBtn.style.opacity = '.6';
+      prog.classList.add('on');
+      doBulkUpload(function (ratio) { bar.style.width = Math.round(ratio * 100) + '%'; })
+        .then(function () {
+          toast('上传完成，已加入内容馆');
+          bulkFiles = [];
+          bulkName = '';
+          bulkTarget = '';
+          bulkMode = false;
+          markDirty();
+          renderHall();
+        })
+        .catch(function (e) {
+          toast('上传中断：' + e.message);
+          startBtn.textContent = '重试上传';
+          startBtn.style.opacity = '1';
+        });
+    });
+    goLine.appendChild(startBtn);
+    goBox.appendChild(goLine);
+    goBox.appendChild(prog);
+    wrap.appendChild(goBox);
+
+    pane.appendChild(wrap);
+  }
+
+  /* 当前类型下可追加的目标 */
+  function currentTargets() {
+    if (bulkType === 'audios') {
+      return (CATALOG.audios || []).map(function (a) {
+        return { id: a.id, label: a.name || a.id };
+      });
+    }
+    if (bulkType === 'videos') {
+      return (CATALOG.videos || []).map(function (v) {
+        return { id: v.id, label: v.name || v.id };
+      });
+    }
+    return [];
+  }
+
+  function pickFileMulti(accept, folder) {
+    return new Promise(function (resolve) {
+      var f = el('input');
+      f.type = 'file';
+      f.accept = accept;
+      f.multiple = true;
+      if (folder) { f.webkitdirectory = true; f.directory = true; }
+      f.style.display = 'none';
+      document.body.appendChild(f);
+      f.addEventListener('change', function () {
+        var list = [].slice.call(f.files || []);
+        document.body.removeChild(f);
+        resolve(list);
+      });
+      f.click();
+    });
+  }
+
+  function naturalSort(files) {
+    return files.slice().sort(function (a, b) {
+      return a.name.localeCompare(b.name, 'zh-CN', { numeric: true });
+    });
+  }
+
+  async function doBulkUpload(onProgress) {
+    var files = naturalSort(bulkFiles);
+    var total = files.length;
+    var done = 0;
+    var name = bulkName || (bulkType === 'audios' ? '我的专辑' : bulkType === 'books' ? '我的书系' : '我的系列');
+
+    /* 目标容器 */
+    var album = null, series = null;
+    if (bulkType === 'audios') {
+      if (bulkTarget) {
+        album = (CATALOG.audios || []).filter(function (a) { return a.id === bulkTarget; })[0];
+      }
+      if (!album) {
+        album = { id: 'album_' + Date.now(), name: name, subject: '语文', category: '国学经典',
+          cover: '', speaker: '', episodes: [] };
+        CATALOG.audios.push(album);
+      }
+    } else if (bulkType === 'videos') {
+      if (bulkTarget) {
+        series = (CATALOG.videos || []).filter(function (v) { return v.id === bulkTarget; })[0];
+      }
+      if (!series) {
+        series = { id: 'series_' + Date.now(), name: name, subject: '探索', cover: '', desc: '', episodes: [] };
+        CATALOG.videos.push(series);
+      }
+    }
+
+    for (var i = 0; i < files.length; i++) {
+      var file = files[i];
+      var j = await uploadFile(file, bulkType === 'audios' ? 'audio' : bulkType === 'videos' ? 'video' : 'book',
+        function (p) { onProgress((done + p) / total); });
+      done++;
+
+      if (bulkType === 'audios') {
+        album.episodes.push({
+          id: 'ep_' + Date.now() + '_' + i,
+          title: stripExt(file.name),
+          speaker: '',
+          seconds: 180,
+          url: j.url
+        });
+        if (!album.cover && i === 0) album.cover = 'assets/hall/audio_wukong.jpg';
+      } else if (bulkType === 'books') {
+        CATALOG.books.push({
+          id: 'book_' + Date.now() + '_' + i,
+          title: stripExt(file.name),
+          author: '', category: '课外阅读',
+          cover: 'assets/hall/book_insects.jpg',
+          minutes: 8, readCount: 0, done: false,
+          summary: '', content: '',
+          pdf: /\.(pdf|epub)$/i.test(file.name) ? j.url : ''
+        });
+      } else {
+        series.episodes.push({
+          n: series.episodes.length + 1,
+          title: stripExt(file.name),
+          sub: '', seconds: 300,
+          video: j.url
+        });
+        if (!series.cover && i === 0) series.cover = 'assets/hall/series_math.jpg';
+      }
+      onProgress(done / total);
+    }
+  }
+
+  function stripExt(n) {
+    return String(n || '').replace(/\.[^.]+$/, '');
+  }
+
+  var openAlbum = {};
+  var openSeries = {};
+
+  function totalAudio() {
+    var n = 0;
+    (CATALOG.audios || []).forEach(function (a) { n += (a.episodes || []).length; });
+    return n;
+  }
+
   function hallAudios() {
     var bar = el('div', 'ph');
-    bar.appendChild(el('div', 'sub', '对应首页「音乐馆」'));
-    var add = el('div', 'mini solid', '＋ 新增音频');
+    bar.appendChild(el('div', 'sub', '对应首页「音乐馆」，共 ' + totalAudio() + ' 首'));
+    var add = el('div', 'mini solid', '＋ 新增专辑');
     add.addEventListener('click', function () {
       CATALOG.audios.push({
-        id: 'audio_' + Date.now(), title: '新故事', speaker: '', category: '名著故事',
-        cover: '', seconds: 180, playCount: 0, done: false, url: ''
+        id: 'album_' + Date.now(), name: '新专辑', subject: '语文',
+        category: '国学经典', cover: '', speaker: '', episodes: []
       });
       markDirty();
       hallSub = 'audios';
       renderHall();
-      toast('已新增，记得填音频');
+      toast('已新增专辑，可以继续加单集');
     });
     bar.appendChild(add);
     pane.appendChild(bar);
 
     pane.appendChild(el('div', 'hint',
-      '音频可以上传本地 mp3 / m4a，也可以直接填外链地址。孩子端「有声故事馆」会显示这里的顺序。'));
+      '一张专辑对应孩子端的一排故事。点「展开单集」可改标题、替换音频；' +
+      '一次要传很多音频，用右上角「批量上传」更快。'));
 
     if (!CATALOG.audios.length) {
-      pane.appendChild(el('div', 'hint', '还没有音频，点右上角新增。'));
+      pane.appendChild(el('div', 'hint', '还没有专辑，点右上角新增，或用「批量上传」。'));
       return;
     }
 
-    CATALOG.audios.forEach(function (a, idx) {
+    CATALOG.audios.forEach(function (a, ai) {
+      if (!Array.isArray(a.episodes)) a.episodes = [];
       var card = el('div', 'icard');
       card.appendChild(coverShot(a.cover, function (url) { a.cover = url; }));
 
       var f = el('div', 'ifields');
 
       var f1 = el('div', 'field');
-      f1.appendChild(el('label', null, '标题'));
-      f1.appendChild(inp(a.title, '故事标题', function (v) { a.title = v; }));
+      f1.appendChild(el('label', null, '专辑名称'));
+      f1.appendChild(inp(a.name, '专辑名称', function (v) { a.name = v; }));
       f.appendChild(f1);
 
       var f2 = el('div', 'field');
       f2.appendChild(el('label', null, '播讲人'));
-      f2.appendChild(inp(a.speaker, '例如：小拓 AI 播音员', function (v) { a.speaker = v; }));
+      f2.appendChild(inp(a.speaker, '例如：小拓 AI 主播', function (v) { a.speaker = v; }));
       f.appendChild(f2);
 
       var f3 = el('div', 'field');
@@ -934,24 +1231,66 @@
       f.appendChild(f3);
 
       var f4 = el('div', 'field');
-      f4.appendChild(el('label', null, '时长（秒）'));
-      f4.appendChild(numInp(a.seconds, function (v) { a.seconds = num(v, 0); }));
+      f4.appendChild(el('label', null, '集数'));
+      var cnt = el('div', 'ro');
+      cnt.style.textAlign = 'left';
+      cnt.style.paddingLeft = '11px';
+      cnt.textContent = a.episodes.length + ' 首';
+      f4.appendChild(cnt);
       f.appendChild(f4);
 
-      f.appendChild(mediaField('音频文件', a.url, 'audio', 'audio/*', function (url) { a.url = url; }));
-
       var tools = el('div', 'full');
-      tools.style.cssText = 'display:flex;gap:10px;align-items:center';
-      var rm = el('div', 'mini danger', '删除');
+      tools.style.cssText = 'display:flex;gap:10px;align-items:center;flex-wrap:wrap';
+
+      var tg = el('div', 'mini', openAlbum[a.id] ? '收起单集' : '展开单集 (' + a.episodes.length + ')');
+      tg.addEventListener('click', function () {
+        openAlbum[a.id] = !openAlbum[a.id];
+        renderHall();
+      });
+      tools.appendChild(tg);
+
+      var addEp = el('div', 'mini', '＋ 加一集');
+      addEp.addEventListener('click', function () {
+        a.episodes.push({
+          id: 'ep_' + Date.now(), title: '新的一集',
+          speaker: a.speaker || '', seconds: 180, url: ''
+        });
+        openAlbum[a.id] = true;
+        markDirty();
+        renderHall();
+      });
+      tools.appendChild(addEp);
+
+      var rm = el('div', 'mini danger', '删除专辑');
       rm.addEventListener('click', function () {
-        if (!confirm('删除音频「' + a.title + '」？')) return;
-        CATALOG.audios.splice(idx, 1);
+        if (!confirm('删除专辑「' + a.name + '」及其中 ' + a.episodes.length + ' 首？')) return;
+        CATALOG.audios.splice(ai, 1);
         markDirty();
         renderHall();
       });
       tools.appendChild(rm);
       tools.appendChild(el('div', 'sub', 'ID：' + a.id));
       f.appendChild(tools);
+
+      if (openAlbum[a.id]) {
+        var box = el('div', 'full');
+        box.style.marginTop = '4px';
+        a.episodes.forEach(function (ep, ei) {
+          var row = el('div', 'eprow');
+          row.appendChild(el('div', 'idx', String(ei + 1)));
+          row.appendChild(inp(ep.title, '单集标题', function (v) { ep.title = v; }));
+          row.appendChild(numInp(ep.seconds, function (v) { ep.seconds = num(v, 0); }));
+          row.appendChild(mediaRow(ep.url, 'audio', 'audio/*', function (url) { ep.url = url; }));
+          row.appendChild(delBtn(function () {
+            a.episodes.splice(ei, 1);
+            markDirty();
+            renderHall();
+          }));
+          box.appendChild(row);
+        });
+        if (!a.episodes.length) box.appendChild(el('div', 'sub', '还没有单集，点「＋ 加一集」'));
+        f.appendChild(box);
+      }
 
       card.appendChild(f);
       pane.appendChild(card);
@@ -1014,9 +1353,14 @@
       f5.appendChild(inp(b.summary, '展示在阅读弹层顶部', function (v) { b.summary = v; }));
       f.appendChild(f5);
 
+      var fpdf = el('div', 'field full');
+      fpdf.appendChild(el('label', null, 'PDF / EPUB 电子书（孩子端详情里点「看 PDF」打开）'));
+      fpdf.appendChild(mediaRow(b.pdf, 'book', '.pdf,.epub,image/*', function (url) { b.pdf = url; }));
+      f.appendChild(fpdf);
+
       var f6 = el('div', 'field full');
-      f6.appendChild(el('label', null, '正文'));
-      f6.appendChild(ta(b.content, '孩子读到的正文内容…', function (v) { b.content = v; }, 6));
+      f6.appendChild(el('label', null, '正文（没有 PDF 时孩子读这段）'));
+      f6.appendChild(ta(b.content, '孩子读到的正文内容…', function (v) { b.content = v; }, 5));
       f.appendChild(f6);
 
       var tools = el('div', 'full');
@@ -1083,37 +1427,49 @@
       f3.appendChild(inp(v.desc, '一行介绍', function (x) { v.desc = x; }));
       f.appendChild(f3);
 
-      /* 讲次列表 */
+      /* 讲次列表（集数多，默认折叠） */
       var eps = el('div', 'field full');
-      eps.appendChild(el('label', null, '讲次（' + (v.episodes || []).length + '）'));
-
-      (v.episodes || []).forEach(function (ep, ei) {
-        var row = el('div', 'eprow');
-        row.appendChild(el('div', 'idx', String(ep.n)));
-
-        row.appendChild(inp(ep.title, '讲次标题', function (x) { ep.title = x; }));
-
-        var dur = numInp(ep.seconds, function (x) { ep.seconds = num(x, 0); });
-        dur.title = '时长（秒）';
-        row.appendChild(dur);
-
-        var mf = mediaField('', ep.video, 'video', 'video/*', function (url) {
-          ep.video = url;
-          renderHall();
-        });
-        mf.className = '';
-        mf.querySelector('label').remove();
-        row.appendChild(mf.firstChild);
-
-        row.appendChild(delBtn(function () {
-          if (!confirm('删除这一讲？')) return;
-          v.episodes.splice(ei, 1);
-          markDirty();
-          renderHall();
-        }));
-
-        eps.appendChild(row);
+      var head = el('div');
+      head.style.cssText = 'display:flex;gap:10px;align-items:center;margin-bottom:8px';
+      head.appendChild(el('label', null, '讲次（' + (v.episodes || []).length + '）'));
+      var tog = el('div', 'mini', openSeries[v.id] ? '收起讲次' : '展开讲次');
+      tog.addEventListener('click', function () {
+        openSeries[v.id] = !openSeries[v.id];
+        renderHall();
       });
+      head.appendChild(tog);
+      eps.appendChild(head);
+
+      if (openSeries[v.id]) {
+        (v.episodes || []).forEach(function (ep, ei) {
+          var row = el('div', 'eprow');
+          row.appendChild(el('div', 'idx', String(ep.n)));
+
+          row.appendChild(inp(ep.title, '讲次标题', function (x) { ep.title = x; }));
+
+          var sec = ep.seconds != null ? ep.seconds : (ep.minutes || 0) * 60;
+          var dur = numInp(sec, function (x) {
+            ep.seconds = num(x, 0);
+            if ('minutes' in ep) delete ep.minutes;
+          });
+          dur.title = '时长（秒）';
+          row.appendChild(dur);
+
+          row.appendChild(mediaRow(ep.video, 'video', 'video/*', function (url) {
+            ep.video = url;
+            renderHall();
+          }));
+
+          row.appendChild(delBtn(function () {
+            if (!confirm('删除这一讲？')) return;
+            v.episodes.splice(ei, 1);
+            markDirty();
+            renderHall();
+          }));
+
+          eps.appendChild(row);
+        });
+      }
 
       var addEp = el('div', 'mini', '＋ 添加讲次');
       addEp.addEventListener('click', function () {

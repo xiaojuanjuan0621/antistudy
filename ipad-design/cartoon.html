@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>动画馆 · 知识冒险岛</title>
 <link rel="stylesheet" href="hall.css">
+<style>
+  .foot-txt{font-size:15px;font-weight:800;color:#2A5FD6}
+</style>
 </head>
 <body>
 <div class="view">
@@ -49,7 +52,7 @@
     <div class="toast" id="toast"></div>
   </div>
 </div>
-<script src="store.js?v=3"></script>
+<script src="store.js?v=4"></script>
 <script>
 (function () {
   var stage = document.getElementById('stage');
@@ -61,10 +64,15 @@
   addEventListener('orientationchange', fit);
   fit();
 
-  var box = document.getElementById('content');
-  var VIDEOS = Store.VIDEOS || [];
+  var content = document.getElementById('content');
+  var SERIES = Store.VIDEOS || [];
   var mv = document.getElementById('mv');
   var modal = document.getElementById('modal');
+  var vloading = document.getElementById('vloading');
+
+  var LOCAL_VIDEO = 'assets/hall/lesson.mp4';
+  var useLocal = false;
+  var loadTimer = null;
 
   function esc(s) {
     return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) {
@@ -83,54 +91,101 @@
     return 'purple';
   }
 
-  function render() {
-    box.innerHTML = '';
-    var epTotal = 0;
-    VIDEOS.forEach(function (v) { epTotal += (v.episodes || []).length; });
-    document.getElementById('cntSeries').textContent = VIDEOS.length;
-    document.getElementById('cntEps').textContent = epTotal;
+  /* ---------------- 系列列表 ---------------- */
+  function renderSeries() {
+    content.innerHTML = '';
+    var total = 0;
+    SERIES.forEach(function (v) { total += (v.episodes || []).length; });
+    document.getElementById('cntSeries').textContent = SERIES.length;
+    document.getElementById('cntEps').textContent = total;
 
-    if (!VIDEOS.length) {
-      box.innerHTML = '<div class="empty">还没有动画 · 家长可以在家长中心「内容馆」上传</div>';
+    if (!SERIES.length) {
+      var d = document.createElement('div');
+      d.className = 'empty';
+      d.textContent = '还没有动画 · 家长可以在家长中心「内容馆」上传';
+      content.appendChild(d);
       return;
     }
 
-    VIDEOS.forEach(function (v) {
-      var s = document.createElement('div');
-      s.className = 'series';
+    var grid = document.createElement('div');
+    grid.className = 'grid3';
+    content.appendChild(grid);
 
-      var head =
-        '<img class="scov" src="' + v.cover + '" alt="">' +
-        '<div class="sbody">' +
-          '<div class="sname">' + esc(v.name) + '</div>' +
-          '<div class="sdesc">' + esc(v.desc) + '</div>' +
-          '<div class="tags" style="margin-top:10px">' +
-            '<span class="tag ' + toneOf(v.subject) + '">' + esc(v.subject) + '</span>' +
-            '<span class="tag gray">' + (v.episodes || []).length + ' 集</span>' +
+    SERIES.forEach(function (v) {
+      var n = (v.episodes || []).length;
+      var card = document.createElement('div');
+      card.className = 'card';
+      card.innerHTML =
+        '<div class="covwrap">' +
+          '<img class="cov" src="' + v.cover + '" alt="">' +
+          '<div class="badge">' + n + ' 集</div>' +
+        '</div>' +
+        '<div class="body">' +
+          '<div class="ttl">' + esc(v.name) + '</div>' +
+          '<div class="sub">' + esc(v.desc || '') + '</div>' +
+          '<div class="tags"><span class="tag ' + toneOf(v.subject) + '">' +
+            esc(v.subject || '探索') + '</span></div>' +
+          '<div class="foot">' +
+            '<div class="playbtn"></div>' +
+            '<span class="foot-txt">查看剧集</span>' +
           '</div>' +
-          '<div class="eps"></div>' +
         '</div>';
 
-      s.innerHTML = head;
-      var eps = s.querySelector('.eps');
-
-      (v.episodes || []).forEach(function (ep) {
-        var e = document.createElement('div');
-        e.className = 'ep';
-        e.innerHTML =
-          '<div class="no">' + ep.n + '</div>' +
-          '<div class="et"><b>' + esc(ep.title) + '</b><span>' + esc(ep.sub) + '</span></div>' +
-          '<div class="dur">' + mmss(ep.seconds) + '</div>';
-        e.addEventListener('click', function () { open(v, ep); });
-        eps.appendChild(e);
-      });
-
-      box.appendChild(s);
+      card.addEventListener('click', function () { renderEps(v); });
+      grid.appendChild(card);
     });
   }
 
-  var vloading = document.getElementById('vloading');
+  /* ---------------- 剧集列表 ---------------- */
+  function renderEps(v) {
+    content.innerHTML = '';
 
+    var crumb = document.createElement('div');
+    crumb.className = 'crumb';
+    var back = document.createElement('div');
+    back.className = 'back';
+    back.textContent = '‹ 返回系列';
+    back.addEventListener('click', renderSeries);
+    crumb.appendChild(back);
+    var ct = document.createElement('div');
+    ct.className = 'ct';
+    ct.textContent = v.name;
+    crumb.appendChild(ct);
+    var cc = document.createElement('div');
+    cc.className = 'cc';
+    cc.textContent = (v.episodes || []).length + ' 集';
+    crumb.appendChild(cc);
+    content.appendChild(crumb);
+
+    var eps = v.episodes || [];
+    if (!eps.length) {
+      var d = document.createElement('div');
+      d.className = 'empty';
+      d.textContent = '这个系列还没有剧集';
+      content.appendChild(d);
+      return;
+    }
+
+    var list = document.createElement('div');
+    list.className = 'tlist';
+
+    eps.forEach(function (ep, i) {
+      var row = document.createElement('div');
+      row.className = 'trow';
+      row.innerHTML =
+        '<div class="tn">' + (ep.n || i + 1) + '</div>' +
+        '<div class="tt2"><b>' + esc(ep.title) + '</b>' +
+          '<span>' + esc(ep.sub || v.name) + '</span></div>' +
+        '<div class="td">' + mmss(ep.seconds) + '</div>' +
+        '<div class="go"></div>';
+      row.addEventListener('click', function () { open(v, ep); });
+      list.appendChild(row);
+    });
+
+    content.appendChild(list);
+  }
+
+  /* ---------------- 播放弹层 ---------------- */
   function setLoading(txt) {
     vloading.classList.remove('hide');
     vloading.querySelector('span').textContent = txt || '正在加载视频…';
@@ -138,11 +193,6 @@
     if (spin) spin.style.display = txt ? 'none' : 'block';
   }
   function hideLoading() { vloading.classList.add('hide'); }
-
-  /* 原始视频是外链，网络不通时自动退到本地示范视频，避免一直转圈 */
-  var LOCAL_VIDEO = 'assets/hall/lesson.mp4';
-  var useLocal = false;
-  var loadTimer = null;
 
   mv.addEventListener('loadedmetadata', function () {
     if (mv.readyState >= 1) { hideLoading(); clearTimeout(loadTimer); }
@@ -158,7 +208,7 @@
 
   function fallbackLocal() {
     if (useLocal) {
-      setLoading('这个视频打不开，可以让家长在家长中心换一个地址');
+      setLoading('这个视频打不开，可以让家长在家长中心换一个');
       return;
     }
     useLocal = true;
@@ -170,19 +220,29 @@
 
   function open(v, ep) {
     document.getElementById('mTitle').textContent = ep.title;
-    document.getElementById('mSub').textContent = v.name + ' · ' + v.subject + ' · ' + mmss(ep.seconds);
+    document.getElementById('mSub').textContent =
+      v.name + ' · ' + (v.subject || '') + ' · ' + mmss(ep.seconds);
     mv.poster = v.cover || '';
     setLoading();
-    /* 一旦确认过外链不可达，后面直接用本地，不再每集转圈 6 秒 */
-    mv.src = useLocal ? LOCAL_VIDEO : ep.video;
+
+    if (ep.video) {
+      mv.src = ep.video;
+    } else {
+      /* 线上系列只有目录没有视频文件，直接用本地示范片，避免空等 */
+      useLocal = true;
+      mv.src = LOCAL_VIDEO;
+    }
+
     modal.classList.add('on');
     var p = mv.play();
     if (p && p.catch) p.catch(function () {});
 
     clearTimeout(loadTimer);
-    loadTimer = setTimeout(function () {
-      if (mv.readyState < 1 || !isFinite(mv.duration) || mv.duration === 0) fallbackLocal();
-    }, 6000);
+    if (ep.video) {
+      loadTimer = setTimeout(function () {
+        if (mv.readyState < 1 || !isFinite(mv.duration) || mv.duration === 0) fallbackLocal();
+      }, 6000);
+    }
   }
 
   function close() {
@@ -204,7 +264,7 @@
     el.addEventListener('click', function () { location.href = el.dataset.go; });
   });
 
-  render();
+  renderSeries();
 })();
 </script>
 </body>

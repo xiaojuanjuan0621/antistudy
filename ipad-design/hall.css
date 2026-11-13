@@ -181,3 +181,75 @@ img{display:block}
 .toast.show{opacity:1}
 
 .empty{padding:80px 0;text-align:center;font-size:20px;font-weight:700;color:#93A8C2}
+
+/* ---------- 电子书（PDF）全屏阅读 ---------- */
+.pdfmodal{position:absolute;left:0;top:0;width:1366px;height:1024px;background:#0B1626;
+  z-index:60;display:none;flex-direction:column}
+.pdfmodal.on{display:flex}
+.pdfbar{height:88px;flex:0 0 auto;display:flex;align-items:center;gap:14px;padding:0 26px;
+  background:linear-gradient(180deg,#1739AA,#0B2788)}
+.pdfbar b{flex:1;min-width:0;font-size:21px;font-weight:900;color:#fff;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pdfbtn{height:52px;padding:0 24px;border-radius:26px;background:rgba(255,255,255,.16);
+  color:#fff;font-size:17px;font-weight:800;display:flex;align-items:center;gap:8px;
+  cursor:pointer;text-decoration:none;white-space:nowrap;transition:transform .12s}
+.pdfbtn:active{transform:scale(.95)}
+.pdfbtn.light{background:#fff;color:#11284F}
+.pdfbody{flex:1;background:#22304A;position:relative}
+.pdfbody iframe{width:100%;height:100%;border:0;background:#525659}
+.pdfmask{position:absolute;left:0;top:0;width:100%;height:100%;background:#22304A;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;
+  color:#8FA6C4;font-size:17px;font-weight:700;transition:opacity .35s}
+.pdfmask.hide{opacity:0;pointer-events:none}
+.pdfhint{position:absolute;left:0;bottom:12px;width:100%;text-align:center;color:#8FA6C4;
+  font-size:13px;font-weight:600}
+
+/* ---------- 专辑横向卡片（两列，一屏放得下） ---------- */
+.alist{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
+.alcard{display:flex;gap:16px;padding:14px;border-radius:26px;background:#fff;
+  border:2px solid #fff;box-shadow:0 8px 22px rgba(80,110,180,.13);cursor:pointer;
+  transition:transform .14s}
+.alcard:active{transform:scale(.985)}
+.alcard .acov{width:168px;height:124px;border-radius:18px;object-fit:cover;flex:0 0 auto;
+  background:#E8F1FC}
+.alcard .abody{flex:1;min-width:0;display:flex;flex-direction:column;gap:7px;padding:2px}
+.alcard .aname{font-size:20px;font-weight:800;color:#11284F;line-height:1.32;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.alcard .asub{font-size:13.5px;font-weight:600;color:#8095B0;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.alcard .afoot{margin-top:auto;display:flex;align-items:center;gap:10px}
+
+/* ---------- 专辑 / 剧集列表（二级页） ---------- */
+.crumb{display:flex;align-items:center;gap:14px;margin-bottom:18px}
+.back{height:52px;padding:0 22px;border-radius:26px;background:#fff;border:2px solid #DCE8F7;
+  color:#2A5FD6;font-size:17px;font-weight:800;display:flex;align-items:center;gap:8px;
+  cursor:pointer;box-shadow:0 4px 12px rgba(80,110,180,.1);transition:transform .12s}
+.back:active{transform:scale(.96)}
+.crumb .ct{font-size:24px;font-weight:900;color:#11284F;min-width:0;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.crumb .cc{font-size:14px;font-weight:700;color:#8095B0;flex:0 0 auto}
+
+.tlist{display:flex;flex-direction:column;gap:10px}
+.trow{display:flex;align-items:center;gap:16px;padding:12px 18px;border-radius:18px;
+  background:#fff;border:2px solid #fff;box-shadow:0 4px 14px rgba(80,110,180,.1);
+  cursor:pointer;transition:transform .12s,background .14s}
+.trow:active{transform:scale(.995)}
+.trow.playing{background:#EAF3FF;border-color:#BBD6FF}
+.trow .tn{width:40px;height:40px;flex:0 0 auto;border-radius:14px;background:#EAF3FF;
+  color:#2A5FD6;font-family:Inter,sans-serif;font-size:16px;font-weight:900;
+  display:flex;align-items:center;justify-content:center}
+.trow.playing .tn{background:#2A5FD6;color:#fff}
+.trow .tt2{flex:1;min-width:0}
+.trow .tt2 b{display:block;font-size:17px;font-weight:800;color:#11284F;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.trow .tt2 span{display:block;font-size:13px;font-weight:600;color:#93A8C2;margin-top:4px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.trow .td{font-family:Inter,sans-serif;font-size:14px;font-weight:800;color:#8095B0;flex:0 0 auto}
+.trow .go{width:44px;height:44px;flex:0 0 auto;border-radius:22px;
+  background:linear-gradient(180deg,#5B9BFF,#2A5FD6);
+  box-shadow:0 4px 12px rgba(42,95,214,.35);
+  display:flex;align-items:center;justify-content:center}
+.trow .go::after{content:"";width:0;height:0;border-style:solid;
+  border-width:8px 0 8px 13px;border-color:transparent transparent transparent #fff;margin-left:3px}
+.trow.playing .go::after{border:none;width:11px;height:13px;margin-left:0;
+  border-left:4px solid #fff;border-right:4px solid #fff}

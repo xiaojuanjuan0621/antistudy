@@ -19,15 +19,13 @@
     <img class="home-btn" id="homeBtn" src="assets/bag2-ico-home.png" alt="">
     <div class="title">有声故事馆</div>
 
-    <div class="stat" style="left:962px"><b id="cntAudio">0</b><span>个故事</span></div>
-    <div class="stat" style="left:1156px"><b id="cntMins">0</b><span>分钟</span></div>
+    <div class="stat" style="left:962px"><b id="cntAlbum">0</b><span>张专辑</span></div>
+    <div class="stat" style="left:1156px"><b id="cntEps">0</b><span>个故事</span></div>
 
-    <div class="content" style="height:590px">
-      <div class="grid3" id="grid"></div>
-    </div>
+    <div class="content" style="height:590px" id="content"></div>
 
     <div class="player" id="player">
-      <img class="pcov" id="pCover" src="" alt="">
+      <img class="pcov" id="pCover" src="assets/hall/audio_wukong.jpg" alt="">
       <div class="pinfo">
         <b id="pTitle">选一段故事开始收听</b>
         <span id="pSpeaker">—</span>
@@ -54,7 +52,7 @@
     <div class="toast" id="toast"></div>
   </div>
 </div>
-<script src="store.js?v=3"></script>
+<script src="store.js?v=4"></script>
 <script>
 (function () {
   var stage = document.getElementById('stage');
@@ -66,11 +64,20 @@
   addEventListener('orientationchange', fit);
   fit();
 
-  var grid = document.getElementById('grid');
-  var AUDIOS = Store.AUDIOS || [];
-  var cur = -1;
+  var content = document.getElementById('content');
+  var ALBUMS = Store.AUDIOS || [];
+
+  var view = 'albums';     // albums | eps
+  var curAlbum = null;
+  var queue = [];          // 当前播放队列（某张专辑的单集）
+  var cur = -1;            // 队列里的下标
+
   var audio = new Audio();
   audio.preload = 'metadata';
+
+  var LOCAL_AUDIO = '';
+  var useLocal = false;
+  var loadTimer = null;
 
   function esc(s) {
     return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) {
@@ -83,104 +90,175 @@
     return (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
   }
   function toneOf(cat) {
-    if (/国学|古诗/.test(cat)) return 'orange';
+    if (/国学|古诗|名著/.test(cat)) return 'orange';
     if (/宇宙|科学/.test(cat)) return 'purple';
-    if (/名著|故事/.test(cat)) return 'green';
+    if (/历史/.test(cat)) return 'green';
     return 'gray';
   }
+  function totalEps() {
+    var n = 0;
+    ALBUMS.forEach(function (a) { n += (a.episodes || []).length; });
+    return n;
+  }
 
-  function render() {
-    grid.innerHTML = '';
-    document.getElementById('cntAudio').textContent = AUDIOS.length;
-    var mins = 0;
-    AUDIOS.forEach(function (a) { mins += Math.round((a.seconds || 0) / 60); });
-    document.getElementById('cntMins').textContent = mins;
+  /* ---------------- 专辑列表 ---------------- */
+  function renderAlbums() {
+    view = 'albums';
+    curAlbum = null;
+    content.innerHTML = '';
+    document.getElementById('cntAlbum').textContent = ALBUMS.length;
+    document.getElementById('cntEps').textContent = totalEps();
 
-    if (!AUDIOS.length) {
-      grid.style.display = 'block';
-      grid.innerHTML = '<div class="empty">还没有音频 · 家长可以在家长中心「内容馆」上传</div>';
+    if (!ALBUMS.length) {
+      content.innerHTML = '<div class="empty">还没有音频 · 家长可以在家长中心「内容馆」上传</div>';
       return;
     }
-    grid.style.display = 'grid';
 
-    AUDIOS.forEach(function (a, i) {
-      var playing = (i === cur && !audio.paused);
+    var grid = document.createElement('div');
+    grid.className = 'alist';
+    content.appendChild(grid);
+
+    ALBUMS.forEach(function (a) {
+      var n = (a.episodes || []).length;
       var card = document.createElement('div');
-      card.className = 'card';
+      card.className = 'alcard';
       card.innerHTML =
-        '<div class="covwrap">' +
-          '<img class="cov" src="' + a.cover + '" alt="">' +
-          '<div class="badge">' + mmss(a.seconds) + '</div>' +
-        '</div>' +
-        '<div class="body">' +
-          '<div class="ttl">' + esc(a.title) + '</div>' +
-          '<div class="sub">' + esc(a.speaker) + ' · ' + (a.playCount || 0) + ' 次收听</div>' +
-          '<div class="tags">' +
-            '<span class="tag ' + toneOf(a.category) + '">' + esc(a.category) + '</span>' +
-          '</div>' +
-          '<div class="foot">' +
-            '<div class="playbtn' + (playing ? ' playing' : '') + '"></div>' +
-            '<span class="foot-txt">' + (playing ? '正在播放' : '播放') + '</span>' +
+        '<img class="acov" src="' + a.cover + '" alt="">' +
+        '<div class="abody">' +
+          '<div class="aname">' + esc(a.name) + '</div>' +
+          '<div class="asub">' + esc(a.speaker || '') +
+            (a.speaker ? ' · ' : '') + n + ' 个故事</div>' +
+          '<div class="tags"><span class="tag ' + toneOf(a.category) + '">' +
+            esc(a.category || '故事') + '</span></div>' +
+          '<div class="afoot">' +
+            '<div class="playbtn"></div>' +
+            '<span class="foot-txt">查看列表</span>' +
           '</div>' +
         '</div>';
-      card.addEventListener('click', function () {
-        if (i === cur) { toggle(); } else { play(i); }
+
+      card.addEventListener('click', function () { renderEps(a); });
+      card.querySelector('.playbtn').addEventListener('click', function (e) {
+        e.stopPropagation();
+        queue = a.episodes || [];
+        curAlbum = a;
+        if (queue.length) play(0);
       });
+
       grid.appendChild(card);
     });
   }
 
-  /* 原始音频是外链，网络不通时自动退到本地示范音频，避免点了没声音 */
-  var LOCAL_AUDIO = 'assets/hall/story.m4a';
-  var useLocal = false;
-  var loadTimer = null;
+  /* ---------------- 单集列表 ---------------- */
+  function renderEps(album) {
+    view = 'eps';
+    curAlbum = album;
+    queue = album.episodes || [];
+    content.innerHTML = '';
 
+    var crumb = document.createElement('div');
+    crumb.className = 'crumb';
+    var back = document.createElement('div');
+    back.className = 'back';
+    back.textContent = '‹ 返回专辑';
+    back.addEventListener('click', renderAlbums);
+    crumb.appendChild(back);
+    var ct = document.createElement('div');
+    ct.className = 'ct';
+    ct.textContent = album.name;
+    crumb.appendChild(ct);
+    var cc = document.createElement('div');
+    cc.className = 'cc';
+    cc.textContent = queue.length + ' 首';
+    crumb.appendChild(cc);
+    content.appendChild(crumb);
+
+    if (!queue.length) {
+      content.appendChild(elEmpty('这张专辑还没有音频'));
+      return;
+    }
+
+    var list = document.createElement('div');
+    list.className = 'tlist';
+
+    queue.forEach(function (ep, i) {
+      var row = document.createElement('div');
+      row.className = 'trow' + (i === cur && !audio.paused ? ' playing' : '');
+      row.innerHTML =
+        '<div class="tn">' + (i + 1) + '</div>' +
+        '<div class="tt2"><b>' + esc(ep.title) + '</b>' +
+          '<span>' + esc(ep.speaker || album.speaker || album.name) + '</span></div>' +
+        '<div class="td">' + mmss(ep.seconds) + '</div>' +
+        '<div class="go"></div>';
+      row.addEventListener('click', function () {
+        if (i === cur) toggle();
+        else play(i);
+      });
+      list.appendChild(row);
+    });
+
+    content.appendChild(list);
+    updateRows();
+  }
+
+  function elEmpty(txt) {
+    var d = document.createElement('div');
+    d.className = 'empty';
+    d.textContent = txt;
+    return d;
+  }
+
+  function updateRows() {
+    content.querySelectorAll('.trow').forEach(function (r, i) {
+      if (i === cur && !audio.paused) r.classList.add('playing');
+      else r.classList.remove('playing');
+    });
+  }
+
+  /* ---------------- 播放 ---------------- */
   function fallbackLocal() {
-    if (useLocal) return;
+    if (useLocal || !LOCAL_AUDIO) return;
     useLocal = true;
     clearTimeout(loadTimer);
-    Store.toast('外链音频打不开，已切换本地示范音频');
+    Store.toast('这段音频打不开，让家长检查一下文件');
     audio.src = LOCAL_AUDIO;
     var p = audio.play();
     if (p && p.catch) p.catch(function () {});
   }
 
   function play(i) {
-    if (i < 0 || i >= AUDIOS.length) return;
+    if (i < 0 || i >= queue.length) return;
     cur = i;
-    var a = AUDIOS[i];
-    audio.src = useLocal ? LOCAL_AUDIO : a.url;
-    document.getElementById('pCover').src = a.cover;
-    document.getElementById('pTitle').textContent = a.title;
-    document.getElementById('pSpeaker').textContent = a.speaker + ' · ' + a.category;
+    var ep = queue[i];
 
-    var p = audio.play();
-    if (p && p.catch) {
-      p.catch(function () {
-        render();
-        syncBtn();
-      });
+    document.getElementById('pCover').src = (curAlbum && curAlbum.cover) || 'assets/hall/audio_wukong.jpg';
+    document.getElementById('pTitle').textContent = ep.title;
+    document.getElementById('pSpeaker').textContent =
+      (ep.speaker || (curAlbum && curAlbum.speaker) || '') +
+      (curAlbum ? ' · ' + curAlbum.name : '');
+
+    if (!ep.url) {
+      Store.toast('这一集还没有音频文件');
+      return;
     }
-    render();
+    audio.src = ep.url;
+    var p = audio.play();
+    if (p && p.catch) p.catch(function () {});
     syncProgress();
+    updateRows();
 
     clearTimeout(loadTimer);
     if (!useLocal) {
       loadTimer = setTimeout(function () {
         if (!isFinite(audio.duration) || audio.duration === 0) fallbackLocal();
-      }, 6000);
+      }, 8000);
     }
   }
 
-  audio.addEventListener('error', function () {
-    if (cur >= 0 && !useLocal) fallbackLocal();
-  });
-
   function toggle() {
-    if (cur < 0) { if (AUDIOS.length) play(0); return; }
+    if (cur < 0) { if (queue.length) play(0); return; }
     if (audio.paused) {
       var p = audio.play();
-      if (p && p.catch) p.catch(function () { Store.toast('播放失败'); });
+      if (p && p.catch) p.catch(function () {});
     } else {
       audio.pause();
     }
@@ -190,35 +268,42 @@
     var btn = document.getElementById('pPlay');
     if (audio.paused) btn.classList.remove('playing');
     else btn.classList.add('playing');
-    render();
+    updateRows();
   }
 
   function syncProgress() {
     var d = isFinite(audio.duration) && audio.duration > 0 ? audio.duration : 0;
+    var fallback = queue[cur] ? queue[cur].seconds : 0;
     var ratio = d ? audio.currentTime / d : 0;
     document.getElementById('pFill').style.width = (ratio * 100) + '%';
     document.getElementById('pDot').style.left = 'calc(' + (ratio * 100) + '% - 9px)';
     document.getElementById('pTime').textContent =
-      mmss(audio.currentTime) + ' / ' + mmss(d || (AUDIOS[cur] ? AUDIOS[cur].seconds : 0));
+      mmss(audio.currentTime) + ' / ' + mmss(d || fallback);
   }
 
   audio.addEventListener('timeupdate', syncProgress);
-  audio.addEventListener('loadedmetadata', syncProgress);
+  audio.addEventListener('loadedmetadata', function () {
+    clearTimeout(loadTimer);
+    syncProgress();
+  });
   audio.addEventListener('play', syncBtn);
   audio.addEventListener('pause', syncBtn);
   audio.addEventListener('ended', function () {
-    if (AUDIOS.length > 1) play((cur + 1) % AUDIOS.length);
+    if (queue.length > 1) play((cur + 1) % queue.length);
     else syncBtn();
+  });
+  audio.addEventListener('error', function () {
+    if (cur >= 0 && !useLocal) fallbackLocal();
   });
 
   document.getElementById('pPlay').addEventListener('click', toggle);
   document.getElementById('pPrev').addEventListener('click', function () {
-    if (!AUDIOS.length) return;
-    play((cur - 1 + AUDIOS.length) % AUDIOS.length);
+    if (!queue.length) return;
+    play((cur - 1 + queue.length) % queue.length);
   });
   document.getElementById('pNext').addEventListener('click', function () {
-    if (!AUDIOS.length) return;
-    play((cur + 1) % AUDIOS.length);
+    if (!queue.length) return;
+    play((cur + 1) % queue.length);
   });
 
   document.getElementById('pTrack').addEventListener('click', function (e) {
@@ -237,8 +322,7 @@
     el.addEventListener('click', function () { location.href = el.dataset.go; });
   });
 
-  render();
-  syncProgress();
+  renderAlbums();
 })();
 </script>
 </body>

@@ -43,10 +43,26 @@
         <div class="modal-head">
           <img id="mCover" src="" style="width:64px;height:64px;border-radius:16px;object-fit:cover;flex:0 0 auto" alt="">
           <div class="mh"><b id="mTitle"></b><span id="mSub"></span></div>
+          <div class="close" id="mPdf"
+               style="width:auto;padding:0 22px;font-size:16px;color:#fff;border:0;
+                      background:linear-gradient(180deg,#5B9BFF,#2F7EF0);white-space:nowrap">看 PDF</div>
           <div class="close" id="mClose">×</div>
         </div>
         <div class="modal-body" id="mBody"></div>
       </div>
+    </div>
+
+    <div class="pdfmodal" id="pdfmodal">
+      <div class="pdfbar">
+        <b id="pdfTitle"></b>
+        <a class="pdfbtn" id="pdfOpen" target="_blank" rel="noopener">新窗口打开</a>
+        <div class="pdfbtn light" id="pdfClose">关闭</div>
+      </div>
+      <div class="pdfbody">
+        <iframe id="pdfFrame" src="about:blank" title="电子书"></iframe>
+        <div class="pdfmask" id="pdfMask"><div class="vspin"></div><span>正在加载电子书…</span></div>
+      </div>
+      <div class="pdfhint">全彩扫描版文件较大，首次打开稍等几秒；iPad 上若只显示一页，点右上角「新窗口打开」</div>
     </div>
 
     <div class="toast" id="toast"></div>
@@ -107,7 +123,7 @@
           '</div>' +
           '<div class="foot">' +
             '<div class="playbtn"></div>' +
-            '<span class="foot-txt">' + (b.done ? '再读一遍' : '开始阅读') + '</span>' +
+            '<span class="foot-txt">查看详情</span>' +
           '</div>' +
         '</div>';
       card.addEventListener('click', function () { open(b, i); });
@@ -122,8 +138,36 @@
   }
 
   var modal = document.getElementById('modal');
+  var pdfmodal = document.getElementById('pdfmodal');
+  var pdfFrame = document.getElementById('pdfFrame');
+  var curBook = null;
+
+  var pdfTimer = null;
+  var pdfMask = document.getElementById('pdfMask');
+
+  function openPdf() {
+    if (!curBook || !curBook.pdf) { Store.toast('这本还没有 PDF 电子书，让家长上传一个'); return; }
+    document.getElementById('pdfTitle').textContent = curBook.title;
+    document.getElementById('pdfOpen').href = curBook.pdf;
+    pdfFrame.src = curBook.pdf;
+    pdfmodal.classList.add('on');
+    /* 全彩扫描版动辄几十 MB，给个加载提示，别让人以为卡住了 */
+    pdfMask.classList.remove('hide');
+    clearTimeout(pdfTimer);
+    pdfTimer = setTimeout(function () { pdfMask.classList.add('hide'); }, 7000);
+  }
+  function closePdf() {
+    pdfmodal.classList.remove('on');
+    clearTimeout(pdfTimer);
+    pdfFrame.src = 'about:blank';
+    pdfMask.classList.add('hide');
+  }
+  document.getElementById('pdfClose').addEventListener('click', closePdf);
+  document.getElementById('mPdf').addEventListener('click', openPdf);
 
   function open(b) {
+    curBook = b;
+    document.getElementById('mPdf').style.display = b.pdf ? 'flex' : 'none';
     document.getElementById('mCover').src = b.cover;
     document.getElementById('mTitle').textContent = b.title;
     document.getElementById('mSub').textContent =
