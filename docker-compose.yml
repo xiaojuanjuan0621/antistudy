@@ -13,3 +13,16 @@ services:
     environment:
       - NODE_ENV=production
       - PORT=3300
+
+  # 家长中心 + 新版孩子端（ipad-design），零依赖 Node 内置模块直接跑
+  parent:
+    image: node:20-alpine
+    container_name: antistudy_parent
+    restart: always
+    working_dir: /app
+    volumes:
+      - ./parent-server.js:/app/parent-server.js:ro
+      - ./ipad-design:/app/ipad-design
+    command: node parent-server.js
+    ports:
+      - "8780:8780"
