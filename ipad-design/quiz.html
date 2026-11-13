@@ -144,15 +144,15 @@
     </div>
 
     <div class="nav-bar"></div>
-    <img class="nav-ico" src="assets/nav-home.png" style="left:114.6px" alt="">
+    <img class="nav-ico" data-go="home.html" src="assets/nav-home.png" style="left:114.6px" alt="">
     <div class="nav-label" data-go="home.html" style="left:88.04px">首页</div>
-    <img class="nav-ico" src="assets/nav-task.png" style="left:384.1px" alt="">
+    <img class="nav-ico" data-go="task.html" src="assets/nav-task.png" style="left:384.1px" alt="">
     <div class="nav-label" data-go="task.html" style="left:357.51px">任务</div>
-    <img class="nav-ico" src="assets/nav-battle.png" style="left:653.9px" alt="">
+    <img class="nav-ico" data-go="battle.html" src="assets/nav-battle.png" style="left:653.9px" alt="">
     <div class="nav-label" data-go="battle.html" style="left:624.3px">战斗</div>
-    <img class="nav-ico" src="assets/nav-bag.png" style="left:923.0px" alt="">
+    <img class="nav-ico" data-go="bag.html" src="assets/nav-bag.png" style="left:923.0px" alt="">
     <div class="nav-label" data-go="bag.html" style="left:896.44px">储物袋</div>
-    <img class="nav-ico" src="assets/nav-me.png" style="left:1189.8px" alt="">
+    <img class="nav-ico" data-go="me.html" src="assets/nav-me.png" style="left:1189.8px" alt="">
     <div class="nav-label" data-go="me.html" style="left:1163.23px">我的</div>
 
     <div class="toast" id="toast"></div>
@@ -190,6 +190,14 @@
     dots.appendChild(d);
   });
 
+  /* 后台新课程还没配题时不白屏：给一句提示 + 回课程页的出口 */
+  if (!quiz.length) {
+    document.getElementById('tagTxt').textContent = '本讲暂无题目';
+    document.getElementById('qtext').textContent = '这一讲还没有闯关题';
+    document.getElementById('qsub').textContent = '先去看视频，或者换一讲试试～';
+    document.getElementById('next').style.display = 'none';
+  }
+
   function paintDots() {
     var ds = dots.querySelectorAll('i');
     for (var i = 0; i < ds.length; i++) {
@@ -200,6 +208,7 @@
   }
 
   function render() {
+    if (!quiz.length) return;
     picked = null; locked = false;
     var q = quiz[idx];
     document.getElementById('tagTxt').textContent = '第 ' + (idx + 1) + ' 题 / 共 ' + quiz.length + ' 题';
@@ -230,6 +239,7 @@
   }
 
   function submit() {
+    if (!quiz.length) return;
     if (picked === null) { Store.toast('先选一个答案'); return; }
     if (locked) { goNext(); return; }
     locked = true;
@@ -274,7 +284,8 @@
     document.getElementById('rTitle').textContent = pass ? '闯关成功！' : '再练一次吧';
     document.getElementById('rSub').textContent = pass
       ? '答对 ' + right + ' / ' + quiz.length + ' 题 · 本讲内容掌握啦'
-      : '只答对 ' + right + ' / ' + quiz.length + ' 题 · 需要答对 2 题以上';
+      : '只答对 ' + right + ' / ' + quiz.length + ' 题 · 需要答对 ' +
+        Math.ceil(quiz.length * 0.66) + ' 题';
 
     [1, 2, 3].forEach(function (k) {
       var el = document.getElementById('s' + k);
@@ -284,6 +295,7 @@
     if (pass) {
       var r = Store.completeLesson(cid, lesson.n);
       reward = {
+        cid: cid,
         stone: r.stone, exp: r.exp, first: r.first,
         lessonTitle: lesson.title, courseName: course.name,
         subject: course.subject, n: lesson.n, stars: stars
@@ -319,7 +331,7 @@
     location.href = 'course.html?course=' + cid;
   });
 
-  document.querySelectorAll('.nav-label').forEach(function (el) {
+  document.querySelectorAll('.nav-ico[data-go],.nav-label[data-go]').forEach(function (el) {
     el.addEventListener('click', function () { location.href = el.dataset.go; });
   });
 

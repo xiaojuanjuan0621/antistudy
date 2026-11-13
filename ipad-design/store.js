@@ -281,9 +281,9 @@
     { id: 'potion', name: '经验药水', icon: 'assets/mall2-i-potion.png', bagIcon: 'assets/bag2-potion.png',
       cat: '道具', price: 90, kind: 'consume', desc: '使用后经验 +100' },
     { id: 'star', name: '星星卡', icon: 'assets/mall2-i-star.png', bagIcon: 'assets/task-star.png',
-      cat: '道具', price: 120, kind: 'consume', desc: '闯关失败补一颗星' },
+      cat: '道具', price: 120, kind: 'consume', desc: '使用后经验 +50' },
     { id: 'scroll', name: '加速卷轴', icon: 'assets/mall2-i-scroll.png', bagIcon: 'assets/mall2-i-scroll.png',
-      cat: '道具', price: 380, kind: 'consume', desc: '下一讲奖励翻倍' },
+      cat: '道具', price: 380, kind: 'consume', desc: '使用后经验 +80' },
     { id: 'hat', name: '活动帽', icon: 'assets/mall2-i-hat.png', bagIcon: 'assets/mall2-i-hat.png',
       cat: '装备', price: 260, kind: 'own', desc: '宠物头饰 · 永久' },
     { id: 'wings', name: '天使翅膀', icon: 'assets/mall2-i-wings.png', bagIcon: 'assets/mall2-i-wings.png',
@@ -306,17 +306,132 @@
     { id: 'pet_clothes', name: '宠物服装', icon: 'assets/bag2-clothes.png', cat: '服装', count: 1 }
   ];
 
+  /* ---------- 内容馆数据 ----------
+   * 首页三个入口：绘本馆 → 少年阅览室 / 音乐馆 → 有声故事馆 / 动画馆 → 知识冒险岛视频
+   * 家长中心「内容馆」可增删改，保存后写进 catalog.json 覆盖这里
+   */
+
+  var BOOKS = [
+    {
+      id: 'book_01',
+      title: '昆虫记·神奇的蜣螂与夏日蝉鸣',
+      author: '法布尔（法）',
+      category: '自然探索',
+      cover: 'assets/hall/book_insects.jpg',
+      minutes: 10,
+      readCount: 36,
+      done: true,
+      summary: '跟随伟大的昆虫学家法布尔，观察大自然中微小生命的智慧与坚韧。',
+      content: '【第一章：聪明的蜣螂工程师】\n\n阳光洒满南法的荒原，微风中夹杂着百里香的气息。在厚厚的泥土下，一个微小的生命正在忙碌。\n\n这就是蜣螂——大自然中最勤勉的清道夫。它们用扁平如铲子的头部和强劲有力的前足，将散落的有机碎屑一点一点聚集起来。在它的灵巧制作下，一个圆滚滚的小球逐渐成型。\n\n这不仅仅是一个小泥球，这是它们精心培育后代的庇护所与粮仓。蜣螂用倒推的方式，在崎岖不平的土地上推动着比自己重数倍的泥球前行。即使遇到陡坡跌落，它也从不放弃，重新爬起继续前行。\n\n【第二章：夏日树梢的歌唱家】\n\n“知了——知了——”，盛夏的阳光把大地烤得滚烫，而在高高的白杨树上，蝉正在不知疲倦地放声高歌。\n\n很多人以为蝉的歌声只是为了热闹，其实这是雄蝉独特的发声器官在振动。在泥土黑暗深处蛰伏了四年甚至更久的蝉蛹，只有在这个夏天短短的几个星期里，才能在阳光下尽情飞翔和歌唱。生命虽短，却绚烂无比！'
+    },
+    {
+      id: 'book_02',
+      title: '中国古代神话·后羿射日与女娲补天',
+      author: '传统神话整理',
+      category: '国学经典',
+      cover: 'assets/hall/book_myth.jpg',
+      minutes: 8,
+      readCount: 24,
+      done: false,
+      summary: '感受中华上古先民战胜自然、勇于担当的英雄史诗。',
+      content: '【上篇：女娲炼石补苍天】\n\n往古之时，四极废，九州裂，天不兼覆，地不周载。烈火炎炎不熄，洪水浩浩不息。\n\n女娲目睹人类受难，心生慈悲。她踏遍三山五岳，寻找五色神石。经过九九八十一天的熔炼，终于将苍天补好。天地重归宁静，万物生机勃勃。\n\n【下篇：后羿神箭挽狂澜】\n\n相传尧帝之时，十日并出，焦禾稼，杀草木，而民无所食。\n\n英雄后羿挺身而出，手持红色的神弓，搭上白色的神箭。他登上昆仑之巅，凝神聚气，“嗖！嗖！嗖！”九支神箭破空而出，九个太阳化作金乌坠落，留下一轮温和的太阳造福人间。百姓欢呼雀跃，大地重现生机！'
+    },
+    {
+      id: 'book_03',
+      title: '海底两万里·潜入神秘的鹦鹉螺号',
+      author: '儒勒·凡尔纳',
+      category: '科幻冒险',
+      cover: 'assets/hall/book_sea.jpg',
+      minutes: 12,
+      readCount: 18,
+      done: false,
+      summary: '尼摩船长带着阿龙纳斯教授，在深邃莫测的太平洋深处展开了一场壮丽的大冒险。',
+      content: '【第一章：来自深海的怪兽】\n\n1866 年，全世界的航海界都被一件不可思议的怪事震惊了。几艘远洋轮船在公海上遇到了一头巨大而神秘的“海怪”，它不仅身形庞大，而且速度极快，甚至能发出奇异的冷光。\n\n阿龙纳斯教授登上了“林肯号”驱逐舰前往探寻真相。然而在一场激烈的遭遇战中，教授与仆人康塞尔不幸落水，意外爬上了这个怪物的脊背——他们惊讶地发现，这根本不是什么海怪，而是一艘由坚硬钢板打造的钢铁巨潜艇！\n\n【第二章：尼摩船长的奇幻世界】\n\n舱门缓缓打开，神秘的尼摩船长出现在他们面前。“欢迎登上鹦鹉螺号，”船长目光深邃而坚定，“在这片广袤无垠的深海之中，我们拥有绝对的自由与宁静！”\n\n透过巨大的水晶舷窗，海底世界如梦如幻：发光的珊瑚林、五彩斑斓的热带鱼群、沉睡千年的古城遗迹……一场震撼心灵的深海科幻之旅正式开启！'
+    }
+  ];
+
+  var AUDIOS = [
+    {
+      id: 'audio_01',
+      title: '大闹天宫：齐天大圣勇闯南天门',
+      speaker: '小拓 AI 播音员',
+      category: '名著故事',
+      cover: 'assets/hall/audio_wukong.jpg',
+      seconds: 240,
+      playCount: 42,
+      done: true,
+      url: 'https://commondatastorage.googleapis.com/codeskulptor-demos/DDR_assets/Sevish_-__nbsp_.mp3'
+    },
+    {
+      id: 'audio_02',
+      title: '宇宙探秘：黑洞到底有多神奇？',
+      speaker: '科学探索号',
+      category: '宇宙科学',
+      cover: 'assets/hall/audio_stars.jpg',
+      seconds: 180,
+      playCount: 29,
+      done: false,
+      url: 'https://commondatastorage.googleapis.com/codeskulptor-demos/DDR_assets/Kangaroo_MusiQue_-_The_Neverending_Story.mp3'
+    },
+    {
+      id: 'audio_03',
+      title: '早读古诗：春晓 & 望庐山瀑布',
+      speaker: '国学雅韵',
+      category: '国学经典',
+      cover: 'assets/hall/audio_poem.jpg',
+      seconds: 210,
+      playCount: 35,
+      done: false,
+      url: 'https://commondatastorage.googleapis.com/codeskulptor-demos/DDR_assets/Sevish_-__nbsp_.mp3'
+    }
+  ];
+
+  var VIDEOS = [
+    {
+      id: 'series_math_g4',
+      name: '分数的奥秘全集',
+      subject: '数学',
+      cover: 'assets/hall/series_math.jpg',
+      desc: '小学四年级数学 · 从分披萨开始真正理解分数',
+      episodes: [
+        { n: 1, title: '第1讲：分数的初体验（分披萨的秘密）', sub: '分数的意义与读写', seconds: 360,
+          video: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4' },
+        { n: 2, title: '第2讲：真分数与假分数的秘密', sub: '大于 1 的思考', seconds: 420,
+          video: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4' },
+        { n: 3, title: '第3讲：分数通分与同分母加减法', sub: '通分技巧与计算', seconds: 480,
+          video: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4' },
+        { n: 4, title: '第4讲：生活中的分数应用题大通关', sub: '画图分析数量关系', seconds: 520,
+          video: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4' }
+      ]
+    },
+    {
+      id: 'series_bio_g4',
+      name: '人体与细胞微观王国',
+      subject: '探索',
+      cover: 'assets/hall/series_bio.jpg',
+      desc: '少年探索课 · 走进身体里的微观世界',
+      episodes: [
+        { n: 1, title: '第1讲：细胞城堡的司令部', sub: '认识细胞核', seconds: 390,
+          video: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4' },
+        { n: 2, title: '第2讲：白细胞卫士出动！', sub: '人体免疫防线大战', seconds: 450,
+          video: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4' }
+      ]
+    }
+  ];
+
+  /* 新用户真实起点：不再用 demo 数字冒充行为数据
+   * stone 是新手礼包（够买一件小道具），打卡/经验从 0 开始 */
   var DEFAULT = {
     v: 1,
     user: { name: '小星星', avatar: 'assets/home2-boy.png' },
-    stone: 1280,
-    exp: 820,
+    stone: 500,
+    exp: 0,
     egg: '',
-    pet: { name: '小龙', hatch: 68, attrs: { 文心: 12, 算力: 28, 共鸣: 9, 灵感: 15 } },
+    pet: { name: '小龙', hatch: 0, attrs: { 文心: 0, 算力: 0, 共鸣: 0, 灵感: 0 } },
     lessons: {},
     tasks: {},
     taskDate: '',
-    streak: 7,
+    streak: 0,
     lastCheckin: '',
     lastLesson: '',
     reward: null,
@@ -359,9 +474,25 @@
 
   var state = load();
 
+  /* 统一 YYYY-MM-DD（补零），跨月/跨年比较才不会错 */
+  function pad2(n) { return n < 10 ? '0' + n : '' + n; }
   function today() {
     var d = new Date();
-    return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate();
+    return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate());
+  }
+  function dayOf(str) {
+    var p = String(str || '').split('-');
+    if (p.length !== 3) return null;
+    var d = new Date(+p[0], +p[1] - 1, +p[2]);
+    return isNaN(d.getTime()) ? null : d;
+  }
+  /* 上一次打卡是不是「昨天」，用来判断连续打卡要不要断签 */
+  function isYesterday(str) {
+    var prev = dayOf(str);
+    if (!prev) return false;
+    var n = new Date();
+    var t = new Date(n.getFullYear(), n.getMonth(), n.getDate());
+    return Math.round((t - prev) / 86400000) === 1;
   }
 
   function levelOf(exp) { return Math.floor(exp / 200) + 1; }
@@ -402,6 +533,9 @@
     COURSES: COURSES,
     ITEMS: ITEMS,
     BASE_INV: BASE_INV,
+    BOOKS: BOOKS,
+    AUDIOS: AUDIOS,
+    VIDEOS: VIDEOS,
 
     get: function () { return state; },
     refresh: function () { state = load(); return state; },
@@ -509,6 +643,7 @@
 
     /* 购买：扣灵石 + 入库。返回 { ok, reason, lack, left, count } */
     buyItem: function (id) {
+      state = load();
       var item = this.getItem(id);
       var chk = this.canBuy(item);
       if (!chk.ok) return chk;
@@ -529,9 +664,11 @@
 
     /* 使用消耗品：返回 { ok, msg, gain, left } */
     useItem: function (id) {
+      state = load();
       var item = this.getItem(id);
       var inv = state.inventory[id];
-      if (!item || item.kind !== 'consume') return { ok: false, msg: '这件是装备，不用使用' };
+      if (!item) return { ok: false, msg: '这是收藏品，不能直接使用' };
+      if (item.kind !== 'consume') return { ok: false, msg: '永久装备 · 已经收进背包啦' };
       if (!inv || !inv.count) return { ok: false, msg: '已经用完啦 · 去商城再换一个' };
 
       var gain = 0;
@@ -553,7 +690,7 @@
         if (!inv) return;
         out.push({
           id: b.id, name: b.name, icon: b.icon, cat: b.cat,
-          count: inv.count || 1, owned: !!inv.owned
+          count: inv.owned ? 1 : (inv.count || 0), owned: !!inv.owned
         });
         seen[b.id] = true;
       });
@@ -565,7 +702,7 @@
         var inv = state.inventory[id];
         out.push({
           id: id, name: it.name, icon: it.bagIcon || it.icon, cat: it.cat,
-          count: inv.count || 1, owned: !!inv.owned
+          count: inv.owned ? 1 : (inv.count || 0), owned: !!inv.owned
         });
       });
       if (cat && cat !== '全部') out = out.filter(function (x) { return x.cat === cat; });
@@ -598,6 +735,7 @@
 
     /* 标记「本讲视频已看完」：只记观看状态，不发奖励、不算闯关通过 */
     markWatched: function (courseId, n) {
+      state = load();
       var key = this.lessonKey(courseId, n);
       var rec = state.lessons[key];
       if (rec && (rec.watched || rec.done)) return false;
@@ -636,6 +774,8 @@
 
     /* 完课：唯一发放入口。返回 {stone, exp, first, lesson} */
     completeLesson: function (courseId, n) {
+      /* 写之前先拉一次最新状态：避免两个标签页各自拿旧数据判 first、互相覆盖 */
+      state = load();
       var key = this.lessonKey(courseId, n);
       var rec = state.lessons[key];
       var first = !(rec && rec.done);
@@ -701,9 +841,25 @@
       return { ok: true, gain: bonus, bonus: bonus > 1, hatch: state.pet.hatch };
     },
 
-    /* 领取全部任务奖励 */
+    /* 任务是否全部完成：每个学科任意体系学完 1 讲 + 打过一次灵宠挑战 */
+    canClaimTasks: function () {
+      state = load();
+      var subs = Object.keys(SERIES);
+      for (var i = 0; i < subs.length; i++) {
+        var list = SERIES[subs[i]], okSub = false;
+        for (var j = 0; j < list.length; j++) {
+          if (this.learnedCount(list[j].id) > 0) { okSub = true; break; }
+        }
+        if (!okSub) return false;
+      }
+      return !!state.tasks.battle;
+    },
+
+    /* 领取全部任务奖励：只领一次，且必须真的全部完成 */
     claimTasks: function () {
+      state = load();
       if (state.tasks.__claimed) return { ok: false, msg: '今天的奖励已经领过啦' };
+      if (!this.canClaimTasks()) return { ok: false, msg: '还有任务没完成哦' };
       state.tasks.__claimed = true;
       state.stone += 50;
       state.exp += 100;
@@ -711,28 +867,38 @@
       return { ok: true, stone: 50, exp: 100 };
     },
 
-    /* 打卡 */
+    /* 打卡：断一天就从头算，连续天数才有意义 */
     checkin: function () {
+      state = load();
       if (state.lastCheckin === today()) return { ok: false, streak: state.streak };
+      state.streak = isYesterday(state.lastCheckin) ? state.streak + 1 : 1;
       state.lastCheckin = today();
-      state.streak += 1;
       state.stone += 10;
       save(state);
       return { ok: true, streak: state.streak, stone: 10 };
     },
 
     setEgg: function (id) {
+      state = load();
       state.egg = id;
       try { localStorage.setItem('antistudy.egg', id); } catch (e) {}
       save(state);
     },
     hasEgg: function () {
+      state = load();
       if (state.egg) return true;
       try { return !!localStorage.getItem('antistudy.egg'); } catch (e) { return false; }
     },
 
-    setReward: function (r) { state.reward = r; save(state); },
+    setReward: function (r) { state = load(); state.reward = r; save(state); },
+
+    /* 答对即到账：奖励只是给用户看的结算单。
+     * 这里读而不清空，刷新奖励页也能看到同一组数字；下次闯关会被覆盖 */
+    peekReward: function () { state = load(); return state.reward; },
+
+    /* 旧接口保留：读取并清空 */
     takeReward: function () {
+      state = load();
       var r = state.reward;
       state.reward = null;
       save(state);
@@ -848,6 +1014,158 @@
       this.toast('「' + name + '」还没做');
     }
   };
+
+  /* ---------------- 家长中心配置覆盖层 ----------------
+   * 家长在 parent.html 点保存后，服务会写同目录的 catalog.json / catalog.js。
+   * 这里把配置合并进内置数据：
+   *   - 同名课程体系：整段替换讲次（家长删掉的就真删掉）
+   *   - 同名商品：整段替换商城列表
+   * 文件不存在（没部署家长端 / 用 file:// 打开）时静默跳过，行为与原来完全一致。
+   */
+  function applyCatalog(cat) {
+    if (!cat || typeof cat !== 'object') return;
+
+    var series = [];
+    for (var i = 0; i < (cat.series || []).length; i++) {
+      if (cat.series[i] && cat.series[i].id) series.push(cat.series[i]);
+    }
+
+    if (series.length) {
+      series.forEach(function (s) {
+        var old = COURSES[s.id] || null;
+        var lessons = (s.lessons || []).map(function (l) {
+          return {
+            n: l.n,
+            title: l.title || '',
+            sub: l.sub || '',
+            min: l.min || 0,
+            video: l.video || '',
+            quiz: l.quiz || []
+          };
+        });
+        COURSES[s.id] = {
+          id: s.id,
+          subject: s.subject || (old && old.subject) || '数学',
+          name: s.name || (old && old.name) || s.id,
+          attr: s.attr || (old && old.attr) || '算力',
+          lessons: lessons.length ? lessons : ((old && old.lessons) ? old.lessons : [])
+        };
+
+        var subj = COURSES[s.id].subject;
+        if (!SERIES[subj]) SERIES[subj] = [];
+        var ref = null;
+        for (var k = 0; k < SERIES[subj].length; k++) {
+          if (SERIES[subj][k].id === s.id) { ref = SERIES[subj][k]; break; }
+        }
+        if (!ref) { ref = { id: s.id }; SERIES[subj].push(ref); }
+        ref.tab = s.tab || COURSES[s.id].name;
+        ref.grade = s.grade || '四年级';
+      });
+
+      /* tab 顺序以家长配置为准，并从各学科里摘掉家长已删除的体系 */
+      Object.keys(SERIES).forEach(function (subj) {
+        var keep = SERIES[subj].filter(function (x) {
+          return series.some(function (s) { return s.id === x.id; });
+        });
+        if (keep.length) SERIES[subj] = keep;
+        else delete SERIES[subj];
+      });
+    }
+
+    var items = cat.items || [];
+    if (items.length) {
+      ITEMS.length = 0;
+      items.forEach(function (it) {
+        if (!it || !it.id) return;
+        ITEMS.push({
+          id: it.id,
+          name: it.name || '',
+          icon: it.icon || 'assets/bag2-stone.png',
+          bagIcon: it.bagIcon || it.icon || 'assets/bag2-stone.png',
+          cat: it.cat || '道具',
+          price: parseInt(it.price, 10) || 0,
+          kind: it.kind === 'consume' ? 'consume' : 'own',
+          desc: it.desc || ''
+        });
+      });
+    }
+
+    /* 内容馆：有声故事 / 少年阅览室 / 动画馆 */
+    var books = cat.books || [];
+    if (books.length) {
+      BOOKS.length = 0;
+      books.forEach(function (b) {
+        if (!b || !b.id) return;
+        BOOKS.push({
+          id: b.id, title: b.title || '', author: b.author || '',
+          category: b.category || '课外阅读',
+          cover: b.cover || 'assets/hall/book_insects.jpg',
+          minutes: parseInt(b.minutes, 10) || 0,
+          readCount: parseInt(b.readCount, 10) || 0,
+          done: !!b.done,
+          summary: b.summary || '',
+          content: b.content || ''
+        });
+      });
+    }
+
+    var audios = cat.audios || [];
+    if (audios.length) {
+      AUDIOS.length = 0;
+      audios.forEach(function (a) {
+        if (!a || !a.id) return;
+        AUDIOS.push({
+          id: a.id, title: a.title || '', speaker: a.speaker || '',
+          category: a.category || '故事',
+          cover: a.cover || 'assets/hall/audio_wukong.jpg',
+          seconds: parseInt(a.seconds, 10) || 0,
+          playCount: parseInt(a.playCount, 10) || 0,
+          done: !!a.done,
+          url: a.url || ''
+        });
+      });
+    }
+
+    var videos = cat.videos || [];
+    if (videos.length) {
+      VIDEOS.length = 0;
+      videos.forEach(function (v) {
+        if (!v || !v.id) return;
+        VIDEOS.push({
+          id: v.id, name: v.name || '', subject: v.subject || '探索',
+          cover: v.cover || 'assets/hall/series_math.jpg',
+          desc: v.desc || '',
+          episodes: (v.episodes || []).map(function (e) {
+            return {
+              n: e.n, title: e.title || '', sub: e.sub || '',
+              seconds: parseInt(e.seconds, 10) || 0,
+              video: e.video || ''
+            };
+          })
+        });
+      });
+    }
+  }
+
+  /* 同步读取配置文件：本地 http 服务下几十 KB，开销可忽略；
+   * 任何异常都当作「没有家长配置」，不影响内置数据 */
+  function loadCatalog() {
+    /* catalog.json 是服务端权威数据，优先读；
+     * 读不到（file:// 或没部署家长端）再退到页面已加载的 catalog.js */
+    try {
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', 'catalog.json?_=' + Date.now(), false);
+      xhr.send(null);
+      if (xhr.status === 200 || xhr.status === 0) {
+        var txt = xhr.responseText;
+        if (txt && txt.charAt(0) === '{') return JSON.parse(txt);
+      }
+    } catch (e) {}
+    if (window.CATALOG && typeof window.CATALOG === 'object') return window.CATALOG;
+    return null;
+  }
+
+  try { applyCatalog(loadCatalog()); } catch (e) {}
 
   window.Store = Store;
 })();

@@ -41,6 +41,12 @@
   .checkin .cal{position:static;width:23px;height:23px;flex:0 0 auto}
   .checkin span{position:static;font-size:16px;font-weight:700;color:#4A93FE;white-space:nowrap}
   .checkin i{position:static;font-style:normal;color:#FE7D4A}
+  .parent{left:810px;top:48.28px;width:164px;height:46.69px;border-radius:23.34px;
+    background:#FFF2E4;display:flex;align-items:center;justify-content:center;gap:7px;cursor:pointer;
+    transition:transform .15s}
+  .parent .ico{position:static;width:22px;height:22px;flex:0 0 auto}
+  .parent span{position:static;font-size:16px;font-weight:700;color:#E8741C;white-space:nowrap}
+  .parent:active{transform:scale(.97)}
   .user{left:1172.57px;top:48.28px;width:157.41px;height:46.69px;border-radius:23.34px;
     background:#F1F0FF;display:flex;align-items:center;justify-content:center;gap:10px;cursor:pointer}
   .user span{position:static;font-size:16px;font-weight:700;color:#11284F;white-space:nowrap}
@@ -113,7 +119,7 @@
     <div class="card" data-card="英语" style="left:936.83px;top:218.28px;width:378.04px;height:214.87px">
       <img class="card-bg" src="assets/home2-card-english.png" style="height:203.95px" alt="">
       <div class="card-name" style="left:38.68px;top:24.35px">英语</div>
-      <div class="card-sub" style="left:38.68px;top:83.08px;width:128px">连续打卡7天</div>
+      <div class="card-sub" style="left:38.68px;top:83.08px;width:128px">每天 10 分钟</div>
       <div class="card-btn" style="left:34.12px;top:136.58px">
         <span class="t" style="color:#FF8C26">去巩固</span><span class="chev" style="color:#FF8C26">›</span>
       </div>
@@ -139,15 +145,23 @@
     <div class="week">星期六</div>
     <div class="vline"></div>
     <img class="weather" src="assets/home2-weather.png" alt="">
-    <div class="temp">12°C</div>
-    <div class="sky">晴转多云</div>
+    <div class="temp">今天</div>
+    <div class="sky">继续加油</div>
+    <div class="parent" id="parentEntry">
+      <svg class="ico" viewBox="0 0 24 24" fill="none">
+        <path d="M12 2.6 4.6 5.5v6.2c0 4.4 3.1 8.3 7.4 9.7 4.3-1.4 7.4-5.3 7.4-9.7V5.5L12 2.6Z" stroke="#F08A32" stroke-width="2" stroke-linejoin="round"/>
+        <circle cx="12" cy="10.2" r="2.1" stroke="#F08A32" stroke-width="2"/>
+        <path d="M8.9 16.1c.63-1.7 1.8-2.55 3.1-2.55s2.47.85 3.1 2.55" stroke="#F08A32" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      <span>家长中心</span>
+    </div>
     <div class="checkin">
       <svg class="cal" viewBox="0 0 24 24" fill="none">
         <rect x="2.6" y="4.6" width="18.8" height="17" rx="4.6" stroke="#5099FD" stroke-width="2.2"/>
         <path d="M2.6 9.6h18.8" stroke="#5099FD" stroke-width="2.2"/>
         <path d="M7.6 2.6v4.2M16.4 2.6v4.2" stroke="#5099FD" stroke-width="2.2" stroke-linecap="round"/>
       </svg>
-      <span>连续打卡<i>XX</i>天</span>
+      <span>连续打卡<i>0</i>天</span>
     </div>
     <div class="user">
       <span class="avatar"><img src="assets/home2-boy.png" alt=""></span>
@@ -270,10 +284,20 @@
     });
   });
 
+  /* 绘本馆 → 少年阅览室 / 音乐馆 → 有声故事馆 / 动画馆 → 知识冒险岛视频 */
+  var TOOL_PAGE = {
+    '绘本馆': 'library.html',
+    '音乐馆': 'music.html',
+    '动画馆': 'cartoon.html'
+  };
   document.querySelectorAll('.t-ico,.t-label').forEach(function (el) {
     el.addEventListener('click', function () {
       var n = el.classList.contains('t-label') ? el.textContent : el.nextElementSibling.textContent;
-      Store.toast('「' + n + '」还没做');
+      n = (n || '').trim();
+      var page = TOOL_PAGE[n];
+      if (!page) { Store.toast('「' + n + '」还没做'); return; }
+      Store.toast('打开「' + n + '」');
+      setTimeout(function () { location.href = page; }, 320);
     });
   });
 
@@ -299,6 +323,10 @@
     var r = Store.checkin();
     render();
     Store.toast(r.ok ? '打卡成功 · 连续 ' + r.streak + ' 天 · 灵石 +10' : '今天已经打过卡啦 · 连续 ' + r.streak + ' 天');
+  });
+
+  document.getElementById('parentEntry').addEventListener('click', function () {
+    location.href = 'parent.html';
   });
 
   document.querySelector('.user').addEventListener('click', function () {

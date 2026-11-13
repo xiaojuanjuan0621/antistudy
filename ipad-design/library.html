@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>少年阅览室 · 知识冒险岛</title>
+<link rel="stylesheet" href="hall.css">
+<style>
+  .foot-txt{font-size:15px;font-weight:800;color:#2A5FD6}
+</style>
+</head>
+<body>
+<div class="view">
+  <div class="stage" id="stage">
+    <img class="bg" src="assets/home2-bg.png" alt="">
+    <div class="mask"></div>
+
+    <div class="title-bar"></div>
+    <img class="home-btn" id="homeBtn" src="assets/bag2-ico-home.png" alt="">
+    <div class="title">少年阅览室</div>
+
+    <div class="stat" style="left:962px"><b id="cntBooks">0</b><span>本书</span></div>
+    <div class="stat" style="left:1156px"><b id="cntMins">0</b><span>分钟</span></div>
+
+    <div class="content">
+      <div class="grid3" id="grid"></div>
+    </div>
+
+    <div class="nav-bar"></div>
+    <img class="nav-ico" data-go="home.html" src="assets/nav-home.png" style="left:114.6px" alt="">
+    <div class="nav-label" data-go="home.html" style="left:88.04px">首页</div>
+    <img class="nav-ico" data-go="task.html" src="assets/nav-task.png" style="left:384.1px" alt="">
+    <div class="nav-label" data-go="task.html" style="left:357.51px">任务</div>
+    <img class="nav-ico" data-go="battle.html" src="assets/nav-battle.png" style="left:653.9px" alt="">
+    <div class="nav-label" data-go="battle.html" style="left:624.3px">战斗</div>
+    <img class="nav-ico" data-go="bag.html" src="assets/nav-bag.png" style="left:923.0px" alt="">
+    <div class="nav-label" data-go="bag.html" style="left:896.44px">储物袋</div>
+    <img class="nav-ico" data-go="me.html" src="assets/nav-me.png" style="left:1189.8px" alt="">
+    <div class="nav-label" data-go="me.html" style="left:1163.23px">我的</div>
+
+    <div class="modal" id="modal">
+      <div class="modal-box">
+        <div class="modal-head">
+          <img id="mCover" src="" style="width:64px;height:64px;border-radius:16px;object-fit:cover;flex:0 0 auto" alt="">
+          <div class="mh"><b id="mTitle"></b><span id="mSub"></span></div>
+          <div class="close" id="mClose">×</div>
+        </div>
+        <div class="modal-body" id="mBody"></div>
+      </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+  </div>
+</div>
+<script src="store.js?v=3"></script>
+<script>
+(function () {
+  var stage = document.getElementById('stage');
+  function fit() {
+    var s = Math.min(window.innerWidth / 1366, window.innerHeight / 1024);
+    stage.style.transform = 'translate(-50%,-50%) scale(' + s + ')';
+  }
+  addEventListener('resize', fit);
+  addEventListener('orientationchange', fit);
+  fit();
+
+  var grid = document.getElementById('grid');
+  var BOOKS = Store.BOOKS || [];
+
+  function toneOf(cat) {
+    if (/国学|神话|古诗/.test(cat)) return 'orange';
+    if (/科幻|冒险/.test(cat)) return 'purple';
+    if (/自然|科学/.test(cat)) return 'green';
+    return 'gray';
+  }
+
+  function render() {
+    grid.innerHTML = '';
+    document.getElementById('cntBooks').textContent = BOOKS.length;
+    var mins = 0;
+    BOOKS.forEach(function (b) { mins += (b.minutes || 0); });
+    document.getElementById('cntMins').textContent = mins;
+
+    if (!BOOKS.length) {
+      grid.style.display = 'block';
+      grid.innerHTML = '<div class="empty">阅览室还没有书 · 家长可以在家长中心「内容馆」上传</div>';
+      return;
+    }
+    grid.style.display = 'grid';
+
+    BOOKS.forEach(function (b, i) {
+      var card = document.createElement('div');
+      card.className = 'card';
+      card.innerHTML =
+        '<div class="covwrap">' +
+          '<img class="cov" src="' + b.cover + '" alt="">' +
+          '<div class="badge' + (b.done ? ' done' : '') + '">' +
+            (b.done ? '已读完' : (b.minutes || 0) + ' 分钟') +
+          '</div>' +
+        '</div>' +
+        '<div class="body">' +
+          '<div class="ttl">' + esc(b.title) + '</div>' +
+          '<div class="sub">' + esc(b.author) + '</div>' +
+          '<div class="tags">' +
+            '<span class="tag ' + toneOf(b.category) + '">' + esc(b.category) + '</span>' +
+            '<span class="tag gray">' + (b.readCount || 0) + ' 人在读</span>' +
+          '</div>' +
+          '<div class="foot">' +
+            '<div class="playbtn"></div>' +
+            '<span class="foot-txt">' + (b.done ? '再读一遍' : '开始阅读') + '</span>' +
+          '</div>' +
+        '</div>';
+      card.addEventListener('click', function () { open(b, i); });
+      grid.appendChild(card);
+    });
+  }
+
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
+    });
+  }
+
+  var modal = document.getElementById('modal');
+
+  function open(b) {
+    document.getElementById('mCover').src = b.cover;
+    document.getElementById('mTitle').textContent = b.title;
+    document.getElementById('mSub').textContent =
+      b.author + ' · ' + b.category + ' · 约 ' + (b.minutes || 0) + ' 分钟';
+
+    var body = document.getElementById('mBody');
+    body.innerHTML = '';
+    var intro = document.createElement('p');
+    intro.style.cssText = 'font-size:15px;color:#7C93B0;background:#F5F9FF;border-radius:14px;padding:14px 18px;line-height:1.75';
+    intro.textContent = b.summary || '';
+    body.appendChild(intro);
+
+    String(b.content || '').split(/\n{1,}/).forEach(function (line) {
+      var t = line.trim();
+      if (!t) return;
+      var p = document.createElement('p');
+      p.textContent = t;
+      if (/^【/.test(t)) {
+        p.style.cssText = 'font-size:19px;font-weight:900;color:#11284F;margin:26px 0 14px';
+      }
+      body.appendChild(p);
+    });
+
+    if (!String(b.content || '').trim()) {
+      var none = document.createElement('p');
+      none.textContent = '这本还没有正文内容，家长可以在家长中心补充。';
+      none.style.color = '#93A8C2';
+      body.appendChild(none);
+    }
+
+    body.scrollTop = 0;
+    modal.classList.add('on');
+  }
+
+  document.getElementById('mClose').addEventListener('click', function () {
+    modal.classList.remove('on');
+    document.getElementById('mBody').innerHTML = '';
+  });
+  modal.addEventListener('click', function (e) {
+    if (e.target === modal) {
+      modal.classList.remove('on');
+      document.getElementById('mBody').innerHTML = '';
+    }
+  });
+
+  document.getElementById('homeBtn').addEventListener('click', function () {
+    location.href = 'home.html';
+  });
+  document.querySelectorAll('[data-go]').forEach(function (el) {
+    el.addEventListener('click', function () { location.href = el.dataset.go; });
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>

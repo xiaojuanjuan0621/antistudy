@@ -98,12 +98,12 @@
     <div class="mask"></div>
 
     <div class="page-t">我的</div>
-    <div class="stone"><img src="assets/task-gem-s.png" alt=""><span id="stoneTxt">1,280</span></div>
+    <div class="stone"><img src="assets/task-gem-s.png" alt=""><span id="stoneTxt">0</span></div>
 
     <div class="lcard">
       <div class="avwrap"><img src="assets/home2-boy.png" alt=""></div>
       <div class="uname" id="uname">小星星</div>
-      <div class="usub" id="usub">四年级 · 已加入 12 天</div>
+      <div class="usub" id="usub">四年级 · 连续学习 0 天</div>
       <div class="lvbar"><span id="lvTxt">Lv.5 · 数学逻辑</span></div>
       <div class="etrack"><i id="ebar" style="width:0%"></i></div>
       <div class="etxt" id="etxt">0 / 200 经验</div>
@@ -134,7 +134,7 @@
 
     <div class="row2" id="parentBtn" style="left:493px">
       <span class="ic"><img src="assets/course2-i-medal.png" alt=""></span>
-      <span class="tt">家长中心<small>排期 · 看板 · 时长管控</small></span>
+      <span class="tt">家长中心<small>课程 · 视频 · 灵石商城</small></span>
       <span style="position:static;font-size:26px;color:#B6C6DB">›</span>
     </div>
 
@@ -145,15 +145,15 @@
     </div>
 
     <div class="nav-bar"></div>
-    <img class="nav-ico" src="assets/nav-home.png" style="left:114.6px" alt="">
+    <img class="nav-ico" data-go="home.html" src="assets/nav-home.png" style="left:114.6px" alt="">
     <div class="nav-label" data-go="home.html" style="left:88.04px">首页</div>
-    <img class="nav-ico" src="assets/nav-task.png" style="left:384.1px" alt="">
+    <img class="nav-ico" data-go="task.html" src="assets/nav-task.png" style="left:384.1px" alt="">
     <div class="nav-label" data-go="task.html" style="left:357.51px">任务</div>
-    <img class="nav-ico" src="assets/nav-battle.png" style="left:653.9px" alt="">
+    <img class="nav-ico" data-go="battle.html" src="assets/nav-battle.png" style="left:653.9px" alt="">
     <div class="nav-label" data-go="battle.html" style="left:624.3px">战斗</div>
-    <img class="nav-ico" src="assets/nav-bag.png" style="left:923.0px" alt="">
+    <img class="nav-ico" data-go="bag.html" src="assets/nav-bag.png" style="left:923.0px" alt="">
     <div class="nav-label" data-go="bag.html" style="left:896.44px">储物袋</div>
-    <img class="nav-ico" src="assets/nav-me.png" style="left:1189.8px" alt="">
+    <img class="nav-ico" data-go="me.html" src="assets/nav-me.png" style="left:1189.8px" alt="">
     <div class="nav-label" style="left:1163.23px;color:#0F8CEB">我的</div>
 
     <div class="toast" id="toast"></div>
@@ -196,6 +196,7 @@
     var st = stats();
     document.getElementById('stoneTxt').textContent = Store.fmt(s.stone);
     document.getElementById('uname').textContent = s.user.name;
+    document.getElementById('usub').textContent = '四年级 · 连续学习 ' + s.streak + ' 天';
     document.getElementById('lvTxt').textContent = 'Lv.' + Store.level() + ' · 知识冒险家';
     document.getElementById('ebar').style.width = Store.expPct() + '%';
     document.getElementById('etxt').textContent = Store.expInLevel() + ' / 200 经验';
@@ -226,10 +227,7 @@
   }
 
   document.getElementById('parentBtn').addEventListener('click', function () {
-    var pin = prompt('请输入家长密码（演示：1234）');
-    if (pin === null) return;
-    if (pin.trim() !== '1234') { Store.toast('密码不对'); return; }
-    Store.toast('家长中心还没做 · 需要先定排期表结构');
+    location.href = 'parent.html';
   });
 
   document.getElementById('resetBtn').addEventListener('click', function () {
@@ -238,7 +236,7 @@
     location.href = 'egg-select.html';
   });
 
-  document.querySelectorAll('.nav-label[data-go]').forEach(function (el) {
+  document.querySelectorAll('.nav-ico[data-go],.nav-label[data-go]').forEach(function (el) {
     el.addEventListener('click', function () { location.href = el.dataset.go; });
   });
 

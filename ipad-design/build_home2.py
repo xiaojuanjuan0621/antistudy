@@ -83,6 +83,14 @@ parts.append('''
 
 # 右上
 parts.append('''
+    <div class="parent" id="parentEntry">
+      <svg class="ico" viewBox="0 0 24 24" fill="none">
+        <path d="M12 2.6 4.6 5.5v6.2c0 4.4 3.1 8.3 7.4 9.7 4.3-1.4 7.4-5.3 7.4-9.7V5.5L12 2.6Z" stroke="#F08A32" stroke-width="2" stroke-linejoin="round"/>
+        <circle cx="12" cy="10.2" r="2.1" stroke="#F08A32" stroke-width="2"/>
+        <path d="M8.9 16.1c.63-1.7 1.8-2.55 3.1-2.55s2.47.85 3.1 2.55" stroke="#F08A32" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      <span>家长中心</span>
+    </div>
     <div class="checkin">
       <svg class="cal" viewBox="0 0 24 24" fill="none">
         <rect x="2.6" y="4.6" width="18.8" height="17" rx="4.6" stroke="#5099FD" stroke-width="2.2"/>
@@ -177,6 +185,12 @@ HTML = f'''<!doctype html>
   .checkin .cal{{position:static;width:23px;height:23px;flex:0 0 auto}}
   .checkin span{{position:static;font-size:16px;font-weight:700;color:#4A93FE;white-space:nowrap}}
   .checkin i{{position:static;font-style:normal;color:#FE7D4A}}
+  .parent{{left:810px;top:48.28px;width:164px;height:46.69px;border-radius:23.34px;
+    background:#FFF2E4;display:flex;align-items:center;justify-content:center;gap:7px;cursor:pointer;
+    transition:transform .15s}}
+  .parent .ico{{position:static;width:22px;height:22px;flex:0 0 auto}}
+  .parent span{{position:static;font-size:16px;font-weight:700;color:#E8741C;white-space:nowrap}}
+  .parent:active{{transform:scale(.97)}}
   .user{{left:1172.57px;top:48.28px;width:157.41px;height:46.69px;border-radius:23.34px;
     background:#F1F0FF;display:flex;align-items:center;justify-content:center;gap:10px;cursor:pointer}}
   .user span{{position:static;font-size:16px;font-weight:700;color:#11284F;white-space:nowrap}}
@@ -269,7 +283,11 @@ HTML = f'''<!doctype html>
   document.querySelectorAll('.t-ico,.t-label').forEach(function (el) {{
     el.addEventListener('click', function () {{
       var n = el.classList.contains('t-label') ? el.textContent : el.nextElementSibling.textContent;
+      n = (n || '').trim();
+      var toolMap = {{'绘本馆': 'library.html', '音乐馆': 'music.html', '动画馆': 'cartoon.html'}};
+      if (!toolMap[n]) {{ toast('「' + n + '」还没做'); return; }}
       toast('打开「' + n + '」');
+      setTimeout(function () {{ location.href = toolMap[n]; }}, 320);
     }});
   }});
   document.querySelectorAll('.entry').forEach(function (e) {{
@@ -290,6 +308,7 @@ HTML = f'''<!doctype html>
       else {{ toast('「' + n + '」还没做'); }}
     }});
   }});
+  document.getElementById('parentEntry').addEventListener('click', function () {{ location.href = 'parent.html'; }});
   document.querySelector('.checkin').addEventListener('click', function () {{ toast('今日已打卡 · 连续 7 天'); }});
   document.querySelector('.user').addEventListener('click', function () {{ toast('打开小星星的成长档案'); }});
   document.querySelector('.hatch').addEventListener('click', function () {{

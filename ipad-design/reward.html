@@ -114,11 +114,14 @@
   function toast(m) { toastEl.textContent = m; toastEl.classList.add('show');
     clearTimeout(tm); tm = setTimeout(function () { toastEl.classList.remove('show'); }, 1500); }
 
-  var r = Store.takeReward();
+  /* 答对即到账：这里只读结算单，不清空，刷新本页仍是同一组数字 */
+  var r = Store.peekReward();
   if (!r) {
-    r = { stone: 0, exp: 0, first: false, lessonTitle: '本讲', courseName: '课程', subject: '数学', n: 1, stars: 1 };
+    r = { cid: 'series_math_g4', stone: 0, exp: 0, first: false,
+      lessonTitle: '本讲', courseName: '课程', subject: '数学', n: 1, stars: 0 };
   }
-  var cid = (r.subject === '探索' ? 'series_bio_g4'
+  /* 课程 id 由闯关页带过来，不再用学科反推（否则清华数学的奖会被送回乐读数学） */
+  var cid = r.cid || (r.subject === '探索' ? 'series_bio_g4'
     : r.subject === '语文' ? 'series_chinese_xes'
     : r.subject === '英语' ? 'series_english_tbd' : 'series_math_g4');
   var course = Store.getCourse(cid);
@@ -129,9 +132,14 @@
   document.getElementById('n3').textContent = attr;
   document.getElementById('v3').textContent = '+' + (r.first ? 2 : 0);
 
-  var nextN = r.n + 1;
-  var hasNext = course && course.lessons.some(function (l) { return l.n === (r.n + 1); });
-  document.getElementById('v4').textContent = hasNext ? '第' + nextN + '讲' : '全通关';
+  /* 下一讲按「比当前大的最小讲次」找，讲次编号不连续也不会算错 */
+  var nextL = null;
+  if (course) {
+    course.lessons.forEach(function (l) {
+      if (l.n > r.n && (!nextL || l.n < nextL.n)) nextL = l;
+    });
+  }
+  document.getElementById('v4').textContent = nextL ? '第' + nextL.n + '讲' : '全通关';
   if (!r.first) {
     document.getElementById('v1').textContent = '+0';
     document.getElementById('v2').textContent = '+0';

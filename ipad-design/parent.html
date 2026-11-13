@@ -1,0 +1,1386 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>家长中心 · 知识冒险岛</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%;overflow:hidden;background:#081A3A;
+    font-family:"Noto Sans SC","PingFang SC","Hiragino Sans GB",-apple-system,sans-serif;
+    -webkit-tap-highlight-color:transparent}
+  .view{position:relative;width:100%;height:100%;overflow:hidden}
+  .stage{position:absolute;left:50%;top:50%;width:1366px;height:1024px;transform-origin:center center}
+
+  .bg{position:absolute;left:0;top:0;width:1366px;height:1024px;
+    background:radial-gradient(900px 600px at 12% 8%,#1B4C8F 0%,rgba(27,76,143,0) 62%),
+               radial-gradient(700px 500px at 92% 92%,#173F7C 0%,rgba(23,63,124,0) 60%),
+               linear-gradient(155deg,#0A1F45 0%,#123566 52%,#0C2549 100%)}
+
+  /* ---------- 顶栏 ---------- */
+  .topbar{position:absolute;left:0;top:0;width:1366px;height:104px;
+    display:flex;align-items:center;padding:0 40px;gap:14px}
+  .brand{flex:1;min-width:0}
+  .bt{font-size:36px;font-weight:900;color:#fff;letter-spacing:1px;line-height:1.15}
+  .bs{font-size:16px;font-weight:600;color:#9FC3F0;margin-top:4px}
+  .conn{display:flex;align-items:center;gap:8px;height:48px;padding:0 20px;border-radius:24px;
+    font-size:16px;font-weight:700;background:rgba(255,255,255,.1);color:#CFE3FF;max-width:430px;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .conn::before{content:"";width:10px;height:10px;border-radius:50%;background:#8AA6CC;flex:0 0 auto}
+  .conn.ok{background:rgba(47,197,110,.16);color:#9BF3C1}
+  .conn.ok::before{background:#2FC56E;box-shadow:0 0 10px #2FC56E}
+  .conn.bad{background:rgba(255,90,95,.16);color:#FFB9BB}
+  .conn.bad::before{background:#FF5A5F}
+
+  .btn{height:48px;padding:0 26px;border-radius:24px;display:flex;align-items:center;justify-content:center;
+    font-size:18px;font-weight:800;cursor:pointer;user-select:none;transition:transform .12s,opacity .15s}
+  .btn:active{transform:scale(.96)}
+  .btn.primary{background:linear-gradient(180deg,#5AA8FF,#2F7EF0);color:#fff;
+    box-shadow:0 6px 16px rgba(47,126,240,.45)}
+  .btn.primary[disabled]{opacity:.55}
+  .btn.ghost{background:rgba(255,255,255,.12);color:#D6E7FF}
+  .btn.wide{width:100%;height:56px;border-radius:28px;font-size:20px}
+
+  /* ---------- 左侧导航 ---------- */
+  .side{position:absolute;left:40px;top:128px;width:212px}
+  .nav{padding:18px 20px;border-radius:20px;cursor:pointer;margin-bottom:12px;
+    background:rgba(255,255,255,.07);border:1.5px solid transparent;transition:background .15s,border-color .15s}
+  .nav b{display:block;font-size:20px;font-weight:800;color:#DCEAFF}
+  .nav i{display:block;font-style:normal;font-size:13px;font-weight:600;color:#7FA5D2;margin-top:5px}
+  .nav.on{background:rgba(90,168,255,.18);border-color:rgba(90,168,255,.55)}
+  .nav.on b{color:#fff}
+  .nav.on i{color:#A9CDFF}
+  .tip{margin-top:18px;font-size:13px;line-height:1.7;color:#7EA3CE;padding:0 4px}
+
+  /* ---------- 内容面板 ---------- */
+  .panel{position:absolute;left:280px;top:128px;width:1046px;height:856px;background:#fff;
+    border-radius:30px;box-shadow:0 20px 60px rgba(3,14,36,.45);overflow:hidden}
+  .pane{position:absolute;left:0;top:0;width:100%;height:100%;overflow-y:auto;
+    padding:26px 30px 40px;-webkit-overflow-scrolling:touch}
+  .pane::-webkit-scrollbar{width:8px}
+  .pane::-webkit-scrollbar-thumb{background:#D6E2F2;border-radius:4px}
+
+  .ph{display:flex;align-items:center;gap:14px;margin-bottom:6px}
+  .ph h2{font-size:24px;font-weight:900;color:#11284F}
+  .ph .sub{font-size:14px;font-weight:600;color:#7C93B0;flex:1}
+  .mini{height:40px;padding:0 18px;border-radius:20px;background:#EAF3FF;color:#2F7EF0;
+    font-size:15px;font-weight:800;display:flex;align-items:center;cursor:pointer;white-space:nowrap;
+    transition:background .15s}
+  .mini:active{background:#D6E8FF}
+  .mini.solid{background:linear-gradient(180deg,#5AA8FF,#2F7EF0);color:#fff}
+  .mini.danger{background:#FFEDEE;color:#E03B40}
+
+  .hint{font-size:13.5px;line-height:1.75;color:#7C93B0;background:#F5F9FF;border-radius:14px;
+    padding:12px 16px;margin:12px 0 18px}
+
+  /* 表格式行 */
+  .thead,.row{display:grid;align-items:center;gap:12px}
+  .thead{font-size:13px;font-weight:800;color:#8AA0BC;padding:0 4px 10px;letter-spacing:.5px}
+  .row{background:#F8FBFF;border:1.5px solid #E8F0FA;border-radius:16px;padding:12px 14px;margin-bottom:10px}
+  .row:hover{border-color:#CFE1F7;background:#F5FAFF}
+  .row .idx{font-size:13px;font-weight:800;color:#9DB2CC}
+
+  .g-series{grid-template-columns:1fr 1.15fr 108px 116px 62px 44px}
+  .g-lessons{grid-template-columns:54px 1fr 1fr 78px 196px 44px}
+  .g-items{grid-template-columns:96px 1fr;gap:16px;align-items:start}
+
+  .inp,.sel{width:100%;font-family:inherit;font-size:16px;font-weight:600;color:#11284F;
+    background:#fff;border:1.5px solid #DCE7F5;border-radius:11px;padding:9px 11px;outline:none;
+    transition:border-color .15s,box-shadow .15s}
+  .inp:focus,.sel:focus{border-color:#4A93FE;box-shadow:0 0 0 3px rgba(74,147,254,.14)}
+  .inp::placeholder{color:#A9BCD4;font-weight:500}
+  .sel{cursor:pointer;appearance:none;
+    background-image:linear-gradient(45deg,transparent 50%,#8AA0BC 50%),linear-gradient(135deg,#8AA0BC 50%,transparent 50%);
+    background-position:calc(100% - 18px) 52%,calc(100% - 13px) 52%;
+    background-size:5px 5px,5px 5px;background-repeat:no-repeat;padding-right:32px}
+  .inp.num{text-align:center;font-family:Inter,sans-serif;font-weight:800}
+
+  .ro{font-size:15px;font-weight:700;color:#5C7396;padding:9px 4px;text-align:center}
+  .del{width:38px;height:38px;border-radius:12px;background:#FFEDEE;color:#E03B40;
+    display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:900;cursor:pointer;
+    transition:background .15s}
+  .del:active{background:#FFDBDD}
+
+  /* 视频单元格 */
+  .vcell{min-width:0}
+  .vfile{font-size:12.5px;font-weight:700;color:#2F7EF0;white-space:nowrap;overflow:hidden;
+    text-overflow:ellipsis;margin-bottom:7px;cursor:pointer}
+  .vfile.empty{color:#C0393E}
+  .vacts{display:flex;gap:7px}
+  .vbtn{flex:1;height:32px;border-radius:10px;background:#EAF3FF;color:#2F7EF0;font-size:12.5px;
+    font-weight:800;display:flex;align-items:center;justify-content:center;cursor:pointer;white-space:nowrap}
+  .vbtn:active{background:#D6E8FF}
+  .vbtn.dark{background:#EEF2F8;color:#5C7396}
+
+  .prog{height:6px;border-radius:3px;background:#E3EDF9;margin-top:8px;overflow:hidden;display:none}
+  .prog.on{display:block}
+  .prog i{display:block;height:100%;width:0;background:linear-gradient(90deg,#5AA8FF,#2FC56E);
+    border-radius:3px;transition:width .18s}
+
+  /* 商城卡片 */
+  .icard{background:#F8FBFF;border:1.5px solid #E8F0FA;border-radius:20px;padding:16px;
+    display:grid;grid-template-columns:104px 1fr;gap:16px;margin-bottom:12px}
+  .icard:hover{border-color:#CFE1F7}
+  .ishot{width:104px;height:104px;border-radius:16px;background:#fff;border:1.5px dashed #CFE1F7;
+    display:flex;align-items:center;justify-content:center;overflow:hidden;cursor:pointer;position:relative}
+  .ishot img{width:100%;height:100%;object-fit:contain}
+  .ishot .ph2{font-size:12px;font-weight:800;color:#9DB2CC;text-align:center;line-height:1.5;padding:0 6px}
+  .ishot .up{position:absolute;left:0;bottom:0;width:100%;height:24px;background:rgba(17,40,79,.62);
+    color:#fff;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center}
+  .ifields{display:grid;grid-template-columns:1.25fr 1fr;gap:10px}
+  .ifields .full{grid-column:1/-1}
+  .field{display:flex;flex-direction:column;gap:5px;min-width:0}
+  .field label{font-size:11.5px;font-weight:800;color:#8AA0BC;letter-spacing:.4px;padding-left:2px}
+
+  /* 内容馆子标签 */
+  .subtabs{display:flex;gap:10px;margin:14px 0 18px}
+  .subtab{height:46px;padding:0 22px;border-radius:23px;background:#F1F6FD;color:#5C7396;
+    font-size:16px;font-weight:800;display:flex;align-items:center;cursor:pointer;
+    border:1.5px solid transparent;transition:background .15s}
+  .subtab.on{background:linear-gradient(180deg,#5AA8FF,#2F7EF0);color:#fff;
+    box-shadow:0 5px 14px rgba(47,126,240,.35)}
+  .ta{width:100%;font-family:inherit;font-size:15px;font-weight:600;color:#11284F;
+    background:#fff;border:1.5px solid #DCE7F5;border-radius:11px;padding:10px 12px;
+    outline:none;resize:vertical;line-height:1.7;min-height:96px}
+  .ta:focus{border-color:#4A93FE;box-shadow:0 0 0 3px rgba(74,147,254,.14)}
+  .eprow{display:grid;grid-template-columns:44px 1fr 76px 200px 40px;gap:10px;align-items:center;
+    background:#fff;border:1.5px solid #E8F0FA;border-radius:13px;padding:9px 11px;margin-bottom:8px}
+  .eprow .idx{font-size:13px;font-weight:800;color:#9DB2CC;text-align:center}
+
+  /* 系统页 */
+  .sect{background:#F8FBFF;border:1.5px solid #E8F0FA;border-radius:20px;padding:20px 22px;margin-bottom:14px}
+  .sect h3{font-size:17px;font-weight:900;color:#11284F;margin-bottom:4px}
+  .sect p{font-size:13.5px;line-height:1.75;color:#7C93B0;margin-bottom:14px}
+  .sect .line{display:flex;gap:12px;align-items:center}
+  .kv{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+  .kv div{background:#fff;border-radius:14px;padding:14px 10px;text-align:center;border:1.5px solid #E8F0FA}
+  .kv b{display:block;font-family:Inter,sans-serif;font-size:26px;font-weight:900;color:#2F7EF0}
+  .kv span{font-size:12.5px;font-weight:700;color:#8AA0BC}
+  .code{font-family:ui-monospace,Menlo,monospace;font-size:13px;background:#11284F;color:#B8D6FF;
+    border-radius:12px;padding:12px 16px;margin-top:12px;-webkit-user-select:text;user-select:text;
+    word-break:break-all;line-height:1.7}
+
+  /* 密码门 */
+  .gate{position:absolute;left:0;top:0;width:1366px;height:1024px;background:rgba(6,17,38,.93);
+    display:flex;align-items:center;justify-content:center;z-index:50;backdrop-filter:blur(6px)}
+  .gate.hide{display:none}
+  .gate-box{width:460px;background:#fff;border-radius:28px;padding:40px 38px 34px;text-align:center;
+    box-shadow:0 30px 80px rgba(0,0,0,.5)}
+  .gate-t{font-size:28px;font-weight:900;color:#11284F}
+  .gate-s{font-size:14.5px;font-weight:600;color:#8AA0BC;margin:10px 0 26px;line-height:1.6}
+  .gate-in{width:100%;height:76px;border-radius:20px;border:2px solid #DCE7F5;background:#F8FBFF;
+    text-align:center;font-size:38px;font-weight:900;letter-spacing:14px;color:#11284F;outline:none;
+    font-family:Inter,sans-serif;padding-left:14px}
+  .gate-in:focus{border-color:#4A93FE;background:#fff}
+  .gate-e{height:24px;font-size:13.5px;font-weight:800;color:#E03B40;margin:8px 0 6px}
+  .shake{animation:sh .3s}
+  @keyframes sh{0%,100%{transform:translateX(0)}25%{transform:translateX(-9px)}75%{transform:translateX(9px)}}
+
+  .toast{position:absolute;left:50%;top:880px;transform:translateX(-50%);padding:15px 32px;border-radius:20px;
+    background:rgba(9,25,60,.92);color:#fff;font-size:19px;font-weight:800;opacity:0;
+    pointer-events:none;transition:opacity .2s;white-space:nowrap;z-index:60}
+  .toast.show{opacity:1}
+</style>
+</head>
+<body>
+<div class="view">
+  <div class="stage" id="stage">
+    <div class="bg"></div>
+
+    <div class="topbar">
+      <div class="brand">
+        <div class="bt">家长中心</div>
+        <div class="bs">课程分类 · 内容馆 · 灵石商城</div>
+      </div>
+      <div class="conn" id="conn">正在连接家长服务…</div>
+      <div class="btn ghost" id="homeBtn">返回首页</div>
+      <div class="btn primary" id="saveBtn">保存修改</div>
+    </div>
+
+    <div class="side" id="side">
+      <div class="nav on" data-tab="series"><b>课程分类</b><i>学科 · 体系 · 年级</i></div>
+      <div class="nav" data-tab="lessons"><b>讲次与视频</b><i>上传视频 · 时长</i></div>
+      <div class="nav" data-tab="items"><b>灵石商城</b><i>图片 · 价格 · 分类</i></div>
+      <div class="nav" data-tab="hall"><b>内容馆</b><i>有声 · 阅览 · 动画</i></div>
+      <div class="nav" data-tab="sys"><b>系统设置</b><i>密码 · 数据 · 导出</i></div>
+      <div class="tip">改完点右上角「保存修改」，孩子端刷新页面后生效。</div>
+    </div>
+
+    <div class="panel"><div class="pane" id="pane"></div></div>
+
+    <div class="gate" id="gate">
+      <div class="gate-box" id="gateBox">
+        <div class="gate-t">家长验证</div>
+        <div class="gate-s">请输入 4 位家长密码<br>首次使用默认 <b>1234</b></div>
+        <input class="gate-in" id="gateIn" type="password" inputmode="numeric" maxlength="4"
+               placeholder="••••" autocomplete="off">
+        <div class="gate-e" id="gateErr"></div>
+        <div class="btn primary wide" id="gateOk">进入家长中心</div>
+      </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+  </div>
+</div>
+
+<script src="store.js?v=3"></script>
+<script>
+(function () {
+  'use strict';
+
+  /* ============ 环境 ============ */
+  var PORT = location.port || (location.protocol === 'file:' ? '' : '80');
+  var API = PORT === '8780' ? ''
+    : (location.protocol === 'file:' ? 'http://127.0.0.1:8780'
+      : location.protocol + '//' + (location.hostname || '127.0.0.1') + ':8780');
+
+  var PIN_KEY = 'antistudy.parent.pin';
+  var AUTH_KEY = 'antistudy.parent.auth';
+  var SUBJECTS = ['语文', '数学', '英语', '探索'];
+  var GRADES = ['四年级', '五年级', '六年级'];
+  var ICATS = ['道具', '装备', '服装', '宠物'];
+  var ATTR = { '语文': '文心', '数学': '算力', '英语': '共鸣', '探索': '灵感' };
+
+  var CATALOG = { v: 1, series: [], items: [] };
+  var tab = 'series';
+  var curCourse = '';
+  var dirty = false;
+  var connected = false;
+
+  var pane = document.getElementById('pane');
+  var connEl = document.getElementById('conn');
+  var saveBtn = document.getElementById('saveBtn');
+  var toastEl = document.getElementById('toast');
+
+  /* ============ 小工具 ============ */
+  function el(tag, cls, txt) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (txt != null) e.textContent = txt;
+    return e;
+  }
+  var toastTimer = null;
+  function toast(msg) {
+    toastEl.textContent = msg;
+    toastEl.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { toastEl.classList.remove('show'); }, 2200);
+  }
+  function markDirty() {
+    dirty = true;
+    saveBtn.textContent = '保存修改 •';
+    saveBtn.style.background = 'linear-gradient(180deg,#FFB055,#F08214)';
+  }
+  function clearDirty() {
+    dirty = false;
+    saveBtn.textContent = '保存修改';
+    saveBtn.style.background = '';
+  }
+  function num(v, def) { var n = parseInt(v, 10); return isNaN(n) ? def : n; }
+  function uid(prefix) {
+    var n = 1;
+    while (true) {
+      var id = prefix + '_' + n;
+      if (!CATALOG.series.some(function (s) { return s.id === id; })) return id;
+      n++;
+    }
+  }
+
+  function inp(val, ph, onchange, cls) {
+    var i = el('input', 'inp' + (cls ? ' ' + cls : ''));
+    i.value = val == null ? '' : String(val);
+    if (ph) i.placeholder = ph;
+    i.addEventListener('input', function () { onchange(i.value); markDirty(); });
+    return i;
+  }
+  function numInp(val, onchange) {
+    var i = inp(val, '', onchange, 'num');
+    i.type = 'number';
+    i.min = '0';
+    return i;
+  }
+  function sel(opts, val, onchange) {
+    var s = el('select', 'sel');
+    opts.forEach(function (o) {
+      var op = el('option', null, o);
+      op.value = o;
+      if (o === val) op.selected = true;
+      s.appendChild(op);
+    });
+    s.addEventListener('change', function () { onchange(s.value); markDirty(); });
+    return s;
+  }
+  function delBtn(onclick) {
+    var d = el('div', 'del', '×');
+    d.title = '删除';
+    d.addEventListener('click', onclick);
+    return d;
+  }
+  function ta(val, ph, onchange, rows) {
+    var t = el('textarea', 'ta');
+    t.value = val == null ? '' : String(val);
+    t.rows = rows || 4;
+    if (ph) t.placeholder = ph;
+    t.addEventListener('input', function () { onchange(t.value); markDirty(); });
+    return t;
+  }
+
+  /* 选文件 → 上传 → 回填。btnEl 用来显示上传中状态 */
+  function pickUpload(kind, accept, btnEl, onDone) {
+    pickFile(accept).then(function (file) {
+      if (!file) return;
+      var old = btnEl ? btnEl.textContent : '';
+      if (btnEl) btnEl.textContent = '上传中…';
+      uploadFile(file, kind)
+        .then(function (j) {
+          onDone(j.url, j);
+          toast('已上传：' + j.name + '（' + (j.size / 1024 / 1024).toFixed(1) + 'MB）');
+        })
+        .catch(function (e) { toast('上传失败：' + e.message); })
+        .then(function () { if (btnEl) btnEl.textContent = old; });
+    });
+  }
+
+  /* ============ 网络 ============ */
+  function checkConn() {
+    return fetch(API + '/api/health', { cache: 'no-store' })
+      .then(function (r) { return r.json(); })
+      .then(function (j) {
+        if (!j || !j.ok) throw new Error('bad');
+        connected = true;
+        connEl.className = 'conn ok';
+        connEl.textContent = '已连接家长服务 · 端口 ' + j.port;
+        return true;
+      })
+      .catch(function () {
+        connected = false;
+        connEl.className = 'conn bad';
+        connEl.textContent = '未连接家长服务 · 先运行 node parent-server.js';
+        return false;
+      });
+  }
+
+  function uploadFile(file, kind, onProgress) {
+    return new Promise(function (resolve, reject) {
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', API + '/api/upload?kind=' + encodeURIComponent(kind) +
+        '&name=' + encodeURIComponent(file.name));
+      xhr.setRequestHeader('X-Parent-Pin', getPin());
+      xhr.upload.onprogress = function (e) {
+        if (e.lengthComputable && onProgress) onProgress(e.loaded / e.total);
+      };
+      xhr.onload = function () {
+        var j;
+        try { j = JSON.parse(xhr.responseText); } catch (e) { return reject(new Error('服务返回异常')); }
+        if (!j.ok) return reject(new Error(j.error || '上传失败'));
+        resolve(j);
+      };
+      xhr.onerror = function () { reject(new Error('上传中断，家长服务没启动？')); };
+      xhr.send(file);
+    });
+  }
+
+  function pickFile(accept) {
+    return new Promise(function (resolve) {
+      var f = el('input');
+      f.type = 'file';
+      f.accept = accept;
+      f.style.display = 'none';
+      document.body.appendChild(f);
+      f.addEventListener('change', function () {
+        var file = f.files && f.files[0];
+        document.body.removeChild(f);
+        resolve(file || null);
+      });
+      f.click();
+    });
+  }
+
+  /* ============ 载入 / 保存 ============ */
+  function importFromStore() {
+    var all = (Store && Store.allSeries) ? Store.allSeries() : {};
+    var list = [];
+    Object.keys(all).forEach(function (subject) {
+      (all[subject] || []).forEach(function (s) {
+        var c = Store.getCourse(s.id);
+        if (!c) return;
+        list.push({
+          id: c.id,
+          subject: c.subject || subject,
+          name: c.name || s.tab || c.id,
+          tab: s.tab || c.name || c.id,
+          grade: s.grade || '四年级',
+          attr: c.attr || ATTR[c.subject || subject] || '算力',
+          lessons: (c.lessons || []).map(function (l) {
+            return {
+              n: l.n, title: l.title, sub: l.sub, min: l.min,
+              video: l.video || '', quiz: l.quiz ? JSON.parse(JSON.stringify(l.quiz)) : []
+            };
+          })
+        });
+      });
+    });
+    return list;
+  }
+
+  function importItemsFromStore() {
+    if (!Store || !Store.ITEMS) return [];
+    return Store.ITEMS.map(function (i) {
+      return {
+        id: i.id, name: i.name, cat: i.cat, price: i.price, kind: i.kind,
+        desc: i.desc || '', icon: i.icon || '', bagIcon: i.bagIcon || i.icon || ''
+      };
+    });
+  }
+
+  /* 内容馆：有声故事 / 少年阅览室 / 动画馆，首次进入时从客户端内置数据带过来 */
+  function importBooks() {
+    return JSON.parse(JSON.stringify((Store && Store.BOOKS) || []));
+  }
+  function importAudios() {
+    return JSON.parse(JSON.stringify((Store && Store.AUDIOS) || []));
+  }
+  function importVideos() {
+    return JSON.parse(JSON.stringify((Store && Store.VIDEOS) || []));
+  }
+
+  function loadCatalog() {
+    return fetch(API + '/api/catalog', { cache: 'no-store' })
+      .then(function (r) { return r.json(); })
+      .catch(function () { return { v: 1, series: [], items: [] }; })
+      .then(function (j) {
+        CATALOG = j && typeof j === 'object' ? j : { v: 1, series: [], items: [] };
+        if (!Array.isArray(CATALOG.series)) CATALOG.series = [];
+        if (!Array.isArray(CATALOG.items)) CATALOG.items = [];
+
+        /* 第一次用：把客户端内置数据带出来，家长不用从零填 */
+        if (!CATALOG.series.length) { CATALOG.series = importFromStore(); markDirty(); }
+        if (!CATALOG.items.length) { CATALOG.items = importItemsFromStore(); markDirty(); }
+
+        /* 内容馆：字段不存在 = 还没配置过（带入内置）；空数组 = 家长主动删空了（尊重） */
+        if (!Array.isArray(CATALOG.books)) { CATALOG.books = importBooks(); markDirty(); }
+        if (!Array.isArray(CATALOG.audios)) { CATALOG.audios = importAudios(); markDirty(); }
+        if (!Array.isArray(CATALOG.videos)) { CATALOG.videos = importVideos(); markDirty(); }
+
+        if (!curCourse && CATALOG.series.length) curCourse = CATALOG.series[0].id;
+      });
+  }
+
+  function save() {
+    if (dirty === false) { toast('没有需要保存的修改'); return; }
+    saveBtn.disabled = true;
+    saveBtn.textContent = '保存中…';
+    fetch(API + '/api/catalog', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', 'X-Parent-Pin': getPin() },
+      body: JSON.stringify(CATALOG)
+    }).then(function (r) { return r.json(); })
+      .then(function (j) {
+        if (!j.ok) throw new Error(j.error || '保存失败');
+        clearDirty();
+        toast('已保存 · 孩子端刷新页面即可看到');
+        render();
+      })
+      .catch(function (e) { toast('保存失败：' + e.message); })
+      .then(function () {
+        saveBtn.disabled = false;
+        if (dirty) markDirty();
+      });
+  }
+
+  /* ============ 渲染：课程分类 ============ */
+  function renderSeries() {
+    pane.innerHTML = '';
+    var head = el('div', 'ph');
+    head.appendChild(el('h2', null, '课程分类'));
+    head.appendChild(el('div', 'sub', '学科 → 课程体系 → 年级，决定孩子首页卡片和课程页 tab'));
+    var add = el('div', 'mini solid', '＋ 新增课程体系');
+    add.addEventListener('click', function () {
+      var id = uid('series_new');
+      CATALOG.series.push({
+        id: id, subject: '数学', name: '新课程体系', tab: '新体系',
+        grade: '四年级', attr: '算力', lessons: []
+      });
+      markDirty();
+      renderSeries();
+      toast('已新增，直接改名字即可');
+    });
+    head.appendChild(add);
+    pane.appendChild(head);
+    pane.appendChild(el('div', 'hint',
+      '「学科」决定首页哪张卡片进去，「属性」由学科自动对应（语文=文心 / 数学=算力 / 英语=共鸣 / 探索=灵感）。' +
+      '新增的体系会自动出现在课程页顶部 tab，不用改代码。'));
+
+    var thead = el('div', 'thead g-series');
+    ['课程体系名称', 'Tab 显示名', '学科', '年级', '讲次数', '删'].forEach(function (t) {
+      thead.appendChild(el('div', null, t));
+    });
+    pane.appendChild(thead);
+
+    if (!CATALOG.series.length) {
+      pane.appendChild(el('div', 'hint', '还没有课程体系，点右上角「＋ 新增课程体系」开始。'));
+      return;
+    }
+
+    CATALOG.series.forEach(function (s, idx) {
+      var row = el('div', 'row g-series');
+
+      row.appendChild(inp(s.name, '课程名称', function (v) { s.name = v; }));
+      row.appendChild(inp(s.tab, 'Tab 名', function (v) { s.tab = v; }));
+      row.appendChild(sel(SUBJECTS, s.subject, function (v) {
+        s.subject = v;
+        s.attr = ATTR[v] || s.attr;
+        renderSeries();
+      }));
+      row.appendChild(sel(GRADES, s.grade, function (v) { s.grade = v; }));
+      row.appendChild(el('div', 'ro', String((s.lessons || []).length)));
+      row.appendChild(delBtn(function () {
+        if (!confirm('删除课程体系「' + s.name + '」？它的 ' + (s.lessons || []).length + ' 个讲次会一起删掉。')) return;
+        CATALOG.series.splice(idx, 1);
+        if (curCourse === s.id) curCourse = CATALOG.series.length ? CATALOG.series[0].id : '';
+        markDirty();
+        renderSeries();
+      }));
+
+      pane.appendChild(row);
+    });
+  }
+
+  /* ============ 渲染：讲次与视频 ============ */
+  function renderLessons() {
+    pane.innerHTML = '';
+
+    var head = el('div', 'ph');
+    head.appendChild(el('h2', null, '讲次与视频'));
+    head.appendChild(el('div', 'sub', '给每一讲换视频、改标题时长'));
+    pane.appendChild(head);
+
+    if (!CATALOG.series.length) {
+      pane.appendChild(el('div', 'hint', '先去「课程分类」建立一个课程体系。'));
+      return;
+    }
+
+    var bar = el('div', 'ph');
+    var picker = el('select', 'sel');
+    picker.style.width = '340px';
+    CATALOG.series.forEach(function (s) {
+      var op = el('option', null, s.name + '（' + s.subject + ' · ' + s.grade + '）');
+      op.value = s.id;
+      if (s.id === curCourse) op.selected = true;
+      picker.appendChild(op);
+    });
+    picker.addEventListener('change', function () { curCourse = picker.value; renderLessons(); });
+    bar.appendChild(picker);
+    var add = el('div', 'mini solid', '＋ 新增讲次');
+    add.addEventListener('click', function () {
+      var c = courseById(curCourse);
+      if (!c) return;
+      c.lessons = c.lessons || [];
+      var maxN = 0;
+      c.lessons.forEach(function (l) { maxN = Math.max(maxN, num(l.n, 0)); });
+      c.lessons.push({ n: maxN + 1, title: '新讲次', sub: '', min: 8, video: '', quiz: [] });
+      markDirty();
+      renderLessons();
+      toast('已新增第 ' + (maxN + 1) + ' 讲，记得上传视频');
+    });
+    bar.appendChild(add);
+    bar.appendChild(el('div', 'sub', ''));
+    pane.appendChild(bar);
+
+    var c = courseById(curCourse);
+    if (!c) return;
+
+    pane.appendChild(el('div', 'hint',
+      '上传的视频会存到 ipad-design/uploads/，孩子端播放页直接读它。' +
+      '讲次号删除后不重排，避免已学进度对不上。'));
+
+    var thead = el('div', 'thead g-lessons');
+    ['讲次', '标题', '副标题', '时长(分)', '视频', '删'].forEach(function (t) {
+      thead.appendChild(el('div', null, t));
+    });
+    pane.appendChild(thead);
+
+    (c.lessons || []).forEach(function (l, idx) {
+      var row = el('div', 'row g-lessons');
+      row.appendChild(el('div', 'idx', String(l.n)));
+
+      row.appendChild(inp(l.title, '标题', function (v) { l.title = v; }));
+      row.appendChild(inp(l.sub, '副标题', function (v) { l.sub = v; }));
+      row.appendChild(numInp(l.min, function (v) { l.min = num(v, 0); }));
+
+      /* 视频单元格 */
+      var vc = el('div', 'vcell');
+      var fname = el('div', 'vfile' + (l.video ? '' : ' empty'), l.video ? shortName(l.video) : '未设置视频');
+      fname.title = l.video || '';
+      vc.appendChild(fname);
+
+      var acts = el('div', 'vacts');
+      var up = el('div', 'vbtn', '上传');
+      var prog = el('div', 'prog');
+      var bar2 = el('i');
+      prog.appendChild(bar2);
+
+      up.addEventListener('click', function () {
+        pickFile('video/*').then(function (file) {
+          if (!file) return;
+          prog.classList.add('on');
+          up.textContent = '上传中';
+          uploadFile(file, 'video', function (p) { bar2.style.width = Math.round(p * 100) + '%'; })
+            .then(function (j) {
+              l.video = j.url;
+              markDirty();
+              toast('视频已上传：' + j.name + '（' + (j.size / 1024 / 1024).toFixed(1) + 'MB）');
+              renderLessons();
+            })
+            .catch(function (e) { toast('上传失败：' + e.message); up.textContent = '上传'; prog.classList.remove('on'); });
+        });
+      });
+      acts.appendChild(up);
+
+      var link = el('div', 'vbtn dark', '链接');
+      link.addEventListener('click', function () {
+        var v = prompt('填视频地址（可以是外链 mp4，或 uploads/ 下的文件）', l.video || '');
+        if (v === null) return;
+        l.video = v.trim();
+        markDirty();
+        renderLessons();
+      });
+      acts.appendChild(link);
+
+      vc.appendChild(acts);
+      vc.appendChild(prog);
+      row.appendChild(vc);
+
+      row.appendChild(delBtn(function () {
+        if (!confirm('删除第 ' + l.n + ' 讲「' + l.title + '」？')) return;
+        c.lessons.splice(idx, 1);
+        markDirty();
+        renderLessons();
+      }));
+
+      pane.appendChild(row);
+    });
+  }
+
+  function shortName(v) {
+    if (!v) return '';
+    var s = String(v).split('?')[0];
+    var parts = s.split('/');
+    return parts[parts.length - 1] || v;
+  }
+
+  /* ============ 渲染：灵石商城 ============ */
+  function renderItems() {
+    pane.innerHTML = '';
+
+    var head = el('div', 'ph');
+    head.appendChild(el('h2', null, '灵石商城'));
+    head.appendChild(el('div', 'sub', '图片、价格、分类、是否可重复购买'));
+    var add = el('div', 'mini solid', '＋ 新增商品');
+    add.addEventListener('click', function () {
+      CATALOG.items.push({
+        id: 'item_' + Date.now(), name: '新商品', cat: '道具', price: 100,
+        kind: 'own', desc: '', icon: '', bagIcon: ''
+      });
+      markDirty();
+      renderItems();
+      toast('已新增，点图片框上传商品图');
+    });
+    head.appendChild(add);
+    pane.appendChild(head);
+
+    pane.appendChild(el('div', 'hint',
+      '价格单位是「灵石」。类型选「消耗品」买了会进背包可重复购买；选「永久拥有」买过即锁定为已拥有。'));
+
+    if (!CATALOG.items.length) {
+      pane.appendChild(el('div', 'hint', '还没有商品，点右上角「＋ 新增商品」。'));
+      return;
+    }
+
+    CATALOG.items.forEach(function (it, idx) {
+      var card = el('div', 'icard');
+
+      /* 图片 */
+      var shot = el('div', 'ishot');
+      if (it.icon) {
+        var img = el('img');
+        img.src = it.icon;
+        img.alt = '';
+        shot.appendChild(img);
+      } else {
+        shot.appendChild(el('div', 'ph2', '点击上传图片'));
+      }
+      shot.appendChild(el('div', 'up', it.icon ? '换图' : '上传'));
+      shot.addEventListener('click', function () {
+        pickFile('image/*').then(function (file) {
+          if (!file) return;
+          shot.querySelector('.up').textContent = '上传中…';
+          uploadFile(file, 'image')
+            .then(function (j) {
+              it.icon = j.url;
+              it.bagIcon = j.url;
+              markDirty();
+              toast('商品图已上传：' + j.name);
+              renderItems();
+            })
+            .catch(function (e) {
+              toast('上传失败：' + e.message);
+              shot.querySelector('.up').textContent = '上传';
+            });
+        });
+      });
+      card.appendChild(shot);
+
+      /* 字段 */
+      var fields = el('div', 'ifields');
+
+      var f1 = el('div', 'field');
+      f1.appendChild(el('label', null, '商品名称'));
+      f1.appendChild(inp(it.name, '名称', function (v) { it.name = v; }));
+      fields.appendChild(f1);
+
+      var f2 = el('div', 'field');
+      f2.appendChild(el('label', null, '分类'));
+      var catSel = sel(ICATS.indexOf(it.cat) >= 0 ? ICATS : ICATS.concat([it.cat]), it.cat,
+        function (v) { it.cat = v; });
+      f2.appendChild(catSel);
+      fields.appendChild(f2);
+
+      var f3 = el('div', 'field');
+      f3.appendChild(el('label', null, '价格（灵石）'));
+      f3.appendChild(numInp(it.price, function (v) { it.price = num(v, 0); }));
+      fields.appendChild(f3);
+
+      var f4 = el('div', 'field');
+      f4.appendChild(el('label', null, '类型'));
+      var kinds = [['own', '永久拥有'], ['consume', '消耗品']];
+      var ks = el('select', 'sel');
+      kinds.forEach(function (k) {
+        var op = el('option', null, k[1]);
+        op.value = k[0];
+        if (k[0] === it.kind) op.selected = true;
+        ks.appendChild(op);
+      });
+      ks.addEventListener('change', function () { it.kind = ks.value; markDirty(); });
+      f4.appendChild(ks);
+      fields.appendChild(f4);
+
+      var f5 = el('div', 'field full');
+      f5.appendChild(el('label', null, '描述（商城卡片上的一行说明）'));
+      f5.appendChild(inp(it.desc, '例如：使用后经验 +100', function (v) { it.desc = v; }));
+      fields.appendChild(f5);
+
+      var tools = el('div', 'full');
+      tools.style.display = 'flex';
+      tools.style.gap = '10px';
+      tools.style.marginTop = '2px';
+      var rm = el('div', 'mini danger', '删除商品');
+      rm.addEventListener('click', function () {
+        if (!confirm('删除商品「' + it.name + '」？')) return;
+        CATALOG.items.splice(idx, 1);
+        markDirty();
+        renderItems();
+      });
+      tools.appendChild(rm);
+      tools.appendChild(el('div', 'sub', 'ID：' + it.id));
+      fields.appendChild(tools);
+
+      card.appendChild(fields);
+      pane.appendChild(card);
+    });
+  }
+
+  /* ============ 渲染：内容馆（有声故事 / 少年阅览室 / 动画馆） ============ */
+  var hallSub = 'audios';
+
+  var AUDIO_CATS = ['名著故事', '宇宙科学', '国学经典', '睡前故事', '英语磨耳'];
+  var BOOK_CATS = ['自然探索', '国学经典', '科幻冒险', '课外阅读', '科学百科'];
+  var VIDEO_SUBJECTS = ['数学', '语文', '英语', '探索'];
+
+  function selWith(list, val, cb) {
+    var opts = list.slice();
+    if (val && opts.indexOf(val) < 0) opts.push(val);
+    return sel(opts, val, cb);
+  }
+
+  /* 一张可点击换图的封面（商品/音频/绘本/系列共用） */
+  function coverShot(cur, onPick) {
+    var shot = el('div', 'ishot');
+    if (cur) {
+      var im = el('img');
+      im.src = cur;
+      im.alt = '';
+      shot.appendChild(im);
+    } else {
+      shot.appendChild(el('div', 'ph2', '点击上传图片'));
+    }
+    shot.appendChild(el('div', 'up', cur ? '换图' : '上传'));
+    shot.addEventListener('click', function () {
+      pickUpload('image', 'image/*', shot.querySelector('.up'), function (url) {
+        onPick(url);
+        renderHall();
+      });
+    });
+    return shot;
+  }
+
+  /* 一个「地址 + 上传 + 链接」控件，音频和视频共用 */
+  function mediaField(label, cur, kind, accept, onChange) {
+    var wrap = el('div', 'field full');
+    wrap.appendChild(el('label', null, label));
+
+    var row = el('div');
+    row.style.cssText = 'display:flex;gap:10px;align-items:center';
+
+    var name = el('div', 'vfile' + (cur ? '' : ' empty'),
+      cur ? shortName(cur) : '未设置');
+    name.style.cssText = 'flex:1;margin:0;min-width:0';
+    name.title = cur || '';
+    row.appendChild(name);
+
+    var up = el('div', 'vbtn', '上传');
+    up.style.flex = '0 0 auto';
+    up.style.width = '78px';
+    up.addEventListener('click', function () {
+      pickUpload(kind, accept, up, function (url) {
+        onChange(url);
+        renderHall();
+      });
+    });
+    row.appendChild(up);
+
+    var link = el('div', 'vbtn dark', '填链接');
+    link.style.flex = '0 0 auto';
+    link.style.width = '86px';
+    link.addEventListener('click', function () {
+      var v = prompt('填地址（可以是 uploads/ 下的文件，也可以是外链）', cur || '');
+      if (v === null) return;
+      onChange(v.trim());
+      renderHall();
+    });
+    row.appendChild(link);
+
+    wrap.appendChild(row);
+    return wrap;
+  }
+
+  function renderHall() {
+    pane.innerHTML = '';
+
+    var head = el('div', 'ph');
+    head.appendChild(el('h2', null, '内容馆'));
+    head.appendChild(el('div', 'sub', '首页三个入口的内容都在这里维护'));
+    pane.appendChild(head);
+
+    var subs = el('div', 'subtabs');
+    [['audios', '有声故事馆', '音乐馆'],
+     ['books', '少年阅览室', '绘本馆'],
+     ['videos', '动画馆', '动画馆']].forEach(function (x) {
+      var b = el('div', 'subtab' + (hallSub === x[0] ? ' on' : ''), x[1]);
+      b.addEventListener('click', function () { hallSub = x[0]; renderHall(); });
+      subs.appendChild(b);
+    });
+    pane.appendChild(subs);
+
+    if (hallSub === 'audios') hallAudios();
+    else if (hallSub === 'books') hallBooks();
+    else hallVideos();
+  }
+
+  function hallAudios() {
+    var bar = el('div', 'ph');
+    bar.appendChild(el('div', 'sub', '对应首页「音乐馆」'));
+    var add = el('div', 'mini solid', '＋ 新增音频');
+    add.addEventListener('click', function () {
+      CATALOG.audios.push({
+        id: 'audio_' + Date.now(), title: '新故事', speaker: '', category: '名著故事',
+        cover: '', seconds: 180, playCount: 0, done: false, url: ''
+      });
+      markDirty();
+      hallSub = 'audios';
+      renderHall();
+      toast('已新增，记得填音频');
+    });
+    bar.appendChild(add);
+    pane.appendChild(bar);
+
+    pane.appendChild(el('div', 'hint',
+      '音频可以上传本地 mp3 / m4a，也可以直接填外链地址。孩子端「有声故事馆」会显示这里的顺序。'));
+
+    if (!CATALOG.audios.length) {
+      pane.appendChild(el('div', 'hint', '还没有音频，点右上角新增。'));
+      return;
+    }
+
+    CATALOG.audios.forEach(function (a, idx) {
+      var card = el('div', 'icard');
+      card.appendChild(coverShot(a.cover, function (url) { a.cover = url; }));
+
+      var f = el('div', 'ifields');
+
+      var f1 = el('div', 'field');
+      f1.appendChild(el('label', null, '标题'));
+      f1.appendChild(inp(a.title, '故事标题', function (v) { a.title = v; }));
+      f.appendChild(f1);
+
+      var f2 = el('div', 'field');
+      f2.appendChild(el('label', null, '播讲人'));
+      f2.appendChild(inp(a.speaker, '例如：小拓 AI 播音员', function (v) { a.speaker = v; }));
+      f.appendChild(f2);
+
+      var f3 = el('div', 'field');
+      f3.appendChild(el('label', null, '分类'));
+      f3.appendChild(selWith(AUDIO_CATS, a.category, function (v) { a.category = v; }));
+      f.appendChild(f3);
+
+      var f4 = el('div', 'field');
+      f4.appendChild(el('label', null, '时长（秒）'));
+      f4.appendChild(numInp(a.seconds, function (v) { a.seconds = num(v, 0); }));
+      f.appendChild(f4);
+
+      f.appendChild(mediaField('音频文件', a.url, 'audio', 'audio/*', function (url) { a.url = url; }));
+
+      var tools = el('div', 'full');
+      tools.style.cssText = 'display:flex;gap:10px;align-items:center';
+      var rm = el('div', 'mini danger', '删除');
+      rm.addEventListener('click', function () {
+        if (!confirm('删除音频「' + a.title + '」？')) return;
+        CATALOG.audios.splice(idx, 1);
+        markDirty();
+        renderHall();
+      });
+      tools.appendChild(rm);
+      tools.appendChild(el('div', 'sub', 'ID：' + a.id));
+      f.appendChild(tools);
+
+      card.appendChild(f);
+      pane.appendChild(card);
+    });
+  }
+
+  function hallBooks() {
+    var bar = el('div', 'ph');
+    bar.appendChild(el('div', 'sub', '对应首页「绘本馆」'));
+    var add = el('div', 'mini solid', '＋ 新增绘本');
+    add.addEventListener('click', function () {
+      CATALOG.books.push({
+        id: 'book_' + Date.now(), title: '新绘本', author: '', category: '自然探索',
+        cover: '', minutes: 8, readCount: 0, done: false, summary: '', content: ''
+      });
+      markDirty();
+      hallSub = 'books';
+      renderHall();
+      toast('已新增，记得填封面和正文');
+    });
+    bar.appendChild(add);
+    pane.appendChild(bar);
+
+    pane.appendChild(el('div', 'hint',
+      '「正文」就是孩子点开书看到的阅读内容，空一行会自动分段；用【小标题】开头的那一行会加粗显示。'));
+
+    if (!CATALOG.books.length) {
+      pane.appendChild(el('div', 'hint', '还没有绘本，点右上角新增。'));
+      return;
+    }
+
+    CATALOG.books.forEach(function (b, idx) {
+      var card = el('div', 'icard');
+      card.appendChild(coverShot(b.cover, function (url) { b.cover = url; }));
+
+      var f = el('div', 'ifields');
+
+      var f1 = el('div', 'field');
+      f1.appendChild(el('label', null, '书名'));
+      f1.appendChild(inp(b.title, '书名', function (v) { b.title = v; }));
+      f.appendChild(f1);
+
+      var f2 = el('div', 'field');
+      f2.appendChild(el('label', null, '作者'));
+      f2.appendChild(inp(b.author, '作者', function (v) { b.author = v; }));
+      f.appendChild(f2);
+
+      var f3 = el('div', 'field');
+      f3.appendChild(el('label', null, '分类'));
+      f3.appendChild(selWith(BOOK_CATS, b.category, function (v) { b.category = v; }));
+      f.appendChild(f3);
+
+      var f4 = el('div', 'field');
+      f4.appendChild(el('label', null, '阅读时长（分钟）'));
+      f4.appendChild(numInp(b.minutes, function (v) { b.minutes = num(v, 0); }));
+      f.appendChild(f4);
+
+      var f5 = el('div', 'field full');
+      f5.appendChild(el('label', null, '一句话简介'));
+      f5.appendChild(inp(b.summary, '展示在阅读弹层顶部', function (v) { b.summary = v; }));
+      f.appendChild(f5);
+
+      var f6 = el('div', 'field full');
+      f6.appendChild(el('label', null, '正文'));
+      f6.appendChild(ta(b.content, '孩子读到的正文内容…', function (v) { b.content = v; }, 6));
+      f.appendChild(f6);
+
+      var tools = el('div', 'full');
+      tools.style.cssText = 'display:flex;gap:10px;align-items:center';
+      var rm = el('div', 'mini danger', '删除');
+      rm.addEventListener('click', function () {
+        if (!confirm('删除绘本「' + b.title + '」？')) return;
+        CATALOG.books.splice(idx, 1);
+        markDirty();
+        renderHall();
+      });
+      tools.appendChild(rm);
+      tools.appendChild(el('div', 'sub', 'ID：' + b.id));
+      f.appendChild(tools);
+
+      card.appendChild(f);
+      pane.appendChild(card);
+    });
+  }
+
+  function hallVideos() {
+    var bar = el('div', 'ph');
+    bar.appendChild(el('div', 'sub', '对应首页「动画馆」'));
+    var add = el('div', 'mini solid', '＋ 新增系列');
+    add.addEventListener('click', function () {
+      CATALOG.videos.push({
+        id: 'series_' + Date.now(), name: '新系列', subject: '探索',
+        cover: '', desc: '', episodes: []
+      });
+      markDirty();
+      hallSub = 'videos';
+      renderHall();
+      toast('已新增系列，接着加讲次');
+    });
+    bar.appendChild(add);
+    pane.appendChild(bar);
+
+    pane.appendChild(el('div', 'hint',
+      '一个系列就是动画馆里的一行，下面挂若干讲次。讲次视频同样支持上传或填链接。'));
+
+    if (!CATALOG.videos.length) {
+      pane.appendChild(el('div', 'hint', '还没有系列，点右上角新增。'));
+      return;
+    }
+
+    CATALOG.videos.forEach(function (v, vi) {
+      var card = el('div', 'icard');
+      card.appendChild(coverShot(v.cover, function (url) { v.cover = url; }));
+
+      var f = el('div', 'ifields');
+
+      var f1 = el('div', 'field');
+      f1.appendChild(el('label', null, '系列名称'));
+      f1.appendChild(inp(v.name, '系列名', function (x) { v.name = x; }));
+      f.appendChild(f1);
+
+      var f2 = el('div', 'field');
+      f2.appendChild(el('label', null, '学科'));
+      f2.appendChild(selWith(VIDEO_SUBJECTS, v.subject, function (x) { v.subject = x; }));
+      f.appendChild(f2);
+
+      var f3 = el('div', 'field full');
+      f3.appendChild(el('label', null, '系列介绍'));
+      f3.appendChild(inp(v.desc, '一行介绍', function (x) { v.desc = x; }));
+      f.appendChild(f3);
+
+      /* 讲次列表 */
+      var eps = el('div', 'field full');
+      eps.appendChild(el('label', null, '讲次（' + (v.episodes || []).length + '）'));
+
+      (v.episodes || []).forEach(function (ep, ei) {
+        var row = el('div', 'eprow');
+        row.appendChild(el('div', 'idx', String(ep.n)));
+
+        row.appendChild(inp(ep.title, '讲次标题', function (x) { ep.title = x; }));
+
+        var dur = numInp(ep.seconds, function (x) { ep.seconds = num(x, 0); });
+        dur.title = '时长（秒）';
+        row.appendChild(dur);
+
+        var mf = mediaField('', ep.video, 'video', 'video/*', function (url) {
+          ep.video = url;
+          renderHall();
+        });
+        mf.className = '';
+        mf.querySelector('label').remove();
+        row.appendChild(mf.firstChild);
+
+        row.appendChild(delBtn(function () {
+          if (!confirm('删除这一讲？')) return;
+          v.episodes.splice(ei, 1);
+          markDirty();
+          renderHall();
+        }));
+
+        eps.appendChild(row);
+      });
+
+      var addEp = el('div', 'mini', '＋ 添加讲次');
+      addEp.addEventListener('click', function () {
+        v.episodes = v.episodes || [];
+        var maxN = 0;
+        v.episodes.forEach(function (e) { maxN = Math.max(maxN, num(e.n, 0)); });
+        v.episodes.push({ n: maxN + 1, title: '新讲次', sub: '', seconds: 300, video: '' });
+        markDirty();
+        renderHall();
+      });
+      eps.appendChild(addEp);
+      f.appendChild(eps);
+
+      var tools = el('div', 'full');
+      tools.style.cssText = 'display:flex;gap:10px;align-items:center';
+      var rm = el('div', 'mini danger', '删除系列');
+      rm.addEventListener('click', function () {
+        if (!confirm('删除系列「' + v.name + '」及其全部讲次？')) return;
+        CATALOG.videos.splice(vi, 1);
+        markDirty();
+        renderHall();
+      });
+      tools.appendChild(rm);
+      tools.appendChild(el('div', 'sub', 'ID：' + v.id));
+      f.appendChild(tools);
+
+      card.appendChild(f);
+      pane.appendChild(card);
+    });
+  }
+
+  /* ============ 渲染：系统设置 ============ */
+  function renderSys() {
+    pane.innerHTML = '';
+    var head = el('div', 'ph');
+    head.appendChild(el('h2', null, '系统设置'));
+    head.appendChild(el('div', 'sub', '密码、孩子数据、目录导出'));
+    pane.appendChild(head);
+
+    /* 孩子学习数据 */
+    var s1 = el('div', 'sect');
+    s1.appendChild(el('h3', null, '孩子的学习数据'));
+    s1.appendChild(el('p', null, '这些数字来自本机 localStorage，只有用同一个地址打开才有数据。'));
+
+    var st = null;
+    try { st = Store && Store.get ? Store.get() : null; } catch (e) { st = null; }
+
+    var kv = el('div', 'kv');
+    [['灵石', st ? st.stone : '—'], ['经验', st ? st.exp : '—'],
+     ['连续打卡', st ? st.streak + ' 天' : '—'],
+     ['已学讲次', st ? Object.keys(st.lessons || {}).filter(function (k) { return st.lessons[k].done; }).length : '—']
+    ].forEach(function (p) {
+      var d = el('div');
+      d.appendChild(el('b', null, String(p[1])));
+      d.appendChild(el('span', null, p[0]));
+      kv.appendChild(d);
+    });
+    s1.appendChild(kv);
+
+    var line1 = el('div', 'line');
+    var reset = el('div', 'mini danger', '重置学习数据');
+    reset.addEventListener('click', function () {
+      if (!confirm('清空孩子的学习进度、灵石、连续打卡？（只影响本机，不影响课程和商品配置）')) return;
+      try { Store.reset(); } catch (e) {}
+      toast('已重置');
+      renderSys();
+    });
+    line1.appendChild(reset);
+    var relogin = el('div', 'mini', '重新选宠物蛋');
+    relogin.addEventListener('click', function () { location.href = 'egg-select.html'; });
+    line1.appendChild(relogin);
+    s1.appendChild(line1);
+    pane.appendChild(s1);
+
+    /* 家长密码 */
+    var s2 = el('div', 'sect');
+    s2.appendChild(el('h3', null, '家长密码'));
+    s2.appendChild(el('p', null,
+      '默认 1234。部署到服务器后，密码由服务端环境变量 PARENT_PIN 决定；' +
+      '这里改的是本机记住的默认值，两边要一致才能保存。'));
+    var line2 = el('div', 'line');
+    line2.style.maxWidth = '460px';
+    var pinIn = el('input', 'inp');
+    pinIn.type = 'password';
+    pinIn.maxLength = 4;
+    pinIn.placeholder = '4 位数字';
+    pinIn.style.textAlign = 'center';
+    pinIn.style.letterSpacing = '6px';
+    pinIn.value = getPin();
+    line2.appendChild(pinIn);
+    var pinSave = el('div', 'mini solid', '保存密码');
+    pinSave.addEventListener('click', function () {
+      var v = (pinIn.value || '').trim();
+      if (!/^\d{4}$/.test(v)) { toast('请填 4 位数字'); return; }
+      try { localStorage.setItem(PIN_KEY, v); } catch (e) {}
+      toast('密码已更新');
+    });
+    line2.appendChild(pinSave);
+    s2.appendChild(line2);
+    pane.appendChild(s2);
+
+    /* 目录数据 */
+    var s3 = el('div', 'sect');
+    s3.appendChild(el('h3', null, '课程与商城配置'));
+    s3.appendChild(el('p', null,
+      '配置存在 ipad-design/catalog.json，同时生成 catalog.js 给孩子端读取。' +
+      '换设备时把这两个文件一起拷走即可。'));
+
+    var line3 = el('div', 'line');
+    var dl = el('div', 'mini', '下载 catalog.json');
+    dl.addEventListener('click', function () {
+      var blob = new Blob([JSON.stringify(CATALOG, null, 2)], { type: 'application/json' });
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'catalog.json';
+      a.click();
+      setTimeout(function () { URL.revokeObjectURL(a.href); }, 2000);
+    });
+    line3.appendChild(dl);
+
+    var reimport = el('div', 'mini', '从孩子端数据重新导入');
+    reimport.addEventListener('click', function () {
+      if (!confirm('用当前客户端内置的课程和商品覆盖现在的配置？未保存的修改会丢。')) return;
+      CATALOG.series = importFromStore();
+      CATALOG.items = importItemsFromStore();
+      CATALOG.books = importBooks();
+      CATALOG.audios = importAudios();
+      CATALOG.videos = importVideos();
+      curCourse = CATALOG.series.length ? CATALOG.series[0].id : '';
+      markDirty();
+      toast('已重新导入，记得保存');
+      renderSys();
+    });
+    line3.appendChild(reimport);
+    s3.appendChild(line3);
+
+    s3.appendChild(el('div', 'code',
+      '页面地址：' + location.href + '\n' +
+      '家长服务：' + (API || '同源') + '\n' +
+      '课程体系：' + CATALOG.series.length + ' 个\n' +
+      '商城商品：' + CATALOG.items.length + ' 个\n' +
+      '上次保存：' + (CATALOG.updated ? new Date(CATALOG.updated).toLocaleString() : '还没有保存过')));
+    pane.appendChild(s3);
+  }
+
+  /* ============ 路由 ============ */
+  function courseById(id) {
+    for (var i = 0; i < CATALOG.series.length; i++) if (CATALOG.series[i].id === id) return CATALOG.series[i];
+    return null;
+  }
+
+  function render() {
+    if (tab === 'series') renderSeries();
+    else if (tab === 'lessons') renderLessons();
+    else if (tab === 'items') renderItems();
+    else if (tab === 'hall') renderHall();
+    else renderSys();
+  }
+
+  document.querySelectorAll('.nav').forEach(function (n) {
+    n.addEventListener('click', function () {
+      document.querySelectorAll('.nav').forEach(function (x) { x.classList.remove('on'); });
+      n.classList.add('on');
+      tab = n.dataset.tab;
+      render();
+    });
+  });
+
+  /* ============ 密码门 ============ */
+  var SESSION_PIN = 'antistudy.parent.pin.session';
+
+  /* 本次登录用的密码会记在 sessionStorage，保存/上传时作为令牌发给服务端 */
+  function getPin() {
+    try {
+      var s = sessionStorage.getItem(SESSION_PIN);
+      if (s) return s;
+    } catch (e) {}
+    try { return localStorage.getItem(PIN_KEY) || '1234'; } catch (e) { return '1234'; }
+  }
+  function isAuthed() {
+    try { return sessionStorage.getItem(AUTH_KEY) === '1'; } catch (e) { return false; }
+  }
+
+  var gate = document.getElementById('gate');
+  var gateIn = document.getElementById('gateIn');
+  var gateErr = document.getElementById('gateErr');
+  var gateBox = document.getElementById('gateBox');
+  var authing = false;
+
+  function wrongPin(msg) {
+    gateErr.textContent = msg || '密码不对，再试一次';
+    gateIn.value = '';
+    gateBox.classList.add('shake');
+    setTimeout(function () { gateBox.classList.remove('shake'); }, 320);
+  }
+  function passGate(v) {
+    try {
+      sessionStorage.setItem(AUTH_KEY, '1');
+      sessionStorage.setItem(SESSION_PIN, v);
+    } catch (e) {}
+    gateErr.textContent = '';
+    gate.classList.add('hide');
+  }
+
+  function tryAuth() {
+    var v = (gateIn.value || '').trim();
+    if (!v) return;
+    if (authing) return;
+    authing = true;
+
+    /* 有家长服务时由服务端校验（服务器上可用 PARENT_PIN 环境变量改密码）；
+     * 本地没起服务时退回本机校验，纯静态预览也能进 */
+    fetch(API + '/api/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ pin: v })
+    }).then(function (r) { return r.json(); })
+      .then(function (j) {
+        if (j && j.ok) passGate(v);
+        else wrongPin('密码不对，再试一次');
+      })
+      .catch(function () {
+        if (v === getPin()) passGate(v);
+        else wrongPin('密码不对，再试一次');
+      })
+      .then(function () { authing = false; });
+  }
+
+  document.getElementById('gateOk').addEventListener('click', tryAuth);
+  gateIn.addEventListener('keydown', function (e) { if (e.key === 'Enter') tryAuth(); });
+  gateIn.addEventListener('input', function () {
+    if (gateIn.value.length >= 4) tryAuth();
+  });
+
+  /* ============ 顶栏 ============ */
+  saveBtn.addEventListener('click', save);
+  document.getElementById('homeBtn').addEventListener('click', function () {
+    if (dirty && !confirm('还有修改没保存，确定离开？')) return;
+    location.href = 'home.html';
+  });
+  window.addEventListener('beforeunload', function (e) {
+    if (!dirty) return;
+    e.preventDefault();
+    e.returnValue = '';
+  });
+
+  /* ============ 适配 + 启动 ============ */
+  var stage = document.getElementById('stage');
+  function fit() {
+    var s = Math.min(window.innerWidth / 1366, window.innerHeight / 1024);
+    stage.style.transform = 'translate(-50%,-50%) scale(' + s + ')';
+  }
+  addEventListener('resize', fit);
+  addEventListener('orientationchange', fit);
+  fit();
+
+  if (isAuthed()) gate.classList.add('hide');
+  else setTimeout(function () { gateIn.focus(); }, 300);
+
+  checkConn()
+    .then(loadCatalog)
+    .then(function () { render(); })
+    .catch(function (e) {
+      render();
+      toast('初始化失败：' + (e && e.message ? e.message : e));
+    });
+})();
+</script>
+</body>
+</html>

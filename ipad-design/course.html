@@ -250,7 +250,8 @@
   var totalN = lessons.length;
 
   document.title = course.subject + '课程 · 知识冒险岛';
-  document.querySelector('.page-title').textContent = course.subject + '课程' + (course.preview ? ' · 试看' : '');
+  /* 全部课程免费，不再区分「试看」 */
+  document.querySelector('.page-title').textContent = course.subject + '课程';
 
   var nums = document.querySelectorAll('.ls-num');
   nums[0].textContent = '';

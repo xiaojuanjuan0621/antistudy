@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>动画馆 · 知识冒险岛</title>
+<link rel="stylesheet" href="hall.css">
+</head>
+<body>
+<div class="view">
+  <div class="stage" id="stage">
+    <img class="bg" src="assets/home2-bg.png" alt="">
+    <div class="mask"></div>
+
+    <div class="title-bar"></div>
+    <img class="home-btn" id="homeBtn" src="assets/bag2-ico-home.png" alt="">
+    <div class="title">动画馆</div>
+
+    <div class="stat" style="left:962px"><b id="cntSeries">0</b><span>个系列</span></div>
+    <div class="stat" style="left:1156px"><b id="cntEps">0</b><span>集</span></div>
+
+    <div class="content" id="content"></div>
+
+    <div class="nav-bar"></div>
+    <img class="nav-ico" data-go="home.html" src="assets/nav-home.png" style="left:114.6px" alt="">
+    <div class="nav-label" data-go="home.html" style="left:88.04px">首页</div>
+    <img class="nav-ico" data-go="task.html" src="assets/nav-task.png" style="left:384.1px" alt="">
+    <div class="nav-label" data-go="task.html" style="left:357.51px">任务</div>
+    <img class="nav-ico" data-go="battle.html" src="assets/nav-battle.png" style="left:653.9px" alt="">
+    <div class="nav-label" data-go="battle.html" style="left:624.3px">战斗</div>
+    <img class="nav-ico" data-go="bag.html" src="assets/nav-bag.png" style="left:923.0px" alt="">
+    <div class="nav-label" data-go="bag.html" style="left:896.44px">储物袋</div>
+    <img class="nav-ico" data-go="me.html" src="assets/nav-me.png" style="left:1189.8px" alt="">
+    <div class="nav-label" data-go="me.html" style="left:1163.23px">我的</div>
+
+    <div class="modal" id="modal">
+      <div class="modal-box">
+        <div class="modal-head">
+          <div class="mh"><b id="mTitle"></b><span id="mSub"></span></div>
+          <div class="close" id="mClose">×</div>
+        </div>
+        <div class="vwrap">
+          <video id="mv" controls playsinline preload="metadata"></video>
+          <div class="vloading" id="vloading"><div class="vspin"></div><span>正在加载视频…</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+  </div>
+</div>
+<script src="store.js?v=3"></script>
+<script>
+(function () {
+  var stage = document.getElementById('stage');
+  function fit() {
+    var s = Math.min(window.innerWidth / 1366, window.innerHeight / 1024);
+    stage.style.transform = 'translate(-50%,-50%) scale(' + s + ')';
+  }
+  addEventListener('resize', fit);
+  addEventListener('orientationchange', fit);
+  fit();
+
+  var box = document.getElementById('content');
+  var VIDEOS = Store.VIDEOS || [];
+  var mv = document.getElementById('mv');
+  var modal = document.getElementById('modal');
+
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
+    });
+  }
+  function mmss(sec) {
+    sec = Math.max(0, Math.floor(sec || 0));
+    var m = Math.floor(sec / 60), s = sec % 60;
+    return m + ':' + (s < 10 ? '0' : '') + s;
+  }
+  function toneOf(subject) {
+    if (subject === '数学') return 'green';
+    if (subject === '语文') return '';
+    if (subject === '英语') return 'orange';
+    return 'purple';
+  }
+
+  function render() {
+    box.innerHTML = '';
+    var epTotal = 0;
+    VIDEOS.forEach(function (v) { epTotal += (v.episodes || []).length; });
+    document.getElementById('cntSeries').textContent = VIDEOS.length;
+    document.getElementById('cntEps').textContent = epTotal;
+
+    if (!VIDEOS.length) {
+      box.innerHTML = '<div class="empty">还没有动画 · 家长可以在家长中心「内容馆」上传</div>';
+      return;
+    }
+
+    VIDEOS.forEach(function (v) {
+      var s = document.createElement('div');
+      s.className = 'series';
+
+      var head =
+        '<img class="scov" src="' + v.cover + '" alt="">' +
+        '<div class="sbody">' +
+          '<div class="sname">' + esc(v.name) + '</div>' +
+          '<div class="sdesc">' + esc(v.desc) + '</div>' +
+          '<div class="tags" style="margin-top:10px">' +
+            '<span class="tag ' + toneOf(v.subject) + '">' + esc(v.subject) + '</span>' +
+            '<span class="tag gray">' + (v.episodes || []).length + ' 集</span>' +
+          '</div>' +
+          '<div class="eps"></div>' +
+        '</div>';
+
+      s.innerHTML = head;
+      var eps = s.querySelector('.eps');
+
+      (v.episodes || []).forEach(function (ep) {
+        var e = document.createElement('div');
+        e.className = 'ep';
+        e.innerHTML =
+          '<div class="no">' + ep.n + '</div>' +
+          '<div class="et"><b>' + esc(ep.title) + '</b><span>' + esc(ep.sub) + '</span></div>' +
+          '<div class="dur">' + mmss(ep.seconds) + '</div>';
+        e.addEventListener('click', function () { open(v, ep); });
+        eps.appendChild(e);
+      });
+
+      box.appendChild(s);
+    });
+  }
+
+  var vloading = document.getElementById('vloading');
+
+  function setLoading(txt) {
+    vloading.classList.remove('hide');
+    vloading.querySelector('span').textContent = txt || '正在加载视频…';
+    var spin = vloading.querySelector('.vspin');
+    if (spin) spin.style.display = txt ? 'none' : 'block';
+  }
+  function hideLoading() { vloading.classList.add('hide'); }
+
+  /* 原始视频是外链，网络不通时自动退到本地示范视频，避免一直转圈 */
+  var LOCAL_VIDEO = 'assets/hall/lesson.mp4';
+  var useLocal = false;
+  var loadTimer = null;
+
+  mv.addEventListener('loadedmetadata', function () {
+    if (mv.readyState >= 1) { hideLoading(); clearTimeout(loadTimer); }
+  });
+  mv.addEventListener('canplay', function () {
+    hideLoading();
+    clearTimeout(loadTimer);
+  });
+  mv.addEventListener('error', function () {
+    if (!modal.classList.contains('on')) return;
+    fallbackLocal();
+  });
+
+  function fallbackLocal() {
+    if (useLocal) {
+      setLoading('这个视频打不开，可以让家长在家长中心换一个地址');
+      return;
+    }
+    useLocal = true;
+    clearTimeout(loadTimer);
+    mv.src = LOCAL_VIDEO;
+    var p = mv.play();
+    if (p && p.catch) p.catch(function () {});
+  }
+
+  function open(v, ep) {
+    document.getElementById('mTitle').textContent = ep.title;
+    document.getElementById('mSub').textContent = v.name + ' · ' + v.subject + ' · ' + mmss(ep.seconds);
+    mv.poster = v.cover || '';
+    setLoading();
+    /* 一旦确认过外链不可达，后面直接用本地，不再每集转圈 6 秒 */
+    mv.src = useLocal ? LOCAL_VIDEO : ep.video;
+    modal.classList.add('on');
+    var p = mv.play();
+    if (p && p.catch) p.catch(function () {});
+
+    clearTimeout(loadTimer);
+    loadTimer = setTimeout(function () {
+      if (mv.readyState < 1 || !isFinite(mv.duration) || mv.duration === 0) fallbackLocal();
+    }, 6000);
+  }
+
+  function close() {
+    modal.classList.remove('on');
+    clearTimeout(loadTimer);
+    try { mv.pause(); } catch (e) {}
+    mv.removeAttribute('src');
+    mv.removeAttribute('poster');
+    try { mv.load(); } catch (e) {}
+  }
+
+  document.getElementById('mClose').addEventListener('click', close);
+  modal.addEventListener('click', function (e) { if (e.target === modal) close(); });
+
+  document.getElementById('homeBtn').addEventListener('click', function () {
+    location.href = 'home.html';
+  });
+  document.querySelectorAll('[data-go]').forEach(function (el) {
+    el.addEventListener('click', function () { location.href = el.dataset.go; });
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>

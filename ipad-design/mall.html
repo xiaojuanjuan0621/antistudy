@@ -101,15 +101,15 @@
     <div id="goods" style="left:0;top:0;width:1366px;height:1024px"></div>
 
     <div class="nav-bar"></div>
-    <img class="nav-ico" src="assets/nav-home.png" style="left:114.6px" alt="">
+    <img class="nav-ico" data-go="home.html" src="assets/nav-home.png" style="left:114.6px" alt="">
     <div class="nav-label" data-go="home.html" style="left:88.04px">首页</div>
-    <img class="nav-ico" src="assets/nav-task.png" style="left:384.1px" alt="">
+    <img class="nav-ico" data-go="task.html" src="assets/nav-task.png" style="left:384.1px" alt="">
     <div class="nav-label" data-go="task.html" style="left:357.51px">任务</div>
-    <img class="nav-ico" src="assets/nav-battle.png" style="left:653.9px" alt="">
+    <img class="nav-ico" data-go="battle.html" src="assets/nav-battle.png" style="left:653.9px" alt="">
     <div class="nav-label" data-go="battle.html" style="left:624.3px">战斗</div>
-    <img class="nav-ico" src="assets/nav-bag.png" style="left:923.0px" alt="">
+    <img class="nav-ico" data-go="bag.html" src="assets/nav-bag.png" style="left:923.0px" alt="">
     <div class="nav-label" data-go="bag.html" style="left:896.44px">储物袋</div>
-    <img class="nav-ico" src="assets/nav-me.png" style="left:1189.8px" alt="">
+    <img class="nav-ico" data-go="me.html" src="assets/nav-me.png" style="left:1189.8px" alt="">
     <div class="nav-label" data-go="me.html" style="left:1163.23px">我的</div>
 
     <div class="toast" id="toast"></div>
@@ -124,7 +124,19 @@
   }
   addEventListener('resize', fit); addEventListener('orientationchange', fit); fit();
 
-  var CATS = ['全部', '道具', '装备', '服装', '宠物'];
+  /* 分类从商品数据里推导：家长在家长中心新增的分类会自动出现在这一行 */
+  function catList() {
+    var out = ['全部'], seen = { '全部': 1 };
+    (Store.ITEMS || []).forEach(function (x) {
+      var c = x.cat || '道具';
+      if (!seen[c]) { seen[c] = 1; out.push(c); }
+    });
+    ['道具', '装备', '服装', '宠物'].forEach(function (c) {
+      if (!seen[c]) { seen[c] = 1; out.push(c); }
+    });
+    return out.slice(0, 7);
+  }
+  var CATS = catList();
   var curCat = '全部';
 
   function renderWallet() {
@@ -227,7 +239,7 @@
   document.getElementById('homeBtn').addEventListener('click', function () {
     location.href = 'home.html';
   });
-  document.querySelectorAll('.nav-label[data-go]').forEach(function (el) {
+  document.querySelectorAll('.nav-ico[data-go],.nav-label[data-go]').forEach(function (el) {
     el.addEventListener('click', function () { location.href = el.dataset.go; });
   });
 

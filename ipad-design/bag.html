@@ -127,15 +127,15 @@
       <div id="bagItems" style="left:0;top:0;width:1366px;height:1024px"></div>
     <div class="tidy" id="tidy"><span>整理背包</span></div>
     <div class="nav-bar"></div>
-    <img class="nav-ico" src="assets/nav-home.png" style="left:114.6px" alt="">
+    <img class="nav-ico" data-go="home.html" src="assets/nav-home.png" style="left:114.6px" alt="">
     <div class="nav-label" data-go="home.html" style="left:88.04px">首页</div>
-    <img class="nav-ico" src="assets/nav-task.png" style="left:384.1px" alt="">
+    <img class="nav-ico" data-go="task.html" src="assets/nav-task.png" style="left:384.1px" alt="">
     <div class="nav-label" data-go="task.html" style="left:357.51px">任务</div>
-    <img class="nav-ico" src="assets/nav-battle.png" style="left:653.9px" alt="">
+    <img class="nav-ico" data-go="battle.html" src="assets/nav-battle.png" style="left:653.9px" alt="">
     <div class="nav-label" data-go="battle.html" style="left:624.3px">战斗</div>
-    <img class="nav-ico" src="assets/nav-bag.png" style="left:923.0px" alt="">
+    <img class="nav-ico" data-go="bag.html" src="assets/nav-bag.png" style="left:923.0px" alt="">
     <div class="nav-label" style="left:896.44px;color:#35DFFC">储物袋</div>
-    <img class="nav-ico" src="assets/nav-me.png" style="left:1189.8px" alt="">
+    <img class="nav-ico" data-go="me.html" src="assets/nav-me.png" style="left:1189.8px" alt="">
     <div class="nav-label" data-go="me.html" style="left:1163.23px">我的</div>
 
     <div class="toast" id="toast"></div>
@@ -204,7 +204,8 @@
           el.dataset.item = it.name;
           var tag = it.owned
             ? '<span class="own-tag" style="top:158px">已拥有</span>'
-            : '<i class="cnt" style="left:auto;right:12px;top:156px;width:auto">x' + it.count + '</i>';
+            : '<i class="cnt" style="left:auto;right:12px;top:156px;width:auto">' +
+              (it.count > 0 ? 'x' + it.count : '已用完') + '</i>';
           el.innerHTML =
             '<div class="card" style="left:0;top:0;width:100%;height:100%;border-radius:28px;' +
             'background:' + BGS[idx % BGS.length] + ';' +
@@ -226,7 +227,10 @@
   function onItemClick(it) {
     if (it.owned) { toast('「' + it.name + '」已拥有 · 永久装扮'); return; }
     var item = Store.getItem(it.id);
-    if (!item || item.kind !== 'consume') { toast('「' + it.name + '」持有 x' + it.count); return; }
+    if (!item || item.kind !== 'consume') {
+      toast(it.count > 0 ? '「' + it.name + '」是收藏品 · 不能使用' : '「' + it.name + '」已经用完啦');
+      return;
+    }
     Store.modal({
       icon: it.icon,
       title: '使用「' + it.name + '」',
@@ -255,7 +259,7 @@
     toast('「' + CUR + '」共 ' + n + ' 件 · 已按品级排好');
   });
 
-  document.querySelectorAll('.nav-label[data-go]').forEach(function (el) {
+  document.querySelectorAll('.nav-ico[data-go],.nav-label[data-go]').forEach(function (el) {
     el.addEventListener('click', function () { location.href = el.dataset.go; });
   });
 

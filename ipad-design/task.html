@@ -154,7 +154,7 @@
         <img class="t-card" src="assets/task-cardbg.png" alt="">
         <img class="t-ico" src="assets/task-i-math.png" alt="">
         <span class="t-title">数学修行</span>
-        <span class="t-sub">完成10道数学题</span>
+        <span class="t-sub">完成 1 节数学课</span>
         <img class="t-gem" src="assets/task-gem-s.png" alt="">
         <span class="t-bonus">+20</span>
         <div class="t-btn go"><span>去完成</span></div>
@@ -172,7 +172,7 @@
         <img class="t-card" src="assets/task-cardbg.png" alt="">
         <img class="t-ico" src="assets/task-i-science.png" alt="">
         <span class="t-title">科普探索</span>
-        <span class="t-sub">完成一个知识挑战</span>
+        <span class="t-sub">完成 1 次灵宠挑战</span>
         <img class="t-gem" src="assets/task-gem-s.png" alt="">
         <span class="t-bonus">+30</span>
         <div class="t-btn go"><span>去完成</span></div>
@@ -196,7 +196,7 @@
     </div>
     <img class="gift" src="assets/task-gift.png" alt="">
 
-    <div class="nav-bar"></div><img class="nav-ico" data-go="home.html" data-name="首页" src="assets/nav-home.png" style="left:114.6px" alt=""><div class="nav-label" data-go="home.html" data-name="首页" style="left:88.04px;">首页</div><img class="nav-ico" data-go="" data-name="任务" src="assets/nav-task.png" style="left:384.1px" alt=""><div class="nav-label" data-go="" data-name="任务" style="left:357.51px;color:#0F8CEB">任务</div><img class="nav-ico" data-go="" data-name="战斗" src="assets/nav-battle.png" style="left:653.9px" alt=""><div class="nav-label" data-go="" data-name="战斗" style="left:624.3px;">战斗</div><img class="nav-ico" data-go="bag.html" data-name="储物袋" src="assets/nav-bag.png" style="left:923.0px" alt=""><div class="nav-label" data-go="bag.html" data-name="储物袋" style="left:896.44px;">储物袋</div><img class="nav-ico" data-go="" data-name="我的" src="assets/nav-me.png" style="left:1189.8px" alt=""><div class="nav-label" data-go="" data-name="我的" style="left:1163.23px;">我的</div>
+    <div class="nav-bar"></div><img class="nav-ico" data-go="home.html" data-name="首页" src="assets/nav-home.png" style="left:114.6px" alt=""><div class="nav-label" data-go="home.html" data-name="首页" style="left:88.04px;">首页</div><img class="nav-ico" data-go="task.html" data-name="任务" src="assets/nav-task.png" style="left:384.1px" alt=""><div class="nav-label" data-go="task.html" data-name="任务" style="left:357.51px;color:#0F8CEB">任务</div><img class="nav-ico" data-go="battle.html" data-name="战斗" src="assets/nav-battle.png" style="left:653.9px" alt=""><div class="nav-label" data-go="battle.html" data-name="战斗" style="left:624.3px;">战斗</div><img class="nav-ico" data-go="bag.html" data-name="储物袋" src="assets/nav-bag.png" style="left:923.0px" alt=""><div class="nav-label" data-go="bag.html" data-name="储物袋" style="left:896.44px;">储物袋</div><img class="nav-ico" data-go="me.html" data-name="我的" src="assets/nav-me.png" style="left:1189.8px" alt=""><div class="nav-label" data-go="me.html" data-name="我的" style="left:1163.23px;">我的</div>
     <div class="toast" id="toast"></div>
   </div>
 </div>
@@ -209,15 +209,27 @@
   }
   addEventListener('resize', fit); addEventListener('orientationchange', fit); fit();
 
+  /* 学科下任意一个体系「看完 1 讲视频」就算完成，与课程页的已学完口径一致
+   * （不再只认某个固定体系，学清华数学也算完成数学任务） */
+  function subjDone(subject) {
+    var list = Store.seriesOf(subject);
+    for (var i = 0; i < list.length; i++) if (Store.learnedCount(list[i].id) > 0) return true;
+    return false;
+  }
+  function subjHome(subject) {
+    var list = Store.seriesOf(subject);
+    return 'course.html?course=' + (list.length ? list[0].id : 'series_math_g4');
+  }
+
   var TASKS = [
-    { key: 'chinese', name: '语文修行', go: 'course.html?course=series_chinese_xes',
-      check: function () { return Store.doneCount('series_chinese_xes') > 0; } },
-    { key: 'math', name: '数学修行', go: 'course.html?course=series_math_g4',
-      check: function () { return Store.doneCount('series_math_g4') > 0; } },
-    { key: 'english', name: '英语修行', go: 'course.html?course=series_english_tbd',
-      check: function () { return Store.doneCount('series_english_tbd') > 0; } },
-    { key: 'science', name: '科普探索', go: 'course.html?course=series_bio_g4',
-      check: function () { return Store.doneCount('series_bio_g4') > 0; } },
+    { key: 'chinese', name: '语文修行', go: subjHome('语文'),
+      check: function () { return subjDone('语文'); } },
+    { key: 'math', name: '数学修行', go: subjHome('数学'),
+      check: function () { return subjDone('数学'); } },
+    { key: 'english', name: '英语修行', go: subjHome('英语'),
+      check: function () { return subjDone('英语'); } },
+    { key: 'science', name: '科普探索', go: subjHome('探索'),
+      check: function () { return subjDone('探索'); } },
     { key: 'battle', name: '灵宠挑战', go: 'battle.html',
       check: function () { return !!Store.getTasks().battle; } }
   ];
