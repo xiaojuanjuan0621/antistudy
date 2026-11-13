@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>恭喜获得 · 知识冒险岛</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%;overflow:hidden;background:#0b2350;
+    font-family:"Noto Sans SC","PingFang SC","Hiragino Sans GB",-apple-system,sans-serif;
+    -webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
+  .view{position:relative;width:100%;height:100%;overflow:hidden}
+  .stage{position:absolute;left:50%;top:50%;width:1366px;height:1024px;transform-origin:center center}
+  .stage *{position:absolute}
+  img{display:block}
+  .bg{left:0;top:0;width:1366px;height:1024px;object-fit:cover}
+
+  .boy{left:0;top:310px;width:378.92px;height:561.9px;object-fit:contain}
+  .title-bg{left:226px;top:144.04px;width:940px;height:249.55px}
+  .title{left:468.83px;top:173.14px;width:444.85px;height:131.37px;
+    font-size:104.5px;font-weight:900;color:#FFF6B4;line-height:1.12;
+    -webkit-text-stroke:5.97px #D95102;paint-order:stroke fill;
+    text-shadow:0 8.96px 0 rgba(168,58,0,.75);
+    display:flex;align-items:center;justify-content:center}
+
+  .rcard{height:341.53px}
+  .rc-bg{left:0;top:0;width:100%;height:100%;object-fit:fill;border-radius:24px}
+  .rc-ico{object-fit:contain}
+  .rc-name{width:100%;height:53.27px;font-size:43.87px;font-weight:900;line-height:1.12;
+    text-align:center;white-space:nowrap}
+  .rc-val{width:100%;height:50.13px;font-size:40.73px;font-weight:900;line-height:1.12;
+    text-align:center;white-space:nowrap}
+  .rcard:nth-of-type(2) .rc-val{font-size:37.6px}
+
+  .dash{left:576.28px;top:680.33px;width:120.06px;height:45.36px;color:#D5E8FF;
+    font-size:29.35px;font-weight:700;display:flex;align-items:center;justify-content:center}
+
+  .ok{left:498.91px;top:779px;width:365.51px;height:112.05px;border-radius:61.36px;
+    background:linear-gradient(180deg,#FFF797 0%,#FFDA2A 45%,#FF9A00 100%);
+    border:5.34px solid #FFF4A8;
+    box-shadow:0 5.34px 0 rgba(237,102,0,.8),0 0 16px rgba(255,207,26,.65);
+    display:flex;align-items:center;justify-content:center;gap:16px;cursor:pointer}
+  .ok span{position:static;font-size:53.36px;font-weight:900;color:#702500;line-height:1.12}
+  .ok i{position:static;width:16.01px;height:32.02px;border-right:9.34px solid #702500;
+    border-top:9.34px solid #702500;transform:rotate(45deg);margin-right:6px}
+
+  .go-pet{left:386.86px;top:915.07px;width:192.09px;height:45.36px;font-size:29.35px;
+    font-weight:700;color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;
+    text-shadow:0 2px 6px rgba(4,18,52,.55)}
+  .go-back{left:741.7px;top:915.07px;width:213.44px;height:45.36px;font-size:29.35px;
+    font-weight:700;color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;
+    text-shadow:0 2px 6px rgba(4,18,52,.55)}
+
+  .dragon{left:1109px;top:561px;width:314px;height:330px;object-fit:contain;
+    animation:float 3.6s ease-in-out infinite}
+  @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+
+  .toast{left:50%;top:700px;transform:translateX(-50%);padding:16px 34px;border-radius:22px;
+    background:rgba(9,25,60,.9);color:#fff;font-size:26px;font-weight:700;
+    opacity:0;pointer-events:none;transition:opacity .22s;white-space:nowrap}
+  .toast.show{opacity:1}
+</style>
+</head>
+<body>
+<div class="view">
+  <div class="stage" id="stage">
+    <img class="bg" src="assets/rw-bg.png" alt="">
+    <img class="boy" src="assets/rw-boy.png" alt="">
+    <img class="title-bg" src="assets/rw-titlebg.png" alt="">
+    <div class="title">恭喜获得</div>
+
+      <div class="rcard" style="left:257.0px;top:378.73px;width:231.87px">
+        <img class="rc-bg" src="assets/rw-c1.png" alt="">
+        <img class="rc-ico" src="assets/rw-i1.png" style="left:34.47000000000003px;top:43.870000000000005px;width:169.2px;height:153.53px" alt="">
+        <span class="rc-name" style="left:21.93px;top:206.8px;color:#102887">灵石</span>
+        <span class="rc-val" id="v1" style="left:21.93px;top:256.93px;color:#102887">+0</span>
+      </div>
+      <div class="rcard" style="left:488.87px;top:378.73px;width:241.27px">
+        <img class="rc-bg" src="assets/rw-c2.png" alt="">
+        <img class="rc-ico" src="assets/rw-i3.png" style="left:31.33000000000004px;top:34.46999999999997px;width:181.73px;height:166.07px" alt="">
+        <span class="rc-name" style="left:10.4px;top:206.8px;color:#24147D">经验值</span>
+        <span class="rc-val" id="v2" style="left:10.4px;top:260.07px;color:#24147D">+0</span>
+      </div>
+      <div class="rcard" style="left:733.27px;top:378.73px;width:231.87px">
+        <img class="rc-bg" src="assets/rw-c3.png" alt="">
+        <img class="rc-ico" src="assets/rw-i4.png" style="left:37.60000000000002px;top:34.46999999999997px;width:156.67px;height:159.8px" alt="">
+        <span class="rc-name" style="left:18.0px;top:206.8px;color:#70290D" id="n3">算力</span>
+        <span class="rc-val" id="v3" style="left:18.0px;top:256.93px;color:#70290D">+0</span>
+      </div>
+      <div class="rcard" style="left:962.0px;top:378.73px;width:235.0px">
+        <img class="rc-bg" src="assets/rw-c4.png" alt="">
+        <img class="rc-ico" src="assets/rw-i2.png" style="left:28.200000000000045px;top:34.46999999999997px;width:153.53px;height:169.2px" alt="">
+        <span class="rc-name" style="left:15.67px;top:206.8px;color:#24502C">新关卡</span>
+        <span class="rc-val" id="v4" style="left:15.67px;top:256.93px;color:#24502C">已解锁</span>
+      </div>
+    <div class="dash">—</div>
+    <div class="ok" id="ok"><span>开心收下</span><i></i></div>
+    <div class="go-pet" id="goPet">去看宠物</div>
+    <div class="go-back" id="goBack">返回课程页</div>
+    <img class="dragon" src="assets/rw-dragon.png" alt="">
+    <div class="toast" id="toast"></div>
+  </div>
+</div>
+<script src="store.js?v=2"></script>
+<script>
+  var stage = document.getElementById('stage');
+  function fit() {
+    var s = Math.min(window.innerWidth / 1366, window.innerHeight / 1024);
+    stage.style.transform = 'translate(-50%,-50%) scale(' + s + ')';
+  }
+  addEventListener('resize', fit); addEventListener('orientationchange', fit); fit();
+
+  var toastEl = document.getElementById('toast'), tm = null;
+  function toast(m) { toastEl.textContent = m; toastEl.classList.add('show');
+    clearTimeout(tm); tm = setTimeout(function () { toastEl.classList.remove('show'); }, 1500); }
+
+  var r = Store.takeReward();
+  if (!r) {
+    r = { stone: 0, exp: 0, first: false, lessonTitle: '本讲', courseName: '课程', subject: '数学', n: 1, stars: 1 };
+  }
+  var cid = (r.subject === '探索' ? 'series_bio_g4'
+    : r.subject === '语文' ? 'series_chinese_xes'
+    : r.subject === '英语' ? 'series_english_tbd' : 'series_math_g4');
+  var course = Store.getCourse(cid);
+  var attr = (course && course.attr) || '算力';
+
+  document.getElementById('v1').textContent = '+' + r.stone;
+  document.getElementById('v2').textContent = '+' + r.exp;
+  document.getElementById('n3').textContent = attr;
+  document.getElementById('v3').textContent = '+' + (r.first ? 2 : 0);
+
+  var nextN = r.n + 1;
+  var hasNext = course && course.lessons.some(function (l) { return l.n === (r.n + 1); });
+  document.getElementById('v4').textContent = hasNext ? '第' + nextN + '讲' : '全通关';
+  if (!r.first) {
+    document.getElementById('v1').textContent = '+0';
+    document.getElementById('v2').textContent = '+0';
+    document.getElementById('v4').textContent = '复习';
+  }
+
+  document.getElementById('ok').addEventListener('click', function () {
+    toast('奖励已收下 · 灵石 ' + r.stone + ' 经验 ' + r.exp);
+    setTimeout(function () { location.href = 'home.html'; }, 900);
+  });
+  document.getElementById('goPet').addEventListener('click', function () {
+    location.href = 'pet.html';
+  });
+  document.getElementById('goBack').addEventListener('click', function () {
+    location.href = 'course.html?course=' + cid;
+  });
+</script>
+</body>
+</html>

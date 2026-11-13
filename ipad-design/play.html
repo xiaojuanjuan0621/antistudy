@@ -1,0 +1,503 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>学习中 · 知识冒险岛</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  html:fullscreen,html:-webkit-full-screen{background:#000}
+  html,body{height:100%;overflow:hidden;background:#000;
+    font-family:"Noto Sans SC","PingFang SC","Hiragino Sans GB",-apple-system,sans-serif;
+    -webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
+  .view{position:relative;width:100%;height:100%;overflow:hidden;background:#000}
+  .stage{position:absolute;left:50%;top:50%;width:1366px;height:1024px;transform-origin:center center;background:#000}
+  .stage *{position:absolute}
+  img{display:block}
+
+  /* ---------- 视频层 ----------
+     非全屏：画面让出右侧 360px 给课程目录；全屏：铺满整屏并隐藏目录 */
+  .player{left:0;top:0;width:1366px;height:1024px;overflow:hidden;background:#000}
+  video{left:0;top:0;width:1006px;height:1024px;object-fit:contain;background:#000;cursor:pointer}
+  .view.is-fs video{width:1366px}
+
+  /* 中央播放键：半透明黑底圆 + 白色三角，点一下开始播放并进入全屏 */
+  .bigplay{left:433px;top:442px;width:140px;height:140px;border-radius:70px;z-index:10;
+    background:rgba(0,0,0,.42);border:1.5px solid rgba(255,255,255,.34);
+    display:flex;align-items:center;justify-content:center;cursor:pointer;
+    backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px);
+    transition:transform .16s,background .16s,opacity .2s}
+  .bigplay:hover{transform:scale(1.06);background:rgba(0,0,0,.58)}
+  .bigplay::after{content:"";position:absolute;left:50px;top:42px;width:0;height:0;
+    border-left:46px solid #fff;border-top:28px solid transparent;border-bottom:28px solid transparent}
+  .paused-hide{opacity:0;pointer-events:none}
+
+  /* ---------- 顶部信息条：返回 + 标题（网盘式渐变浮层） ---------- */
+  .topbar{left:0;top:0;width:1006px;height:108px;z-index:40;
+    display:flex;align-items:center;gap:14px;padding:0 26px;
+    background:linear-gradient(180deg,rgba(0,0,0,.72) 0%,rgba(0,0,0,.40) 58%,rgba(0,0,0,0) 100%);
+    transition:opacity .22s ease}
+  .back{position:static;width:46px;height:46px;border-radius:50%;flex:0 0 auto;
+    display:flex;align-items:center;justify-content:center;cursor:pointer;color:#fff;
+    transition:background .12s}
+  .back:hover{background:rgba(255,255,255,.16)}
+  .back svg{position:static;width:26px;height:26px;fill:none;stroke:currentColor;
+    stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;display:block}
+  .tinfo{position:static;display:flex;flex-direction:column;justify-content:center;gap:4px;overflow:hidden}
+  .ttitle{position:static;font-size:23px;font-weight:700;color:#fff;line-height:1.2;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:880px}
+  .tsub{position:static;font-size:14px;color:rgba(255,255,255,.62);line-height:1.2;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:880px}
+
+  /* ---------- 底部控制条：通栏贴底 + 渐变遮罩 ---------- */
+  .ctrl{left:0;top:850px;width:1006px;height:174px;z-index:40;
+    display:flex;align-items:flex-end;gap:10px;padding:0 24px 22px;
+    background:linear-gradient(0deg,rgba(0,0,0,.82) 0%,rgba(0,0,0,.52) 48%,rgba(0,0,0,0) 100%);
+    transition:opacity .22s ease}
+  /* 播放中无操作时自动隐藏（和网盘一致） */
+  .view.idle .topbar,.view.idle .ctrl{opacity:0;pointer-events:none}
+
+  /* 全屏：画面与控制条铺满整屏，右侧课程目录隐藏 */
+  .view.is-fs .topbar,.view.is-fs .ctrl{width:1366px}
+  .view.is-fs .bigplay{left:613px}
+
+  /* ---------- 右侧课程目录（非全屏显示，点击切讲） ---------- */
+  .playlist{left:1006px;top:0;width:360px;height:1024px;z-index:45;
+    background:rgba(9,15,28,.98);border-left:1px solid rgba(255,255,255,.08);
+    display:flex;flex-direction:column}
+  .view.is-fs .playlist{display:none}
+  .pl-head{position:static;flex:0 0 auto;display:flex;align-items:baseline;justify-content:space-between;
+    padding:30px 22px 16px;border-bottom:1px solid rgba(255,255,255,.08)}
+  .pl-head span{position:static;font-size:20px;font-weight:700;color:#fff}
+  .pl-head em{position:static;font-style:normal;font-size:13px;color:rgba(255,255,255,.46)}
+  .pl-body{position:relative;flex:1;overflow-y:auto;padding:14px 14px 24px;
+    display:flex;flex-direction:column;gap:8px}
+  .pl-body::-webkit-scrollbar{width:6px}
+  .pl-body::-webkit-scrollbar-thumb{background:rgba(255,255,255,.18);border-radius:3px}
+  .pl-item{position:static;display:flex;align-items:center;gap:12px;padding:15px 14px;border-radius:12px;
+    background:rgba(255,255,255,.05);cursor:pointer;transition:background .14s}
+  .pl-item:hover{background:rgba(255,255,255,.13)}
+  .pl-item.cur{background:rgba(53,223,252,.15);box-shadow:inset 3px 0 0 #35DFFC}
+  .pl-n{position:static;flex:0 0 auto;width:52px;font-size:13px;font-weight:700;color:#93AACB;
+    white-space:nowrap}
+  .pl-item.cur .pl-n{color:#35DFFC}
+  .pl-t{position:static;flex:1;min-width:0;font-size:15px;font-weight:600;color:#E4EDFB;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .pl-s{position:static;flex:0 0 auto;font-size:12px;color:#75899F;white-space:nowrap}
+  .pl-item.done .pl-s{color:#4ADE80}
+
+  .cbtn{position:static;height:44px;min-width:44px;padding:0 8px;border-radius:6px;flex:0 0 auto;
+    display:flex;align-items:center;justify-content:center;cursor:pointer;color:#fff;
+    transition:background .12s,color .12s}
+  .cbtn:hover{background:rgba(255,255,255,.16)}
+  .cbtn:active{background:rgba(255,255,255,.28)}
+  .cbtn svg{position:static;width:24px;height:24px;fill:currentColor;display:block}
+  .cbtn i{position:static;font-style:normal;display:flex;align-items:center;justify-content:center}
+  .cbtn.txt{font-size:14px;font-weight:700;min-width:50px;letter-spacing:.3px}
+  .cbtn.on{color:#FFD24A}
+
+  .time{position:static;flex:0 0 auto;padding:0 8px 0 4px;font-size:13.5px;font-weight:600;
+    color:rgba(255,255,255,.92);font-variant-numeric:tabular-nums;letter-spacing:.3px}
+
+  /* 进度条：外框 44px 便于点按，轨道 4px，hover 变粗 */
+  .track{position:relative;flex:1;height:44px;display:flex;align-items:center;cursor:pointer;margin:0 6px}
+  .track::before{content:"";position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);height:4px;
+    border-radius:2px;background:rgba(255,255,255,.28);transition:height .12s}
+  .track b{left:0;top:50%;transform:translateY(-50%);height:4px;width:0;border-radius:2px;
+    background:#fff;z-index:2;transition:height .12s}
+  .knob{left:0;top:50%;width:12px;height:12px;border-radius:50%;background:#fff;z-index:3;
+    transform:translate(-50%,-50%) scale(0);transition:transform .12s;pointer-events:none}
+  .track:hover::before,.track.dragging::before,.track:hover b,.track.dragging b{height:6px}
+  .track:hover .knob,.track.dragging .knob{transform:translate(-50%,-50%) scale(1)}
+
+  /* 倍速菜单 */
+  .speedmenu{right:104px;bottom:78px;width:112px;padding:6px;border-radius:10px;z-index:60;
+    background:rgba(24,24,26,.96);border:1px solid rgba(255,255,255,.10);
+    box-shadow:0 10px 30px rgba(0,0,0,.55);display:none;flex-direction:column;gap:2px}
+  .speedmenu.show{display:flex}
+  .speedmenu .si{position:static;height:38px;line-height:38px;text-align:center;border-radius:6px;
+    font-size:14px;font-weight:600;color:rgba(255,255,255,.85);cursor:pointer}
+  .speedmenu .si:hover{background:rgba(255,255,255,.14);color:#fff}
+  .speedmenu .si.cur{color:#FFD24A}
+
+  .toast{left:50%;top:600px;transform:translateX(-50%);padding:14px 30px;border-radius:12px;z-index:70;
+    background:rgba(0,0,0,.86);border:1px solid rgba(255,255,255,.14);color:#fff;
+    font-size:20px;font-weight:700;opacity:0;pointer-events:none;transition:opacity .22s;white-space:nowrap}
+  .toast.show{opacity:1}
+</style>
+</head>
+<body>
+<div class="view" id="view">
+  <div class="stage" id="stage">
+
+    <div class="player">
+      <video id="video" playsinline webkit-playsinline preload="metadata" poster="assets/course2-board.png"></video>
+      <div class="bigplay" id="bigplay"></div>
+    </div>
+
+    <div class="playlist" id="playlist">
+      <div class="pl-head">
+        <span>课程目录</span><em id="plCount"></em>
+      </div>
+      <div class="pl-body" id="plBody"></div>
+    </div>
+
+    <div class="topbar" id="topbar">
+      <div class="back" id="back">
+        <svg viewBox="0 0 24 24"><path d="M15 5L8 12l7 7"/></svg>
+      </div>
+      <div class="tinfo">
+        <div class="ttitle" id="ttitle"></div>
+        <div class="tsub" id="tsub"></div>
+      </div>
+    </div>
+
+    <div class="ctrl" id="ctrl">
+      <div class="cbtn" id="playBtn"><i id="playIco"></i></div>
+      <div class="time" id="time">00:00 / 00:00</div>
+      <div class="track" id="track">
+        <b id="bar"></b>
+        <i class="knob" id="knob"></i>
+      </div>
+      <div class="cbtn txt" id="speedBtn"><i id="speedIco">1.0X</i></div>
+      <div class="cbtn" id="volBtn"></div>
+      <div class="cbtn" id="fsBtn"></div>
+
+      <div class="speedmenu" id="speedMenu">
+        <div class="si" data-s="0.75">0.75X</div>
+        <div class="si cur" data-s="1">1.0X</div>
+        <div class="si" data-s="1.25">1.25X</div>
+        <div class="si" data-s="1.5">1.5X</div>
+        <div class="si" data-s="2">2.0X</div>
+      </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+  </div>
+</div>
+<script src="store.js?v=2"></script>
+<script>
+  var stage = document.getElementById('stage');
+  function fit() {
+    var s = Math.min(window.innerWidth / 1366, window.innerHeight / 1024);
+    stage.style.transform = 'translate(-50%,-50%) scale(' + s + ')';
+  }
+  addEventListener('resize', fit); addEventListener('orientationchange', fit); fit();
+
+  var qs = new URLSearchParams(location.search);
+  var cid = qs.get('course') || 'series_math_g4';
+  var course = Store.getCourse(cid) || Store.getCourse('series_math_g4');
+  cid = course.id;
+
+  var cur = Store.currentLesson(cid);
+  var n = parseInt(qs.get('n'), 10);
+  if (!n || isNaN(n)) n = cur.n;
+  var lesson = null;
+  for (var i = 0; i < course.lessons.length; i++) if (course.lessons[i].n === n) lesson = course.lessons[i];
+  if (!lesson) lesson = cur;
+
+  /* ---------- 顶部标题 ---------- */
+  document.getElementById('ttitle').textContent = '第' + lesson.n + '讲 · ' + lesson.title;
+  document.getElementById('tsub').textContent = course.name + ' · ' + lesson.sub;
+
+  /* ---------- 右侧课程目录：非全屏显示，点一条就切到那一讲 ---------- */
+  document.getElementById('plCount').textContent = '共 ' + course.lessons.length + ' 讲';
+  var plBody = document.getElementById('plBody');
+  course.lessons.forEach(function (l) {
+    var done = Store.isLearned(cid, l.n);
+    var item = document.createElement('div');
+    item.className = 'pl-item' + (l.n === lesson.n ? ' cur' : '') + (done ? ' done' : '');
+    item.innerHTML =
+      '<span class="pl-n">第' + l.n + '讲</span>' +
+      '<span class="pl-t">' + l.title + '</span>' +
+      '<span class="pl-s">' + (l.n === lesson.n ? '播放中' : (done ? '已学完' : l.min + ' 分钟')) + '</span>';
+    item.addEventListener('click', function () {
+      if (l.n === lesson.n) return;
+      location.href = 'play.html?course=' + cid + '&n=' + l.n;
+    });
+    plBody.appendChild(item);
+  });
+  /* 从中间某一讲进来时，目录自动滚到当前讲，不用手动找（等一帧布局稳定后再滚） */
+  requestAnimationFrame(function () {
+    var curItem = plBody.querySelector('.pl-item.cur');
+    if (curItem) curItem.scrollIntoView({ block: 'center' });
+  });
+
+  /* ---------- 图标 ---------- */
+  var SVG = {
+    play: '<svg viewBox="0 0 24 24"><path d="M8 5.1v13.8L19 12z"/></svg>',
+    pause: '<svg viewBox="0 0 24 24"><path d="M6.5 5h3.8v14H6.5zM13.7 5h3.8v14h-3.8z"/></svg>',
+    vol: '<svg viewBox="0 0 24 24"><path d="M3 9.5v5h3.6L11 18V6L6.6 9.5H3zm11.2 2.5a3.4 3.4 0 0 0-2-3.1v6.2a3.4 3.4 0 0 0 2-3.1zm-2-8.4v2.1a6.6 6.6 0 0 1 0 12.6v2.1a8.7 8.7 0 0 0 0-16.8z"/></svg>',
+    mute: '<svg viewBox="0 0 24 24"><path d="M3 9.5v5h3.6L11 18V6L6.6 9.5H3z"/><path d="M15.5 9.2l5 5.6M20.5 9.2l-5 5.6" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>',
+    fs: '<svg viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    exitFs: '<svg viewBox="0 0 24 24"><path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+  };
+
+  var view = document.getElementById('view');
+  var video = document.getElementById('video');
+  var bigplay = document.getElementById('bigplay');
+  var playBtn = document.getElementById('playBtn');
+  var playIco = document.getElementById('playIco');
+  var bar = document.getElementById('bar');
+  var knob = document.getElementById('knob');
+  var timeEl = document.getElementById('time');
+  var speedIco = document.getElementById('speedIco');
+  var volBtn = document.getElementById('volBtn');
+  var fsBtn = document.getElementById('fsBtn');
+  var speedMenu = document.getElementById('speedMenu');
+
+  var maxSeen = 0;
+  var duration = lesson.min * 60;
+  var fakeTimer = null, fakeSec = 0, fallback = false, fallbackNotified = false;
+
+  video.src = lesson.video;
+
+  function fmtT(s) {
+    s = Math.max(0, Math.floor(s));
+    var m = Math.floor(s / 60), r = s % 60;
+    return (m < 10 ? '0' : '') + m + ':' + (r < 10 ? '0' : '') + r;
+  }
+
+  function render(p, d) {
+    var pct = d > 0 ? Math.min(100, (p / d) * 100) : 0;
+    bar.style.width = pct + '%';
+    knob.style.left = pct + '%';
+    timeEl.textContent = fmtT(p) + ' / ' + fmtT(d);
+  }
+
+  function setPlaying(playing) {
+    playIco.innerHTML = playing ? SVG.pause : SVG.play;
+    bigplay.classList.toggle('paused-hide', playing);
+  }
+
+  /* ---------- 控制条自动隐藏 ---------- */
+  var idleTimer = null, menuOpen = false, hoveringCtrl = false;
+  function armIdle(delay) {
+    clearTimeout(idleTimer);
+    idleTimer = setTimeout(function () {
+      if (!video.paused && !menuOpen && !hoveringCtrl && !fallback) view.classList.add('idle');
+    }, delay || 2800);
+  }
+  function showUI() {
+    view.classList.remove('idle');
+    armIdle();
+  }
+  addEventListener('mousemove', showUI);
+  addEventListener('touchstart', showUI, { passive: true });
+  document.getElementById('ctrl').addEventListener('mouseenter', function () { hoveringCtrl = true; showUI(); });
+  document.getElementById('ctrl').addEventListener('mouseleave', function () { hoveringCtrl = false; armIdle(); });
+
+  /* ---------- 进度条：点击 / 拖动都能跳转 ---------- */
+  var track = document.getElementById('track');
+  var seeking = false;
+  function seekTo(ev) {
+    var r = track.getBoundingClientRect();
+    var ratio = Math.max(0, Math.min(1, (ev.clientX - r.left) / r.width));
+    var d = (isFinite(video.duration) && video.duration > 0) ? video.duration : duration;
+    if (fallback) {
+      fakeSec = ratio * duration;
+      maxSeen = Math.max(maxSeen, ratio);
+      render(fakeSec, duration);
+      return;
+    }
+    if (d > 0) {
+      try { video.currentTime = ratio * d; } catch (e) {}
+      render(ratio * d, d);
+    }
+  }
+  track.addEventListener('pointerdown', function (e) {
+    seeking = true;
+    track.classList.add('dragging');
+    try { track.setPointerCapture(e.pointerId); } catch (err) {}
+    seekTo(e);
+  });
+  track.addEventListener('pointermove', function (e) { if (seeking) seekTo(e); });
+  track.addEventListener('pointerup', function (e) {
+    seeking = false;
+    track.classList.remove('dragging');
+    try { track.releasePointerCapture(e.pointerId); } catch (err) {}
+  });
+  track.addEventListener('pointercancel', function () {
+    seeking = false;
+    track.classList.remove('dragging');
+  });
+
+  function tick() {
+    var d = (isFinite(video.duration) && video.duration > 0) ? video.duration : duration;
+    if (d > 0) maxSeen = Math.max(maxSeen, video.currentTime / d);
+    render(video.currentTime, d);
+  }
+
+  video.addEventListener('timeupdate', tick);
+  video.addEventListener('loadedmetadata', function () {
+    duration = video.duration || duration;
+    render(video.currentTime, duration);
+    video.poster = '';
+  });
+  video.addEventListener('play', function () {
+    setPlaying(true);
+    armIdle(2400);
+  });
+  video.addEventListener('pause', function () {
+    setPlaying(false);
+    view.classList.remove('idle');
+    clearTimeout(idleTimer);
+  });
+
+  /* 播放结束：弹窗引导去闯关（每次播完都弹） */
+  function onFinished() {
+    maxSeen = 1;
+    render(duration, duration);
+    view.classList.remove('idle');
+    /* 视频看完即记为「已学完」，返回课程列表时卡片同步变绿。
+     * 只写观看状态，不发奖励——灵石/经验仍在闯关通过时发放 */
+    Store.markWatched(cid, lesson.n);
+    Store.modal({
+      icon: 'assets/course2-hat.png',
+      title: '本讲看完啦！',
+      desc: '去闯关检验一下今天学的知识吧，答对还能拿灵石～',
+      ok: '去闯关',
+      cancel: '再看一遍',
+      onOk: function () { location.href = 'quiz.html?course=' + cid + '&n=' + lesson.n; },
+      onCancel: function () {
+        try { video.currentTime = 0; video.play(); } catch (e) {}
+      }
+    });
+  }
+
+  video.addEventListener('ended', onFinished);
+  video.addEventListener('error', function () { fallback = true; });
+
+  function toggle() {
+    showUI();
+    if (fallback) {
+      if (!fallbackNotified) {
+        fallbackNotified = true;
+        Store.toast('视频源不稳定 · 已切换图文精讲模式');
+      }
+      if (fakeTimer) { clearInterval(fakeTimer); fakeTimer = null; setPlaying(false); return; }
+      setPlaying(true);
+      fakeTimer = setInterval(function () {
+        fakeSec += 3;
+        var doneFake = fakeSec >= duration;
+        if (doneFake) { fakeSec = duration; clearInterval(fakeTimer); fakeTimer = null; setPlaying(false); }
+        maxSeen = Math.max(maxSeen, fakeSec / duration);
+        render(fakeSec, duration);
+        if (doneFake) onFinished();
+      }, 180);
+      return;
+    }
+    if (video.paused) {
+      var p = video.play();
+      if (p && p.catch) p.catch(function () { fallback = true; toggle(); });
+    } else {
+      video.pause();
+    }
+  }
+
+  /* ---------- 全屏 ----------
+   * 桌面 / 安卓：整页全屏（保留自定义控制条，画面随屏幕自适应，和成熟播放器一致）
+   * iPad Safari 不支持元素全屏，自动退回原生 video 全屏
+   */
+  function isFullscreen() {
+    return !!(document.fullscreenElement || document.webkitFullscreenElement);
+  }
+  function nativeVideoFullscreen() {
+    if (video.webkitEnterFullscreen) { video.webkitEnterFullscreen(); return; }
+    if (video.requestFullscreen) { video.requestFullscreen(); return; }
+  }
+  function toggleFullscreen() {
+    if (isFullscreen()) {
+      if (document.exitFullscreen) document.exitFullscreen();
+      else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+      return;
+    }
+    var el = document.documentElement;
+    if (el.requestFullscreen) {
+      var p = el.requestFullscreen();
+      if (p && p.catch) p.catch(function () { nativeVideoFullscreen(); });
+      return;
+    }
+    if (el.webkitRequestFullscreen) { el.webkitRequestFullscreen(); return; }
+    nativeVideoFullscreen();
+  }
+  fsBtn.addEventListener('click', function () { showUI(); toggleFullscreen(); });
+
+  function syncFsState() {
+    var on = isFullscreen();
+    fsBtn.classList.toggle('on', on);
+    fsBtn.innerHTML = on ? SVG.exitFs : SVG.fs;
+    /* 全屏铺满并隐藏右侧目录；缩小回来目录重新出现 */
+    view.classList.toggle('is-fs', on);
+    fit();
+  }
+  document.addEventListener('fullscreenchange', syncFsState);
+  document.addEventListener('webkitfullscreenchange', syncFsState);
+  syncFsState();
+
+  /* ---------- 音量 ---------- */
+  function syncVol() {
+    volBtn.innerHTML = video.muted || video.volume === 0 ? SVG.mute : SVG.vol;
+  }
+  volBtn.addEventListener('click', function () {
+    video.muted = !video.muted;
+    if (!video.muted && video.volume === 0) video.volume = 1;
+    syncVol();
+    showUI();
+  });
+  video.addEventListener('volumechange', syncVol);
+  syncVol();
+
+  /* ---------- 倍速：弹出菜单选择 ---------- */
+  document.getElementById('speedBtn').addEventListener('click', function (e) {
+    e.stopPropagation();
+    menuOpen = !menuOpen;
+    speedMenu.classList.toggle('show', menuOpen);
+    showUI();
+  });
+  speedMenu.addEventListener('click', function (e) {
+    var t = e.target;
+    if (!t.classList.contains('si')) return;
+    var s = parseFloat(t.getAttribute('data-s'));
+    video.playbackRate = s;
+    speedIco.textContent = s.toFixed(2).replace(/0$/, '') + 'X';
+    var all = speedMenu.querySelectorAll('.si');
+    for (var i = 0; i < all.length; i++) all[i].classList.toggle('cur', all[i] === t);
+    menuOpen = false;
+    speedMenu.classList.remove('show');
+    showUI();
+  });
+  document.addEventListener('click', function () {
+    if (!menuOpen) return;
+    menuOpen = false;
+    speedMenu.classList.remove('show');
+  });
+
+  playBtn.addEventListener('click', toggle);
+  /* 点画面中央大播放键：全屏 + 播放，必须在同一次点击里调用，否则会被浏览器拦 */
+  bigplay.addEventListener('click', function () {
+    if (video.paused && !isFullscreen()) toggleFullscreen();
+    toggle();
+  });
+  video.addEventListener('click', toggle);
+
+  /* 键盘：空格播放/暂停，← → 快退/快进 5 秒，F 全屏 */
+  addEventListener('keydown', function (e) {
+    if (e.key === ' ' || e.code === 'Space') { e.preventDefault(); toggle(); }
+    else if (e.key === 'ArrowLeft') { video.currentTime = Math.max(0, video.currentTime - 5); showUI(); }
+    else if (e.key === 'ArrowRight') {
+      video.currentTime = Math.min(duration, video.currentTime + 5); showUI();
+    }
+    else if (e.key === 'f' || e.key === 'F') { toggleFullscreen(); }
+  });
+
+  document.getElementById('back').addEventListener('click', function () {
+    location.href = 'course.html?course=' + cid;
+  });
+
+  setPlaying(false);
+  render(0, duration);
+  armIdle(3200);
+</script>
+</body>
+</html>

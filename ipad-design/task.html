@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>每日修行任务 · 知识冒险岛</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%;overflow:hidden;background:#0b2350;
+    font-family:"Noto Sans SC","PingFang SC","Hiragino Sans GB",-apple-system,sans-serif;
+    -webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
+  .view{position:relative;width:100%;height:100%;overflow:hidden}
+  .stage{position:absolute;left:50%;top:50%;width:1366px;height:1024px;transform-origin:center center}
+  .stage *{position:absolute}
+  img{display:block}
+  .bg{left:0;top:0;width:1366px;height:1024px;object-fit:cover}
+
+  .back{left:32.02px;top:26.68px;width:64.03px;height:64.03px;border-radius:32.02px;
+    background:linear-gradient(180deg,#77D8FF,#398DE7);box-shadow:0 5.34px 5.34px rgba(20,98,186,.35);
+    display:flex;align-items:center;justify-content:center;cursor:pointer}
+  .back span{position:static;color:#fff;font-size:50px;font-weight:700;line-height:1;margin-top:-6px}
+  .title-bar{left:162.75px;top:26.68px;width:338.83px;height:61.36px;border-radius:32.02px;
+    background:rgba(34,91,188,.65)}
+  .title-house{left:178.76px;top:32.02px;width:58.7px;height:50.69px}
+  .title{left:250.79px;top:26.68px;width:242.79px;height:58.7px;font-size:33.35px;font-weight:700;
+    color:#fff;display:flex;align-items:center}
+
+  .w1{left:941.79px;top:32.02px;width:184.09px;height:48.02px;border-radius:24.01px;
+    background:rgba(48,98,186,.7)}
+  .w2{left:1155.23px;top:32.02px;width:181.42px;height:48.02px;border-radius:24.01px;
+    background:rgba(48,98,186,.7)}
+  .gem-top{left:944.46px;top:32.02px;width:56.03px;height:45.36px}
+  .coin-top{left:1155.23px;top:32.02px;width:58.7px;height:48.02px}
+  .num{width:80.04px;height:50.69px;font-family:Inter,sans-serif;font-size:25.35px;font-weight:700;
+    color:#fff;display:flex;align-items:center;justify-content:center}
+  .n1{left:1005.82px;top:29.35px}
+  .n2{left:1227.26px;top:29.35px;width:53.36px}
+  .plus{width:29.35px;height:29.35px;border-radius:16px;cursor:pointer;
+    background:linear-gradient(180deg,#9FC2FF,#6F96EF)}
+  .plus::before,.plus::after{content:"";position:absolute;background:#fff;border-radius:1.07px}
+  .plus::before{left:5.87px;top:13.21px;width:17.61px;height:2.93px}
+  .plus::after{left:13.34px;top:5.74px;width:2.93px;height:17.61px}
+  .p1{left:1083.19px;top:40.02px}
+  .p2{left:1299.30px;top:40.02px}
+
+  .boy{left:21.92px;top:164.98px;width:332.85px;height:685.88px}
+  .pet{left:296.14px;top:456.22px;width:232.11px;height:282.8px}
+  .dialog{left:194.76px;top:122.73px;width:320.16px;height:165.41px}
+  .dialog-txt{left:224.11px;top:144.07px;width:285.47px;height:96.05;font-size:28.81px;
+    font-weight:700;color:#062D8E;line-height:1.55;white-space:pre-line}
+
+  .prog-card{left:562.94px;top:136.07px;width:776.38px;height:130.73px}
+  .prog-star{left:576.28px;top:144.07px;width:88.04px;height:96.05px}
+  .prog-title{left:672.33px;top:157.41px;width:309.48px;height:40.02px;font-size:24.01px;
+    font-weight:700;color:#fff;display:flex;align-items:center}
+  .prog-count{left:1040.51px;top:200.1px;width:96.05px;height:34.68px;
+    font-family:Inter,sans-serif;font-size:24.01px;font-weight:700;color:#fff;
+    display:flex;align-items:center;justify-content:center}
+  .chest{left:1173.91px;top:128.06px;width:170.75px;height:138.73px}
+
+  .list-bg{left:562.94px;top:269.46px;width:776.38px;height:589.62px}
+
+  .task{left:576.28px;width:749.7px;height:101.38px}
+  .t-card{left:0;top:0;width:749.7px;height:101.38px;border-radius:24.01px}
+  .t-ico{left:24.01px;top:6px;width:93.38px;height:88px;object-fit:contain}
+  .t-title{left:138.73px;top:5.34px;width:282.8px;height:45.36px;font-size:28.81px;
+    font-weight:700;color:#0B348E;display:flex;align-items:center}
+  .t-sub{left:138.73px;top:48.02px;width:282.8px;height:40.02px;font-size:21.08px;
+    font-weight:500;color:#526EAF;display:flex;align-items:center}
+  .t-gem{left:402.86px;top:26.68px;width:48.02px;height:45.36px}
+  .t-bonus{left:450.89px;top:24.01px;width:88.04px;height:45.36px;font-family:Inter,sans-serif;
+    font-size:28.28px;font-weight:700;color:#073EAE;display:flex;align-items:center}
+  .t-btn{left:562.94px;top:16.01px;width:165.41px;height:66.7px;border-radius:34.68px;
+    cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px}
+  .t-btn.go{background:linear-gradient(180deg,#76DBFF,#3E80F6);
+    box-shadow:0 5.34px 5.34px rgba(94,153,240,.3)}
+  .t-btn.go span{position:static;font-size:28.55px;font-weight:700;color:#fff}
+  .t-btn.done{background:linear-gradient(180deg,#B8F5CB,#79DC9D);
+    box-shadow:0 5.34px 5.34px rgba(88,186,144,.3)}
+  .t-btn.done span{position:static;font-size:26.68px;font-weight:700;color:#278F62}
+  .tick{position:static;width:34.68px;height:34.68px;border-radius:50%;background:#30BB79;
+    color:#fff;font-size:22px;font-style:normal;display:flex;align-items:center;
+    justify-content:center;margin-left:-26px}
+
+  .total{left:32.02px;top:792.39px;width:504.25px;height:82.71px}
+  .total-bg{left:0;top:0;width:504.25px;height:82.71px}
+  .total-t{left:93.38px;top:13.34px;width:170.75px;height:53.36px;font-size:22.41px;
+    font-weight:700;color:#133D91;display:flex;align-items:center}
+  .total-gem{left:242.79px;top:21.34px;width:37.35px;height:37.35px}
+  .total-n{left:282.8px;top:13.34px;width:66.7px;height:53.36px;font-family:Inter,sans-serif;
+    font-size:24.01px;font-weight:700;color:#173A91;display:flex;align-items:center}
+  .claim{left:352.17px;top:13.34px;width:136.07px;height:58.7px;border-radius:32.02px;
+    background:linear-gradient(180deg,#B9C2D5,#929DB8);cursor:pointer;
+    display:flex;align-items:center;justify-content:center}
+  .claim span{position:static;font-size:22.94px;font-weight:700;color:#fff}
+  .claim.on{background:linear-gradient(180deg,#FFF36C,#FFAD05);
+    box-shadow:0 4px 0 rgba(249,153,22,.95),0 0 14px rgba(255,210,80,.8)}
+  .gift{left:45.36px;top:795.05px;width:77.37px;height:74.7px}
+
+  .nav-bar{left:0;top:903.75px;width:1366px;height:121px;opacity:.8;
+    background:linear-gradient(180deg,#E7F0FE,#DBDFFE);
+    box-shadow:0 2.31px 9.23px rgba(146,148,207,.15)}
+  .nav-ico{top:917.3px;width:61.55px;height:54.04px;cursor:pointer}
+  .nav-label{top:971.75px;width:114.72px;height:45.36px;font-size:23.48px;font-weight:700;
+    color:#2442A3;text-align:center;line-height:1.9;cursor:pointer}
+
+  .toast{left:50%;top:620px;transform:translateX(-50%);padding:16px 34px;border-radius:22px;
+    background:rgba(9,25,60,.9);color:#fff;font-size:26px;font-weight:700;
+    opacity:0;pointer-events:none;transition:opacity .22s;white-space:nowrap}
+  .toast.show{opacity:1}
+</style>
+</head>
+<body>
+<div class="view">
+  <div class="stage" id="stage">
+    <img class="bg" src="assets/task-bg.png" alt="">
+    <img class="boy" src="assets/task-boy.png" alt="">
+    <img class="pet" src="assets/task-pet.png" alt="">
+
+    <div class="back" id="back"><span>‹</span></div>
+    <div class="title-bar"></div>
+    <img class="title-house" src="assets/task-house.png" alt="">
+    <div class="title">每日修行任务</div>
+
+    <div class="w1"></div><div class="w2"></div>
+    <img class="gem-top" src="assets/task-gem.png" alt="">
+    <img class="coin-top" src="assets/task-coins.png" alt="">
+    <div class="num n1" id="numStone">1280</div>
+    <div class="num n2" id="numExp">12</div>
+    <div class="plus p1"></div><div class="plus p2"></div>
+
+    <img class="dialog" src="assets/task-dialog.png" alt="">
+    <div class="dialog-txt">完成今日任务，
+获得灵石和经验吧！</div>
+
+    <img class="prog-card" src="assets/task-progress.png" alt="">
+    <img class="prog-star" src="assets/task-star.png" alt="">
+    <div class="prog-title">今日任务进度</div>
+    <div class="prog-count" id="count">3 / 5</div>
+    <img class="chest" src="assets/task-chest.png" alt="">
+
+    <img class="list-bg" src="assets/task-listbg.png" alt="">
+
+      <div class="task done" data-idx="0" style="top:288.14px">
+        <img class="t-card" src="assets/task-cardbg.png" alt="">
+        <img class="t-ico" src="assets/task-i-chinese.png" alt="">
+        <span class="t-title">语文修行</span>
+        <span class="t-sub">完成1节语文课程</span>
+        <img class="t-gem" src="assets/task-gem-s.png" alt="">
+        <span class="t-bonus">+20</span>
+        <div class="t-btn done"><i class="tick">✓</i><span>已完成</span></div>
+      </div>
+      <div class="task" data-idx="1" style="top:400.2px">
+        <img class="t-card" src="assets/task-cardbg.png" alt="">
+        <img class="t-ico" src="assets/task-i-math.png" alt="">
+        <span class="t-title">数学修行</span>
+        <span class="t-sub">完成10道数学题</span>
+        <img class="t-gem" src="assets/task-gem-s.png" alt="">
+        <span class="t-bonus">+20</span>
+        <div class="t-btn go"><span>去完成</span></div>
+      </div>
+      <div class="task" data-idx="2" style="top:512.25px">
+        <img class="t-card" src="assets/task-cardbg.png" alt="">
+        <img class="t-ico" src="assets/task-i-english.png" alt="">
+        <span class="t-title">英语修行</span>
+        <span class="t-sub">完成一次英语学习</span>
+        <img class="t-gem" src="assets/task-gem-s.png" alt="">
+        <span class="t-bonus">+20</span>
+        <div class="t-btn go"><span>去完成</span></div>
+      </div>
+      <div class="task" data-idx="3" style="top:624.3px">
+        <img class="t-card" src="assets/task-cardbg.png" alt="">
+        <img class="t-ico" src="assets/task-i-science.png" alt="">
+        <span class="t-title">科普探索</span>
+        <span class="t-sub">完成一个知识挑战</span>
+        <img class="t-gem" src="assets/task-gem-s.png" alt="">
+        <span class="t-bonus">+30</span>
+        <div class="t-btn go"><span>去完成</span></div>
+      </div>
+      <div class="task" data-idx="4" style="top:736.36px">
+        <img class="t-card" src="assets/task-cardbg.png" alt="">
+        <img class="t-ico" src="assets/task-i-battle.png" alt="">
+        <span class="t-title">灵宠挑战</span>
+        <span class="t-sub">与AI宠物进行一次答题</span>
+        <img class="t-gem" src="assets/task-gem-s.png" alt="">
+        <span class="t-bonus">+30</span>
+        <div class="t-btn go"><span>去完成</span></div>
+      </div>
+
+    <div class="total">
+      <img class="total-bg" src="assets/task-rewardcard.png" alt="">
+      <span class="total-t">全部完成奖励</span>
+      <img class="total-gem" src="assets/task-gem-s.png" alt="">
+      <span class="total-n">+50</span>
+      <div class="claim" id="claim"><span>领取奖励</span></div>
+    </div>
+    <img class="gift" src="assets/task-gift.png" alt="">
+
+    <div class="nav-bar"></div><img class="nav-ico" data-go="home.html" data-name="首页" src="assets/nav-home.png" style="left:114.6px" alt=""><div class="nav-label" data-go="home.html" data-name="首页" style="left:88.04px;">首页</div><img class="nav-ico" data-go="" data-name="任务" src="assets/nav-task.png" style="left:384.1px" alt=""><div class="nav-label" data-go="" data-name="任务" style="left:357.51px;color:#0F8CEB">任务</div><img class="nav-ico" data-go="" data-name="战斗" src="assets/nav-battle.png" style="left:653.9px" alt=""><div class="nav-label" data-go="" data-name="战斗" style="left:624.3px;">战斗</div><img class="nav-ico" data-go="bag.html" data-name="储物袋" src="assets/nav-bag.png" style="left:923.0px" alt=""><div class="nav-label" data-go="bag.html" data-name="储物袋" style="left:896.44px;">储物袋</div><img class="nav-ico" data-go="" data-name="我的" src="assets/nav-me.png" style="left:1189.8px" alt=""><div class="nav-label" data-go="" data-name="我的" style="left:1163.23px;">我的</div>
+    <div class="toast" id="toast"></div>
+  </div>
+</div>
+<script src="store.js?v=2"></script>
+<script>
+  var stage = document.getElementById('stage');
+  function fit() {
+    var s = Math.min(window.innerWidth / 1366, window.innerHeight / 1024);
+    stage.style.transform = 'translate(-50%,-50%) scale(' + s + ')';
+  }
+  addEventListener('resize', fit); addEventListener('orientationchange', fit); fit();
+
+  var TASKS = [
+    { key: 'chinese', name: '语文修行', go: 'course.html?course=series_chinese_xes',
+      check: function () { return Store.doneCount('series_chinese_xes') > 0; } },
+    { key: 'math', name: '数学修行', go: 'course.html?course=series_math_g4',
+      check: function () { return Store.doneCount('series_math_g4') > 0; } },
+    { key: 'english', name: '英语修行', go: 'course.html?course=series_english_tbd',
+      check: function () { return Store.doneCount('series_english_tbd') > 0; } },
+    { key: 'science', name: '科普探索', go: 'course.html?course=series_bio_g4',
+      check: function () { return Store.doneCount('series_bio_g4') > 0; } },
+    { key: 'battle', name: '灵宠挑战', go: 'battle.html',
+      check: function () { return !!Store.getTasks().battle; } }
+  ];
+
+  document.getElementById('numStone').textContent = Store.fmt(Store.get().stone);
+  document.getElementById('numExp').textContent = Store.get().exp;
+
+  var nodes = document.querySelectorAll('.task');
+  var claim = document.getElementById('claim');
+
+  function render() {
+    var doneN = 0;
+    nodes.forEach(function (t, i) {
+      var def = TASKS[i];
+      var ok = def.check();
+      if (ok) doneN++;
+      var btn = t.querySelector('.t-btn');
+      if (ok) {
+        t.classList.add('done');
+        btn.className = 't-btn done';
+        btn.innerHTML = '<i class="tick">✓</i><span>已完成</span>';
+      } else {
+        t.classList.remove('done');
+        btn.className = 't-btn go';
+        btn.innerHTML = '<span>去完成</span>';
+      }
+    });
+    document.getElementById('count').textContent = doneN + ' / 5';
+    claim.classList.toggle('on', doneN === 5);
+    return doneN;
+  }
+
+  nodes.forEach(function (t, i) {
+    t.querySelector('.t-btn').addEventListener('click', function (ev) {
+      ev.stopPropagation();
+      var ok = TASKS[i].check();
+      if (ok) { Store.toast('这个任务今天已经完成啦'); return; }
+      location.href = TASKS[i].go;
+    });
+  });
+
+  claim.addEventListener('click', function () {
+    var doneN = render();
+    if (doneN < 5) { Store.toast('还有 ' + (5 - doneN) + ' 个任务没完成'); return; }
+    var r = Store.claimTasks();
+    Store.toast(r.ok ? '奖励已领取 · 灵石 +50 经验 +100' : r.msg);
+  });
+
+  document.getElementById('back').addEventListener('click', function () { location.href = 'home.html'; });
+  document.querySelectorAll('.plus').forEach(function (p) {
+    p.addEventListener('click', function () { location.href = 'mall.html'; });
+  });
+  document.querySelectorAll('.nav-ico,.nav-label').forEach(function (el) {
+    el.addEventListener('click', function () {
+      var go = el.dataset.go;
+      if (go) location.href = go;
+      else Store.toast('「' + el.dataset.name + '」还没做');
+    });
+  });
+
+  render();
+</script>
+</body>
+</html>

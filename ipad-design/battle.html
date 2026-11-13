@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>灵宠挑战 · 知识冒险岛</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%;overflow:hidden;background:#071a3d;
+    font-family:"Noto Sans SC","PingFang SC","Hiragino Sans GB",-apple-system,sans-serif;
+    -webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
+  .view{position:relative;width:100%;height:100%;overflow:hidden}
+  .stage{position:absolute;left:50%;top:50%;width:1366px;height:1024px;transform-origin:center center}
+  .stage *{position:absolute}
+  img{display:block}
+  .bg{left:0;top:0;width:1366px;height:1024px;object-fit:cover}
+  .mask{left:0;top:0;width:1366px;height:1024px;
+    background:linear-gradient(180deg,rgba(5,16,42,.78),rgba(5,16,42,.9))}
+
+  .back{left:37px;top:34px;width:64px;height:64px;border-radius:32px;
+    background:rgba(255,255,255,.16);border:1.6px solid rgba(255,255,255,.3);
+    display:flex;align-items:center;justify-content:center;cursor:pointer}
+  .back span{position:static;font-size:42px;color:#fff;line-height:1;margin-top:-6px}
+  .page-t{left:126px;top:40px;height:38px;font-size:31px;font-weight:700;color:#fff}
+  .page-s{left:126px;top:82px;height:24px;font-size:16px;color:#A8C4EE}
+
+  .timer{left:600px;top:38px;width:166px;height:70px;border-radius:35px;
+    background:rgba(255,255,255,.14);border:2px solid rgba(255,255,255,.28);
+    display:flex;align-items:center;justify-content:center}
+  .timer span{position:static;font-size:40px;font-weight:900;color:#FFD24A;
+    font-family:Inter,sans-serif;line-height:1}
+  .timer.warn span{color:#FF6B52}
+
+  .hpwrap{width:300px;height:34px}
+  .hpname{left:0;top:-34px;font-size:19px;font-weight:700;color:#fff;white-space:nowrap}
+  .hptrack{left:0;top:0;width:300px;height:34px;border-radius:17px;
+    background:rgba(255,255,255,.16);border:2px solid rgba(255,255,255,.3);overflow:hidden}
+  .hptrack i{left:0;top:0;height:30px;border-radius:15px;transition:width .4s}
+  .hpv{left:0;top:6px;width:300px;text-align:center;font-size:19px;font-weight:900;
+    color:#fff;line-height:1.2;text-shadow:0 2px 4px rgba(0,0,0,.4)}
+
+  .me{left:60px;top:150px}
+  .foe{left:1006px;top:150px}
+  .foe .hpname{text-align:right}
+
+  .mepet{left:56px;top:280px;width:290px;height:320px;object-fit:contain;
+    animation:float 3.2s ease-in-out infinite}
+  .foepet{left:1010px;top:290px;width:300px;height:300px;object-fit:contain;
+    animation:float 3.8s ease-in-out infinite reverse}
+  @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+  .hit{animation:hit .4s ease}
+  @keyframes hit{0%,100%{transform:translateX(0)}25%{transform:translateX(-16px)}75%{transform:translateX(16px)}}
+
+  .qcard{left:373px;top:170px;width:620px;height:180px;border-radius:24px;
+    background:rgba(255,255,255,.95);border:2px solid #fff;padding:24px 28px}
+  .qtag{left:28px;top:20px;font-size:14px;font-weight:700;color:#3692FF}
+  .qtext{left:28px;top:52px;width:564px;font-size:26px;font-weight:700;color:#11284F;line-height:1.45}
+
+  .opt{left:373px;width:620px;height:96px;border-radius:20px;background:rgba(255,255,255,.94);
+    border:2.5px solid rgba(255,255,255,.6);display:flex;align-items:center;gap:16px;padding:0 20px;
+    cursor:pointer;transition:background .15s,border-color .15s}
+  .opt .k{position:static;width:42px;height:42px;border-radius:21px;background:#EFF5FF;
+    display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;
+    color:#5C7396;flex:0 0 auto}
+  .opt .v{position:static;flex:1;font-size:24px;font-weight:700;color:#11284F}
+  .opt.right{background:#EAFBF1;border-color:#2FC56E}
+  .opt.right .k{background:#2FC56E;color:#fff}
+  .opt.wrong{background:#FFF0EE;border-color:#FF6B52}
+  .opt.wrong .k{background:#FF6B52;color:#fff}
+  .opt.dim{opacity:.45}
+
+  .combo{left:600px;top:410px;width:166px;text-align:center;font-size:20px;font-weight:900;
+    color:#FFD24A;opacity:0;transition:opacity .2s}
+  .combo.show{opacity:1}
+
+  .result{left:373px;top:430px;width:620px;height:330px;border-radius:28px;display:none;
+    background:rgba(255,255,255,.97);border:2px solid #fff;
+    box-shadow:0 12px 44px rgba(0,0,0,.35);flex-direction:column;align-items:center;justify-content:center}
+  .result.show{display:flex}
+  .result *{position:static}
+  .r-t{font-size:44px;font-weight:900;color:#11284F}
+  .r-s{font-size:19px;color:#5C7396;margin:12px 0 26px}
+  .r-b{display:flex;gap:36px;margin-bottom:28px}
+  .r-b div{display:flex;align-items:center;gap:8px;font-size:21px;font-weight:700;color:#11284F}
+  .r-b img{width:28px;height:28px;position:static}
+  .r-btn{width:340px;height:90px;border-radius:45px;
+    background:linear-gradient(180deg,#FFF797,#FFDA2A 45%,#FF9A00);
+    border:5px solid #FFF4A8;box-shadow:0 6px 0 rgba(237,102,0,.8);
+    display:flex;align-items:center;justify-content:center;cursor:pointer}
+  .r-btn span{font-size:32px;font-weight:900;color:#702500}
+
+  .nav-bar{left:0;top:893px;width:1366px;height:121px;
+    background:linear-gradient(180deg,rgba(12,40,96,.5),rgba(10,32,80,.7))}
+  .nav-ico{top:906.55px;width:61.55px;height:54.04px;cursor:pointer}
+  .nav-label{top:961px;width:114.72px;height:45.36px;font-size:23.48px;font-weight:700;
+    color:#fff;text-align:center;line-height:1.9;cursor:pointer}
+
+  .toast{left:50%;top:820px;transform:translateX(-50%);padding:16px 34px;border-radius:22px;
+    background:rgba(4,14,38,.94);color:#fff;font-size:24px;font-weight:700;
+    opacity:0;pointer-events:none;transition:opacity .22s;white-space:nowrap;
+    border:1.6px solid rgba(255,255,255,.16)}
+  .toast.show{opacity:1}
+</style>
+</head>
+<body>
+<div class="view">
+  <div class="stage" id="stage">
+    <img class="bg" src="assets/course2-bg.png" alt="">
+    <div class="mask"></div>
+
+    <div class="back" id="back"><span>‹</span></div>
+    <div class="page-t">灵宠挑战</div>
+    <div class="page-s">答得越快，伤害越高 · 三题定胜负</div>
+    <div class="timer" id="timer"><span id="timerTxt">15</span></div>
+
+    <div class="hpwrap me">
+      <div class="hpname">我方 · <b id="meName">小蓝</b></div>
+      <div class="hptrack"><i id="meHp" style="width:100%;background:linear-gradient(90deg,#36FF80,#0FBF52)"></i></div>
+      <div class="hpv" id="meHpTxt">100</div>
+    </div>
+    <div class="hpwrap foe">
+      <div class="hpname" style="text-align:right">AI 对手 · 墨影</div>
+      <div class="hptrack"><i id="foeHp" style="width:100%;background:linear-gradient(90deg,#FF8A5B,#E23B3B)"></i></div>
+      <div class="hpv" id="foeHpTxt">100</div>
+    </div>
+
+    <img class="mepet" id="mePet" src="assets/task-pet.png" alt="">
+    <img class="foepet" id="foePet" src="assets/bag2-dragon.png" alt="">
+
+    <div class="qcard">
+      <div class="qtag" id="qtag">第 1 题 / 共 3 题</div>
+      <div class="qtext" id="qtext">题目加载中…</div>
+    </div>
+
+    <div id="opts"></div>
+
+    <div class="combo" id="combo"></div>
+
+    <div class="result" id="result">
+      <div class="r-t" id="rT">挑战成功！</div>
+      <div class="r-s" id="rS"></div>
+      <div class="r-b">
+        <div><img src="assets/task-gem-s.png" alt=""><span id="rStone">+30 灵石</span></div>
+        <div><img src="assets/task-star.png" alt=""><span id="rExp">+80 经验</span></div>
+      </div>
+      <div class="r-btn" id="rBtn"><span>收下奖励</span></div>
+    </div>
+
+    <div class="nav-bar"></div>
+    <img class="nav-ico" src="assets/nav-home.png" style="left:114.6px" alt="">
+    <div class="nav-label" data-go="home.html" style="left:88.04px">首页</div>
+    <img class="nav-ico" src="assets/nav-task.png" style="left:384.1px" alt="">
+    <div class="nav-label" data-go="task.html" style="left:357.51px">任务</div>
+    <img class="nav-ico" src="assets/nav-battle.png" style="left:653.9px" alt="">
+    <div class="nav-label" style="left:624.3px;color:#35DFFC">战斗</div>
+    <img class="nav-ico" src="assets/nav-bag.png" style="left:923.0px" alt="">
+    <div class="nav-label" data-go="bag.html" style="left:896.44px">储物袋</div>
+    <img class="nav-ico" src="assets/nav-me.png" style="left:1189.8px" alt="">
+    <div class="nav-label" data-go="me.html" style="left:1163.23px">我的</div>
+
+    <div class="toast" id="toast"></div>
+  </div>
+</div>
+<script src="store.js?v=2"></script>
+<script>
+  var stage = document.getElementById('stage');
+  function fit() {
+    var s = Math.min(window.innerWidth / 1366, window.innerHeight / 1024);
+    stage.style.transform = 'translate(-50%,-50%) scale(' + s + ')';
+  }
+  addEventListener('resize', fit); addEventListener('orientationchange', fit); fit();
+
+  var qp = new URLSearchParams(location.search);
+  var cid = qp.get('course') || 'series_math_g4';
+  var course = Store.getCourse(cid) || Store.getCourse('series_math_g4');
+
+  var pool = [];
+  course.lessons.forEach(function (l) { (l.quiz || []).forEach(function (q) { pool.push(q); }); });
+  for (var i = pool.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var t = pool[i]; pool[i] = pool[j]; pool[j] = t;
+  }
+  var quiz = pool.slice(0, 3);
+
+  var meHp = 100, foeHp = 100, idx = 0, right = 0, locked = false;
+  var timeLeft = 15, timerId = null;
+  var meName = Store.get().pet.name;
+
+  document.getElementById('meName').textContent = meName;
+
+  function paintHp() {
+    document.getElementById('meHp').style.width = Math.max(0, meHp) + '%';
+    document.getElementById('foeHp').style.width = Math.max(0, foeHp) + '%';
+    document.getElementById('meHpTxt').textContent = Math.max(0, meHp);
+    document.getElementById('foeHpTxt').textContent = Math.max(0, foeHp);
+  }
+
+  function startTimer() {
+    stopTimer();
+    timeLeft = 15;
+    document.getElementById('timerTxt').textContent = timeLeft;
+    document.getElementById('timer').classList.remove('warn');
+    timerId = setInterval(function () {
+      timeLeft--;
+      document.getElementById('timerTxt').textContent = Math.max(0, timeLeft);
+      if (timeLeft <= 5) document.getElementById('timer').classList.add('warn');
+      if (timeLeft <= 0) { stopTimer(); answer(-1); }
+    }, 1000);
+  }
+
+  function stopTimer() { if (timerId) { clearInterval(timerId); timerId = null; } }
+
+  function render() {
+    locked = false;
+    var q = quiz[idx];
+    document.getElementById('qtag').textContent = '第 ' + (idx + 1) + ' 题 / 共 ' + quiz.length + ' 题';
+    document.getElementById('qtext').textContent = q.q;
+    var box = document.getElementById('opts');
+    box.innerHTML = '';
+    var K = ['A', 'B', 'C'];
+    q.opts.forEach(function (o, i) {
+      var el = document.createElement('div');
+      el.className = 'opt';
+      el.style.top = (380 + i * 112) + 'px';
+      el.innerHTML = '<span class="k">' + K[i] + '</span><span class="v">' + o + '</span>';
+      el.addEventListener('click', function () { answer(i); });
+      box.appendChild(el);
+    });
+    paintHp();
+    startTimer();
+  }
+
+  function answer(pick) {
+    if (locked) return;
+    locked = true;
+    stopTimer();
+
+    var q = quiz[idx];
+    var all = document.querySelectorAll('.opt');
+    all.forEach(function (x) { x.classList.remove('dim'); });
+
+    var ok = pick === q.a;
+    if (pick >= 0 && ok) {
+      all[pick].classList.add('right');
+      foeHp -= 34;
+      right++;
+      document.getElementById('foePet').classList.add('hit');
+      setTimeout(function () { document.getElementById('foePet').classList.remove('hit'); }, 420);
+      Store.toast('答对！' + q.why);
+    } else {
+      if (pick >= 0) all[pick].classList.add('wrong');
+      if (q.a >= 0 && all[q.a]) all[q.a].classList.add('right');
+      meHp -= 34;
+      document.getElementById('mePet').classList.add('hit');
+      setTimeout(function () { document.getElementById('mePet').classList.remove('hit'); }, 420);
+      Store.toast(pick < 0 ? '超时了 · 对手先得一分' : '答错了 · ' + q.why);
+    }
+    paintHp();
+
+    setTimeout(function () {
+      if (idx < quiz.length - 1) { idx++; render(); }
+      else finish();
+    }, 1500);
+  }
+
+  var reward = null;
+
+  function finish() {
+    stopTimer();
+    document.querySelector('.qcard').style.display = 'none';
+    document.getElementById('opts').innerHTML = '';
+    document.querySelector('.combo').style.opacity = '0';
+    var win = right >= 2;
+    var res = document.getElementById('result');
+    res.classList.add('show');
+    document.getElementById('rT').textContent = win ? '挑战成功！' : '再来一次吧';
+    document.getElementById('rS').textContent = win
+      ? '答对 ' + right + ' / 3 题 · 墨影认输了'
+      : '只答对 ' + right + ' / 3 题 · 答对 2 题才能赢';
+
+    if (win) {
+      var s = Store.get();
+      var first = !Store.getTasks().battle;
+      Store.markTask('battle');
+      s.stone += first ? 30 : 0;
+      s.exp += first ? 80 : 0;
+      var a = s.pet.attrs;
+      var min = Math.min(a.文心, a.算力, a.共鸣, a.灵感);
+      var keys = ['文心', '算力', '共鸣', '灵感'];
+      var pickKey = keys.filter(function (k) { return a[k] === min; })[0] || '算力';
+      a[pickKey] = (a[pickKey] || 0) + (first ? 2 : 0);
+      Store.save();
+      reward = { stone: first ? 30 : 0, exp: first ? 80 : 0 };
+      document.getElementById('rStone').textContent = '+' + reward.stone + ' 灵石';
+      document.getElementById('rExp').textContent = '+' + reward.exp + ' 经验';
+      document.getElementById('rBtn').querySelector('span').textContent = first ? '收下奖励' : '回首页';
+    } else {
+      document.getElementById('rStone').textContent = '+0 灵石';
+      document.getElementById('rExp').textContent = '+0 经验';
+      document.getElementById('rBtn').querySelector('span').textContent = '再挑战一次';
+    }
+  }
+
+  document.getElementById('rBtn').addEventListener('click', function () {
+    if (reward) { location.href = 'home.html'; return; }
+    location.reload();
+  });
+
+  document.getElementById('back').addEventListener('click', function () { location.href = 'task.html'; });
+  document.querySelectorAll('.nav-label[data-go]').forEach(function (el) {
+    el.addEventListener('click', function () { location.href = el.dataset.go; });
+  });
+
+  render();
+</script>
+</body>
+</html>

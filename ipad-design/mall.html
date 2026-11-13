@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>灵石商城 · 知识冒险岛</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%;overflow:hidden;background:#cfe3ff;
+    font-family:"Noto Sans SC","PingFang SC","Hiragino Sans GB",-apple-system,sans-serif;
+    -webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
+  .view{position:relative;width:100%;height:100%;overflow:hidden}
+  .stage{position:absolute;left:50%;top:50%;width:1366px;height:1024px;transform-origin:center center}
+  .stage *{position:absolute}
+  img{display:block}
+  .bg{left:0;top:0;width:1366px;height:1024px;object-fit:cover}
+  .mask{left:0;top:0;width:1366px;height:1024px;
+    background:linear-gradient(180deg,rgba(238,247,255,.78),rgba(226,239,255,.92))}
+
+  .title-bar{left:29px;top:24px;width:364px;height:112px;border-radius:52px;
+    background:linear-gradient(180deg,#1739AA,#0B2788);opacity:.72}
+  .home-btn{left:41px;top:38px;width:84px;height:84px;cursor:pointer}
+  .title{left:140px;top:52px;width:250px;height:60px;font-size:44px;font-weight:900;color:#fff;
+    display:flex;align-items:center;text-shadow:0 2px 3px rgba(20,42,102,.6)}
+
+  .wallet{left:884px;top:44px;width:200px;height:68px;border-radius:36px;
+    background:rgba(255,255,255,.94);border:2px solid #fff;
+    box-shadow:0 4px 14px rgba(80,110,180,.16);display:flex;align-items:center;gap:8px;padding:0 16px}
+  .wallet img{position:static;width:38px;height:38px;object-fit:contain}
+  .wallet span{position:static;flex:1;font-size:26px;font-weight:900;color:#11284F;
+    font-family:Inter,sans-serif;text-align:right}
+  .wallet2{left:1104px;top:44px;width:200px;height:68px;border-radius:36px;
+    background:rgba(255,255,255,.94);border:2px solid #fff;
+    box-shadow:0 4px 14px rgba(80,110,180,.16);display:flex;align-items:center;gap:8px;padding:0 16px}
+  .wallet2 img{position:static;width:36px;height:36px;object-fit:contain}
+  .wallet2 span{position:static;flex:1;font-size:26px;font-weight:900;color:#11284F;
+    font-family:Inter,sans-serif;text-align:right}
+
+  .cat{top:172px;width:152px;height:76px;border-radius:26px;cursor:pointer;
+    background:rgba(255,255,255,.92);border:2px solid #fff;
+    box-shadow:0 4px 12px rgba(80,110,180,.12);
+    display:flex;align-items:center;justify-content:center;
+    font-size:25px;font-weight:700;color:#5C7396;transition:transform .12s}
+  .cat:active{transform:scale(.96)}
+  .cat.on{background:linear-gradient(180deg,#5B9BFF,#2A5FD6);border-color:#BBD6FF;color:#fff;
+    box-shadow:0 5px 16px rgba(42,95,214,.42)}
+
+  .gcard{width:295px;height:276px;border-radius:30px;background:#fff;
+    box-shadow:0 8px 24px rgba(80,110,180,.14);border:2px solid #fff;
+    transition:transform .14s}
+  .gcard:active{transform:scale(.985)}
+  .gcard.locked{opacity:.62}
+  .gico{left:82px;top:12px;width:130px;height:118px;display:flex;align-items:center;justify-content:center}
+  .gico img{position:static;max-width:130px;max-height:118px;object-fit:contain}
+  .gname{left:0;top:140px;width:295px;text-align:center;font-size:23px;font-weight:700;color:#11284F;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .gsub{left:0;top:169px;width:295px;text-align:center;font-size:13px;color:#9FB0C8;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .gprice{left:0;top:194px;width:295px;display:flex;align-items:center;justify-content:center;gap:6px}
+  .gprice img{position:static;width:22px;height:22px;object-fit:contain}
+  .gprice span{position:static;font-size:22px;font-weight:900;color:#FF8A00;font-family:Inter,sans-serif}
+  .gbtn{left:65px;top:222px;width:165px;height:44px;border-radius:22px;cursor:pointer;
+    background:linear-gradient(180deg,#FFE06B,#FFAD05);border:2px solid #FFF0B8;
+    box-shadow:0 3px 0 rgba(233,150,0,.7);
+    display:flex;align-items:center;justify-content:center;transition:transform .12s}
+  .gbtn:active{transform:scale(.96)}
+  .gbtn span{position:static;font-size:19px;font-weight:900;color:#7A3E00;line-height:1}
+  .gbtn.off{background:#E3EAF4;border-color:#EFF4FB;box-shadow:0 3px 0 rgba(160,175,195,.45)}
+  .gbtn.off span{color:#97A9BF}
+  .gbadge{left:auto;right:12px;top:12px;height:30px;padding:0 12px;border-radius:15px;
+    display:flex;align-items:center;background:#EAF7EF;color:#2FA45F;
+    font-size:14px;font-weight:700}
+  .gbadge.count{background:#EAF3FF;color:#3A7BD5}
+
+  .nav-bar{left:0;top:893px;width:1366px;height:121px;
+    background:linear-gradient(180deg,#E7F0FE,#DBDFFE);box-shadow:0 -2px 10px rgba(146,148,207,.12)}
+  .nav-ico{top:906.55px;width:61.55px;height:54.04px;cursor:pointer}
+  .nav-label{top:961px;width:114.72px;height:45.36px;font-size:23.48px;font-weight:700;
+    color:#2442A3;text-align:center;line-height:1.9;cursor:pointer}
+
+  .toast{left:50%;top:820px;transform:translateX(-50%);padding:16px 34px;border-radius:22px;
+    background:rgba(9,25,60,.92);color:#fff;font-size:24px;font-weight:700;
+    opacity:0;pointer-events:none;transition:opacity .22s;white-space:nowrap}
+  .toast.show{opacity:1}
+</style>
+</head>
+<body>
+<div class="view">
+  <div class="stage" id="stage">
+    <img class="bg" src="assets/mall2-bg.png" alt="">
+    <div class="mask"></div>
+
+    <div class="title-bar"></div>
+    <img class="home-btn" id="homeBtn" src="assets/bag2-ico-home.png" alt="">
+    <div class="title">灵石商城</div>
+
+    <div class="wallet"><img src="assets/bag2-ico-stone.png" alt=""><span id="stoneNum">1,280</span></div>
+    <div class="wallet2"><img src="assets/task-star.png" alt=""><span id="expNum">820</span></div>
+
+    <div id="cats" style="left:0;top:0;width:1366px;height:1024px"></div>
+    <div id="goods" style="left:0;top:0;width:1366px;height:1024px"></div>
+
+    <div class="nav-bar"></div>
+    <img class="nav-ico" src="assets/nav-home.png" style="left:114.6px" alt="">
+    <div class="nav-label" data-go="home.html" style="left:88.04px">首页</div>
+    <img class="nav-ico" src="assets/nav-task.png" style="left:384.1px" alt="">
+    <div class="nav-label" data-go="task.html" style="left:357.51px">任务</div>
+    <img class="nav-ico" src="assets/nav-battle.png" style="left:653.9px" alt="">
+    <div class="nav-label" data-go="battle.html" style="left:624.3px">战斗</div>
+    <img class="nav-ico" src="assets/nav-bag.png" style="left:923.0px" alt="">
+    <div class="nav-label" data-go="bag.html" style="left:896.44px">储物袋</div>
+    <img class="nav-ico" src="assets/nav-me.png" style="left:1189.8px" alt="">
+    <div class="nav-label" data-go="me.html" style="left:1163.23px">我的</div>
+
+    <div class="toast" id="toast"></div>
+  </div>
+</div>
+<script src="store.js?v=2"></script>
+<script>
+  var stage = document.getElementById('stage');
+  function fit() {
+    var s = Math.min(window.innerWidth / 1366, window.innerHeight / 1024);
+    stage.style.transform = 'translate(-50%,-50%) scale(' + s + ')';
+  }
+  addEventListener('resize', fit); addEventListener('orientationchange', fit); fit();
+
+  var CATS = ['全部', '道具', '装备', '服装', '宠物'];
+  var curCat = '全部';
+
+  function renderWallet() {
+    document.getElementById('stoneNum').textContent = Store.fmt(Store.get().stone);
+    document.getElementById('expNum').textContent = Store.get().exp;
+  }
+
+  function renderCats() {
+    var box = document.getElementById('cats');
+    box.innerHTML = '';
+    CATS.forEach(function (c, i) {
+      var el = document.createElement('div');
+      el.className = 'cat' + (c === curCat ? ' on' : '');
+      el.style.left = (53 + i * 172) + 'px';
+      el.textContent = c;
+      el.addEventListener('click', function () {
+        curCat = c;
+        renderCats();
+        renderGoods();
+      });
+      box.appendChild(el);
+    });
+  }
+
+  function renderGoods() {
+    var box = document.getElementById('goods');
+    box.innerHTML = '';
+    var list = Store.ITEMS.filter(function (x) {
+      return curCat === '全部' || x.cat === curCat;
+    });
+
+    list.forEach(function (item, i) {
+      var inv = Store.owned(item.id);
+      var isOwned = item.kind === 'own' && inv && inv.owned;
+      var lackStone = Store.get().stone < item.price;
+      var col = i % 4, row = Math.floor(i / 4);
+
+      var el = document.createElement('div');
+      el.className = 'gcard' + (isOwned ? ' locked' : '');
+      el.style.left = (53 + col * 320) + 'px';
+      el.style.top = (280 + row * 300) + 'px';
+
+      var badge = '';
+      if (isOwned) badge = '<div class="gbadge">已拥有</div>';
+      else if (item.kind === 'consume' && inv && inv.count > 0) {
+        badge = '<div class="gbadge count">x' + inv.count + '</div>';
+      }
+
+      var btnText = isOwned ? '已拥有' : (lackStone ? '灵石不足' : '兑换');
+      var btnOff = (isOwned || lackStone) ? ' off' : '';
+
+      el.innerHTML =
+        badge +
+        '<div class="gico"><img src="' + item.icon + '" alt=""></div>' +
+        '<div class="gname">' + item.name + '</div>' +
+        '<div class="gsub">' + item.desc + '</div>' +
+        '<div class="gprice"><img src="assets/task-gem-s.png" alt=""><span>' + item.price + '</span></div>' +
+        '<div class="gbtn' + btnOff + '"><span>' + btnText + '</span></div>';
+
+      el.querySelector('.gbtn').addEventListener('click', function (ev) {
+        ev.stopPropagation();
+        buy(item);
+      });
+
+      box.appendChild(el);
+    });
+  }
+
+  function buy(item) {
+    var inv = Store.owned(item.id);
+    if (item.kind === 'own' && inv && inv.owned) {
+      Store.toast('这件已经拥有啦');
+      return;
+    }
+    var chk = Store.canBuy(item);
+    if (!chk.ok) {
+      if (chk.reason === 'stone') showLack(chk.lack, item);
+      return;
+    }
+    var r = Store.buyItem(item.id);
+    if (!r.ok) return;
+    renderWallet();
+    renderGoods();
+    Store.toast('兑换成功 · 「' + item.name + '」已放进储物袋 · 还剩 ' + Store.fmt(r.left) + ' 灵石');
+  }
+
+  function showLack(lack, item) {
+    Store.modal({
+      icon: 'assets/bag2-ico-stone.png',
+      badge: '!',
+      tone: 'warn',
+      title: '灵石不够啦',
+      desc: '「' + item.name + '」要 ' + item.price + ' 灵石，<br>你还差 <em>' + lack + '</em> 灵石',
+      cancel: '再逛逛',
+      ok: '去赚灵石',
+      onOk: function () { location.href = 'task.html'; }
+    });
+  }
+
+  document.getElementById('homeBtn').addEventListener('click', function () {
+    location.href = 'home.html';
+  });
+  document.querySelectorAll('.nav-label[data-go]').forEach(function (el) {
+    el.addEventListener('click', function () { location.href = el.dataset.go; });
+  });
+
+  renderCats();
+  renderWallet();
+  renderGoods();
+</script>
+</body>
+</html>

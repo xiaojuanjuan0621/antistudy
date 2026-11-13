@@ -1,0 +1,242 @@
+#!/usr/bin/env python3
+# 首次进入 · 选择宠物蛋
+# 来源：Figma 画板「宠物蛋选择 · PNG素材 + 可编辑UI」#47:622
+# 画布 1366×1024（iPad 横屏 4:3）
+# 运行：python3 build_egg.py  →  生成 egg-select.html
+import os
+
+BASE = os.path.dirname(os.path.abspath(__file__))
+CW, CH = 1366, 1024
+
+EGGS = [
+    # key,   名字,       蛋图,            底座图,                  底座 x,y,w,h
+    ('blue',   '深海之卵', 'egg-blue.png',   'egg-plate-blue.png',   298.81, 661.66, 309.48, 77.37,
+     298.81, 352.17, 309.48, 309.48),
+    ('gold',   '曜金之卵', 'egg-gold.png',   'egg-plate-gold.png',   610.96, 671.26, 360.18, 81.11,
+     610.96, 325.49, 360.18, 345.77),
+    ('purple', '幻梦之卵', 'egg-purple.png', 'egg-plate-purple.png', 973.81, 663.26, 330.83, 78.44,
+     973.81, 349.50, 330.83, 313.75),
+]
+
+units = []
+for i, (key, name, egg, plate, px, py, pw, ph, ex, ey, ew, eh) in enumerate(EGGS):
+    units.append(f'''
+      <div class="unit" data-egg="{key}" data-name="{name}" style="left:{min(px, ex)}px;top:{ey}px;width:{max(pw, ew)}px;height:{py + ph - ey}px">
+        <span class="halo"></span>
+        <img class="plate" src="assets/{plate}" style="left:{px - min(px, ex)}px;top:{py - ey}px;width:{pw}px;height:{ph}px">
+        <img class="egg" src="assets/{egg}" style="left:{ex - min(px, ex)}px;top:0;width:{ew}px;height:{eh}px">
+        <span class="tick">✓</span>
+      </div>''')
+
+HTML = f'''<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>选择你的宠物蛋 · 知识冒险岛</title>
+<style>
+  *{{box-sizing:border-box;margin:0;padding:0}}
+  html,body{{height:100%;overflow:hidden;background:#0b2350;
+    font-family:"Noto Sans SC","PingFang SC","Hiragino Sans GB",-apple-system,sans-serif;
+    -webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}}
+  .view{{position:relative;width:100%;height:100%;overflow:hidden}}
+  .stage{{position:absolute;left:50%;top:50%;width:{CW}px;height:{CH}px;
+    transform-origin:center center}}
+  .stage *{{position:absolute}}
+  .bg{{left:0;top:0;width:{CW}px;height:{CH}px;object-fit:cover}}
+
+  .boy{{left:48.46px;top:414.18px;width:260.74px;height:415.34px}}
+  .star-l{{left:309.48px;top:125.39px;width:72.04px;height:77.37px}}
+  .star-r{{left:984.48px;top:122.73px;width:74.7px;height:77.37px}}
+
+  .title{{left:376.19px;top:77.37px;width:613.63px;height:104.05px;
+    font-size:72px;font-weight:900;line-height:1;display:flex;align-items:center;justify-content:center;
+    color:#fff;-webkit-text-stroke:3.7px #2356B2;paint-order:stroke fill;
+    text-shadow:0 5.3px 4px rgba(7,34,105,.9),0 0 5.3px rgba(154,205,255,.65);letter-spacing:2px}}
+  .title i{{position:static;font-style:normal;color:#FFD24A;
+    -webkit-text-stroke:3.2px #2C6AD2;paint-order:stroke fill;
+    text-shadow:0 0 14px rgba(255,214,90,.95),0 3px 0 rgba(255,248,205,.75)}}
+
+  .capsule{{left:461.56px;top:194.76px;width:453.55px;height:50.69px;border-radius:26.68px;
+    background:linear-gradient(180deg,#5693FF,#2859D7);border:1.33px solid rgba(166,203,255,.5)}}
+  .sub{{left:466.90px;top:194.76px;width:442.88px;height:50.69px;display:flex;align-items:center;
+    justify-content:center;font-size:27.2px;font-weight:700;color:#fff}}
+
+  .unit{{cursor:pointer;transition:transform .26s cubic-bezier(.34,1.4,.64,1)}}
+  .unit .egg{{transition:transform .26s cubic-bezier(.34,1.4,.64,1),filter .26s}}
+  .unit .plate{{transition:filter .26s,opacity .26s}}
+  .unit .halo{{left:50%;top:50%;width:96%;height:96%;margin:-48% 0 0 -48%;border-radius:50%;
+    background:radial-gradient(circle,rgba(150,220,255,.55) 0%,rgba(120,190,255,.18) 46%,transparent 70%);
+    opacity:0;transition:opacity .3s;pointer-events:none}}
+  .unit .tick{{left:50%;top:-2px;margin-left:-26px;width:52px;height:52px;border-radius:50%;
+    background:linear-gradient(180deg,#7CF5B2,#12C46B);color:#fff;font-size:30px;font-weight:900;
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:0 6px 16px rgba(6,40,26,.45);opacity:0;transform:scale(.4);
+    transition:opacity .25s,transform .25s;pointer-events:none}}
+
+  .stage.picked .unit{{opacity:.68}}
+  .stage.picked .unit.on{{opacity:1}}
+  .unit.on .egg{{transform:translateY(-18px) scale(1.03);filter:drop-shadow(0 12px 26px rgba(140,215,255,.7))}}
+  .unit.on .plate{{filter:brightness(1.14) saturate(1.12)}}
+  .unit.on .halo{{opacity:1}}
+  .unit.on .tick{{opacity:1;transform:translateY(-18px) scale(1)}}
+
+  .q{{font-family:Inter,"Segoe UI",sans-serif;font-weight:700;line-height:1;
+    text-shadow:0 0 8px rgba(255,255,255,.7)}}
+  .q1{{left:402.87px;top:453.56px;width:104.05px;height:144.07px;font-size:138.7px;color:#D9FFFF}}
+  .q2{{left:723.02px;top:437.55px;width:120.06px;height:152.07px;font-size:149.4px;color:#FFFBC9}}
+  .q3{{left:1085.87px;top:450.89px;width:112.05px;height:146.74px;font-size:141.4px;color:#F8DFFF}}
+
+  .confirm{{left:482.90px;top:829.74px;width:413.54px;height:101.38px;border:0;padding:0;
+    border-radius:53.36px;cursor:pointer;
+    background:linear-gradient(180deg,#FFF9A2,#FF9905);border:2.67px solid #FFE97A;
+    box-shadow:0 0 21.3px rgba(255,185,0,.75),0 8px 8px rgba(73,51,127,.7);
+    transition:transform .18s,box-shadow .25s,filter .25s}}
+  .confirm.nudge{{animation:nudge .42s ease-in-out}}
+  @keyframes nudge{{0%,100%{{transform:translateX(0)}}20%{{transform:translateX(-11px)}}
+    40%{{transform:translateX(11px)}}60%{{transform:translateX(-7px)}}80%{{transform:translateX(7px)}}}}
+  .confirm:active{{transform:translateY(4px) scale(.985)}}
+  .confirm .in{{left:5.34px;top:5.34px;width:402.86px;height:88.04px;border-radius:48px;
+    background:linear-gradient(180deg,#FFE95E,#FFBA07);border:1.6px solid #FFF6BA;
+    display:flex;align-items:center;justify-content:center;gap:56px}}
+  .confirm .txt,.confirm .arrow{{position:static}}
+  .confirm .txt{{font-size:45.4px;font-weight:900;color:#874300;letter-spacing:4px;
+    text-shadow:0 2.7px 0 rgba(255,243,161,.9)}}
+  .confirm .arrow{{font-size:58px;font-weight:700;color:#fff;line-height:1;
+    text-shadow:0 2.7px 2.7px rgba(188,112,18,.55)}}
+
+  .hint{{left:424.57px;top:770.68px;width:560.27px;height:53.36px;display:flex;
+    align-items:center;justify-content:center;font-size:28.3px;font-weight:700;color:#fff;
+    text-shadow:0 2.7px 5.3px rgba(26,66,156,1)}}
+
+  .wallet{{left:1000.49px;top:21.34px;width:181.42px;height:50.69px}}
+  .wallet .bar{{left:24.01px;top:5.34px;width:162.75px;height:42.69px;border-radius:21.34px;
+    background:rgba(12,52,127,.65)}}
+  .wallet .num{{left:53.36px;top:2.67px;width:77.37px;height:42.69px;display:flex;
+    align-items:center;justify-content:center;font-family:Inter,sans-serif;
+    font-size:24px;font-weight:700;color:#fff}}
+  .wallet .plus{{left:138.73px;top:10.67px;width:29.35px;height:29.35px;border-radius:50%;
+    background:linear-gradient(180deg,#74DFFF,#3383EC);border:1.33px solid #B6EBFF}}
+  .wallet .plus::before,.wallet .plus::after{{content:"";position:absolute;background:#fff;border-radius:1.34px}}
+  .wallet .plus::before{{left:6.2px;top:12.9px;width:17.34px;height:3.2px}}
+  .wallet .plus::after{{left:13.4px;top:5.7px;width:3.2px;height:17.34px}}
+  .w2{{left:1200.59px;top:21.34px;width:141.4px;height:50.69px}}
+  .w2 .bar{{left:24.01px;top:5.34px;width:122.73px;height:42.69px;border-radius:21.34px;
+    background:rgba(12,52,127,.65)}}
+  .w2 .num{{left:48.02px;top:2.67px;width:50.69px;height:42.69px;display:flex;
+    align-items:center;justify-content:center;font-family:Inter,sans-serif;
+    font-size:24px;font-weight:700;color:#fff}}
+  .w2 .plus{{left:104.05px;top:10.67px;width:29.35px;height:29.35px;border-radius:50%;
+    background:linear-gradient(180deg,#74DFFF,#3383EC);border:1.33px solid #B6EBFF}}
+  .w2 .plus::before,.w2 .plus::after{{content:"";position:absolute;background:#fff;border-radius:1.34px}}
+  .w2 .plus::before{{left:6.2px;top:12.9px;width:17.34px;height:3.2px}}
+  .w2 .plus::after{{left:13.4px;top:5.7px;width:3.2px;height:17.34px}}
+  .gem{{left:1000.49px;top:21.34px;width:56.03px;height:53.36px}}
+  .star-coin{{left:1197.92px;top:16.01px;width:61.36px;height:61.36px}}
+
+  #flash{{left:0;top:0;width:{CW}px;height:{CH}px;background:#fff;opacity:0;pointer-events:none;z-index:900}}
+  #flash.go{{animation:flash .55s ease-out forwards}}
+  @keyframes flash{{0%{{opacity:0}}18%{{opacity:.92}}100%{{opacity:0}}}}
+
+  @media (prefers-reduced-motion: no-preference) {{
+    .unit .egg{{animation:breathe 4.2s ease-in-out infinite}}
+    .unit:nth-of-type(4) .egg{{animation-delay:-1.4s}}
+    .unit:nth-of-type(5) .egg{{animation-delay:-2.8s}}
+    @keyframes breathe{{0%,100%{{transform:translateY(0)}}50%{{transform:translateY(-10px)}}}}
+    .unit.on .egg{{animation:none;transform:translateY(-18px) scale(1.03)}}
+  }}
+</style>
+</head>
+<body>
+<div class="view">
+  <div class="stage" id="stage">
+    <img class="bg" src="assets/egg-bg.png" alt="">
+    <img class="boy" src="assets/egg-boy.png" alt="">
+    <img class="star-l" src="assets/egg-star-left.png" alt="">
+    <img class="star-r" src="assets/egg-star-right.png" alt="">
+{"".join(units)}
+    <div class="title">请选择你的<i>宠物蛋</i></div>
+    <div class="capsule"></div>
+    <div class="sub">神秘的宠物蛋，等待你来开启！</div>
+    <span class="q q1">?</span>
+    <span class="q q2">?</span>
+    <span class="q q3">?</span>
+    <div class="hint">每个宠物蛋都有独特的惊喜哦！</div>
+    <button class="confirm" id="ok">
+      <span class="in"><span class="txt">确认选择</span><span class="arrow">➜</span></span>
+    </button>
+    <div class="wallet">
+      <span class="bar"></span><span class="num">1280</span><span class="plus"></span>
+    </div>
+    <div class="w2">
+      <span class="bar"></span><span class="num">12</span><span class="plus"></span>
+    </div>
+    <img class="gem" src="assets/egg-icon-gem.png" alt="">
+    <img class="star-coin" src="assets/egg-icon-star.png" alt="">
+    <div id="flash"></div>
+  </div>
+</div>
+<script>
+  var stage = document.getElementById('stage');
+  var ok = document.getElementById('ok');
+  var picked = null;
+
+  function fit() {{
+    var s = Math.min(window.innerWidth / {CW}, window.innerHeight / {CH});
+    stage.style.transform = 'translate(-50%,-50%) scale(' + s + ')';
+  }}
+  window.addEventListener('resize', fit);
+  window.addEventListener('orientationchange', fit);
+  fit();
+
+  document.querySelectorAll('.unit').forEach(function (u) {{
+    u.addEventListener('click', function () {{
+      document.querySelectorAll('.unit').forEach(function (x) {{ x.classList.remove('on'); }});
+      u.classList.add('on');
+      stage.classList.add('picked');
+      picked = u.dataset.egg;
+      try {{ if (navigator.vibrate) navigator.vibrate(12); }} catch (e) {{}}
+    }});
+  }});
+
+  var hintEl = document.querySelector('.hint');
+  ok.addEventListener('click', function () {{
+    if (!picked) {{
+      ok.classList.remove('nudge');
+      void ok.offsetWidth;
+      ok.classList.add('nudge');
+      var old = hintEl.textContent;
+      hintEl.textContent = '先点一颗喜欢的宠物蛋吧～';
+      setTimeout(function () {{ hintEl.textContent = old; }}, 1600);
+      return;
+    }}
+    var u = document.querySelector('.unit.on');
+    var name = u.dataset.name;
+    document.querySelectorAll('.unit').forEach(function (x) {{
+      if (x !== u) {{ x.style.transition = 'opacity .3s'; x.style.opacity = '0'; }}
+    }});
+    u.style.transition = 'transform .7s cubic-bezier(.3,.9,.3,1)';
+    u.style.transform = 'translate(0,-120px) scale(1.5)';
+    u.style.zIndex = '60';
+    document.querySelector('.title').style.transition = 'opacity .4s';
+    document.querySelector('.title').style.opacity = '0';
+    document.querySelector('.capsule').style.opacity = '0';
+    document.querySelector('.capsule').style.transition = 'opacity .3s';
+    document.querySelector('.sub').style.opacity = '0';
+    document.querySelector('.sub').style.transition = 'opacity .3s';
+    document.querySelectorAll('.q').forEach(function (q) {{ q.style.opacity = '0'; q.style.transition = 'opacity .3s'; }});
+    document.querySelector('.hint').textContent = '你选择了「' + name + '」，正在孵化…';
+    document.getElementById('flash').classList.add('go');
+    try {{ localStorage.setItem('antistudy.egg', picked); localStorage.setItem('antistudy.eggName', name); }} catch (e) {{}}
+    setTimeout(function () {{
+      try {{ window.location.href = document.documentElement.dataset.next || 'home.html'; }} catch (e) {{}}
+    }}, 1600);
+  }});
+</script>
+</body>
+</html>'''
+
+out = os.path.join(BASE, 'egg-select.html')
+with open(out, 'w', encoding='utf-8') as f:
+    f.write(HTML)
+print('生成 egg-select.html', len(HTML), '字符')

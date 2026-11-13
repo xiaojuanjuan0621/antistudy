@@ -1,0 +1,328 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>我的灵宠 · 知识冒险岛</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%;overflow:hidden;background:#cfe3ff;
+    font-family:"Noto Sans SC","PingFang SC","Hiragino Sans GB",-apple-system,sans-serif;
+    -webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
+  .view{position:relative;width:100%;height:100%;overflow:hidden}
+  .stage{position:absolute;left:50%;top:50%;width:1366px;height:1024px;transform-origin:center center}
+  .stage *{position:absolute}
+  img{display:block}
+  .bg{left:0;top:0;width:1366px;height:1024px;object-fit:cover}
+  .mask{left:0;top:0;width:1366px;height:1024px;
+    background:linear-gradient(180deg,rgba(236,246,255,.72),rgba(224,238,255,.9))}
+
+  .back{left:37px;top:36px;width:64px;height:64px;border-radius:32px;background:#fff;
+    box-shadow:0 4px 12px rgba(107,84,217,.16);display:flex;align-items:center;justify-content:center;cursor:pointer}
+  .back span{position:static;font-size:42px;color:#11284F;line-height:1;margin-top:-6px}
+  .page-t{left:126px;top:42px;height:38px;font-size:32px;font-weight:700;color:#11284F}
+  .page-s{left:126px;top:86px;height:24px;font-size:17px;color:#5C7396}
+
+  .stone{left:1090px;top:42px;height:46px;border-radius:23px;background:#fff;
+    box-shadow:0 3px 10px rgba(107,84,217,.14);display:flex;align-items:center;gap:8px;padding:0 18px}
+  .stone img{position:static;width:25px;height:25px;object-fit:contain}
+  .stone span{position:static;font-size:18px;font-weight:700;color:#11284F}
+  .lvl{left:1246px;top:42px;height:46px;border-radius:23px;background:linear-gradient(180deg,#8E7BFF,#5B3CE0);
+    display:flex;align-items:center;padding:0 18px;box-shadow:0 3px 10px rgba(91,60,224,.35)}
+  .lvl span{position:static;font-size:17px;font-weight:700;color:#fff}
+
+  .pcard{left:53px;top:150px;width:420px;height:660px;border-radius:30px;
+    background:rgba(255,255,255,.95);border:2px solid #fff;
+    box-shadow:0 10px 30px rgba(80,110,180,.14)}
+  .ph{left:26px;top:24px;font-size:21px;font-weight:700;color:#11284F}
+  .ph-s{left:26px;top:58px;font-size:14px;color:#8FA5C2}
+
+  .arow{left:26px;width:368px;height:112px;border-radius:18px;background:#F6FAFF;border:2px solid #E9F1FB}
+  .adot{left:18px;top:20px;width:14px;height:14px;border-radius:7px}
+  .aname{left:42px;top:12px;font-size:21px;font-weight:700;color:#11284F}
+  .asub{left:42px;top:40px;font-size:13px;color:#93A8C4}
+  .aval{left:250px;top:10px;width:60px;font-size:26px;font-weight:900;color:#11284F;text-align:right;
+    font-family:Inter,sans-serif}
+  .atrack{left:18px;top:74px;width:214px;height:14px;border-radius:7px;background:#E2ECF8;overflow:hidden}
+  .atrack i{left:0;top:0;height:14px;border-radius:7px;transition:width .4s}
+  .afeed{left:250px;top:52px;width:98px;height:46px;border-radius:23px;
+    background:linear-gradient(180deg,#FFE06B,#FFAD05);border:2px solid #FFF0B8;
+    box-shadow:0 3px 0 rgba(233,150,0,.75);display:flex;align-items:center;justify-content:center;
+    cursor:pointer;transition:transform .12s}
+  .afeed:active{transform:scale(.96)}
+  .afeed.off{background:#DCE5F0;border-color:#EDF3FA;box-shadow:0 3px 0 rgba(160,175,195,.5)}
+  .afeed span{position:static;font-size:16px;font-weight:900;color:#7A3E00;line-height:1}
+  .afeed.off span{color:#93A8C4}
+  .abonus{left:148px;top:22px;width:86px;font-size:11px;font-weight:700;color:#2FC56E;
+    text-align:right;display:none}
+  .abonus.show{display:block}
+
+  .tip{margin:0;left:26px;top:588px;width:368px;font-size:13.5px;line-height:1.6;color:#6E86A6;
+    background:#F2F8FF;border-radius:14px;padding:14px 16px;height:auto}
+  .tip b{position:static;color:#2FC56E}
+
+  .petscene{left:493px;top:150px;width:440px;height:660px}
+  .halo{left:60px;top:390px;width:320px;height:80px;border-radius:160px;
+    background:radial-gradient(ellipse at center,rgba(124,107,255,.35),rgba(124,107,255,0) 70%)}
+  .petimg{left:40px;top:60px;width:360px;height:400px;object-fit:contain;
+    animation:float 3.4s ease-in-out infinite}
+  @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+  .petname{left:60px;top:462px;width:320px;text-align:center;font-size:32px;font-weight:900;color:#11284F;
+    cursor:pointer}
+  .title{left:60px;top:508px;width:320px;text-align:center}
+  .title span{position:static;display:inline-block;font-size:17px;font-weight:700;color:#7B4DE0;
+    background:#F0EAFF;border-radius:14px;padding:6px 16px}
+
+  .hatch{left:36px;top:562px;width:368px;height:96px;border-radius:22px;
+    background:rgba(255,255,255,.92);border:2px solid #fff;box-shadow:0 6px 18px rgba(107,84,217,.14);
+    padding:16px 20px}
+  .hatch-t{left:20px;top:14px;font-size:17px;font-weight:700;color:#11284F}
+  .hatch-p{left:250px;top:12px;width:98px;text-align:right;font-size:20px;font-weight:900;
+    color:#7438FF;font-family:Inter,sans-serif}
+  .htrack{left:20px;top:50px;width:328px;height:16px;border-radius:8px;background:#E6E1FF;overflow:hidden}
+  .htrack i{left:0;top:0;height:16px;border-radius:8px;
+    background:linear-gradient(90deg,#35DFFC,#6737FF);transition:width .5s}
+
+  .rcard{left:953px;top:150px;width:360px;height:660px;border-radius:30px;
+    background:rgba(255,255,255,.95);border:2px solid #fff;
+    box-shadow:0 10px 30px rgba(80,110,180,.14);padding:26px}
+  .rh{left:26px;top:24px;font-size:21px;font-weight:700;color:#11284F}
+  .stars{left:26px;top:62px;display:flex;gap:8px;height:44px}
+  .stars i{position:static;font-style:normal;font-size:38px;line-height:1;color:#DDE6F2}
+  .stars i.on{color:#FFC107;text-shadow:0 2px 6px rgba(255,193,7,.4)}
+  .rsum{left:26px;top:112px;width:308px;font-size:15px;color:#5C7396;line-height:1.5}
+  .sep{left:26px;width:308px;height:1px;background:#E9F1FB}
+
+  .cond{left:26px;width:308px;height:64px;border-radius:14px;background:#F6FAFF;border:2px solid #E9F1FB;
+    display:flex;align-items:center;gap:12px;padding:0 14px}
+  .cond .ck{position:static;width:30px;height:30px;border-radius:15px;background:#DDE6F2;color:#fff;
+    font-size:17px;font-weight:900;display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+  .cond.on .ck{background:#2FC56E}
+  .cond .ct{position:static;flex:1;font-size:15.5px;font-weight:700;color:#11284F;line-height:1.35}
+  .cond .cv{position:static;font-size:15px;font-weight:900;color:#8FA5C2;font-family:Inter,sans-serif}
+  .cond.on .cv{color:#2FC56E}
+
+  .evolve{left:26px;top:560px;width:308px;height:74px;border-radius:37px;
+    background:linear-gradient(180deg,#A8B6CC,#8494AD);border:4px solid rgba(255,255,255,.7);
+    display:flex;align-items:center;justify-content:center;cursor:pointer}
+  .evolve.on{background:linear-gradient(180deg,#B98BFF,#6E3CFF);border-color:#DCC8FF;
+    box-shadow:0 5px 0 rgba(78,30,180,.8),0 0 20px rgba(140,90,255,.5)}
+  .evolve span{position:static;font-size:26px;font-weight:900;color:#fff}
+
+  .toast{left:50%;top:830px;transform:translateX(-50%);padding:16px 34px;border-radius:22px;
+    background:rgba(9,25,60,.92);color:#fff;font-size:24px;font-weight:700;
+    opacity:0;pointer-events:none;transition:opacity .22s;white-space:nowrap}
+  .toast.show{opacity:1}
+
+  .nav-bar{left:0;top:893px;width:1366px;height:121px;opacity:.8;
+    background:linear-gradient(180deg,#E7F0FE,#DBDFFE)}
+  .nav-ico{top:906.55px;width:61.55px;height:54.04px;cursor:pointer}
+  .nav-label{top:961px;width:114.72px;height:45.36px;font-size:23.48px;font-weight:700;
+    color:#2442A3;text-align:center;line-height:1.9;cursor:pointer}
+</style>
+</head>
+<body>
+<div class="view">
+  <div class="stage" id="stage">
+    <img class="bg" src="assets/home2-bg.png" alt="">
+    <div class="mask"></div>
+
+    <div class="back" id="back"><span>‹</span></div>
+    <div class="page-t">我的灵宠</div>
+    <div class="page-s" id="pageS">每学完一讲，四条属性都会长大</div>
+    <div class="stone"><img src="assets/task-gem-s.png" alt=""><span id="stoneTxt">1,280</span></div>
+    <div class="lvl"><span id="lvlTxt">Lv.5</span></div>
+
+    <div class="pcard">
+      <div class="ph">四维属性</div>
+      <div class="ph-s">点「喂养」花 20 灵石，让属性长大</div>
+      <div id="attrs"></div>
+      <div class="tip">提示：当前最弱的那条属性喂养时 <b>1.5 倍成长</b>，所以别只顾着练一条腿。</div>
+    </div>
+
+    <div class="petscene">
+      <div class="halo"></div>
+      <img class="petimg" id="petImg" src="assets/pet-dragon.png" alt="">
+      <div class="petname" id="petName">小龙</div>
+      <div class="title"><span id="titleTxt">逻辑新星</span></div>
+      <div class="hatch">
+        <div class="hatch-t" id="hatchT">破壳进度</div>
+        <div class="hatch-p" id="hatchP">68%</div>
+        <div class="htrack"><i id="hatchBar" style="width:68%"></i></div>
+      </div>
+    </div>
+
+    <div class="rcard">
+      <div class="rh">成长评价</div>
+      <div class="stars"><i>★</i><i>★</i><i>★</i><i>★</i></div>
+      <div class="rsum" id="rsum">四维总和 64 · 距离进化还差 136</div>
+      <div class="sep" style="top:172px"></div>
+      <div class="rh" style="top:194px;font-size:18px">进化条件</div>
+      <div id="conds"></div>
+      <div class="evolve" id="evolve"><span>还没达标</span></div>
+    </div>
+
+    <div class="nav-bar"></div>
+    <img class="nav-ico" src="assets/nav-home.png" style="left:114.6px" alt="">
+    <div class="nav-label" data-go="home.html" style="left:88.04px">首页</div>
+    <img class="nav-ico" src="assets/nav-task.png" style="left:384.1px" alt="">
+    <div class="nav-label" data-go="task.html" style="left:357.51px">任务</div>
+    <img class="nav-ico" src="assets/nav-battle.png" style="left:653.9px" alt="">
+    <div class="nav-label" data-go="battle.html" style="left:624.3px">战斗</div>
+    <img class="nav-ico" src="assets/nav-bag.png" style="left:923.0px" alt="">
+    <div class="nav-label" data-go="bag.html" style="left:896.44px">储物袋</div>
+    <img class="nav-ico" src="assets/nav-me.png" style="left:1189.8px" alt="">
+    <div class="nav-label" data-go="me.html" style="left:1163.23px">我的</div>
+
+    <div class="toast" id="toast"></div>
+  </div>
+</div>
+<script src="store.js?v=2"></script>
+<script>
+  var stage = document.getElementById('stage');
+  function fit() {
+    var s = Math.min(window.innerWidth / 1366, window.innerHeight / 1024);
+    stage.style.transform = 'translate(-50%,-50%) scale(' + s + ')';
+  }
+  addEventListener('resize', fit); addEventListener('orientationchange', fit); fit();
+
+  var TITLES = { '文心': '书卷少年', '算力': '逻辑新星', '共鸣': '语感共鸣者', '灵感': '小小发现家' };
+
+  function starOf(total) {
+    if (total >= 200) return 4;
+    if (total >= 160) return 3;
+    if (total >= 100) return 2;
+    return 1;
+  }
+
+  function weakKey(s) {
+    var a = s.pet.attrs, min = 1e9, key = '文心';
+    Store.ATTRS.forEach(function (x) { if (a[x.key] < min) { min = a[x.key]; key = x.key; } });
+    return key;
+  }
+
+  function render() {
+    var s = Store.get();
+    var a = s.pet.attrs;
+    var total = Store.attrTotal();
+    var weak = weakKey(s);
+    var st = Store.stage();
+    var ev = Store.evolveInfo();
+
+    document.getElementById('stoneTxt').textContent = Store.fmt(s.stone);
+    document.getElementById('lvlTxt').textContent = 'Lv.' + Store.level();
+    document.getElementById('petName').textContent = s.pet.name;
+
+    var topKey = '算力', topVal = -1;
+    Store.ATTRS.forEach(function (x) { if (a[x.key] > topVal) { topVal = a[x.key]; topKey = x.key; } });
+    document.getElementById('titleTxt').textContent = st === 'egg' ? '等待破壳' : TITLES[topKey];
+
+    var imgs = { egg: 'assets/home2-egg.png', baby: 'assets/task-pet.png', grown: 'assets/pet-dragon.png' };
+    var el = document.getElementById('petImg');
+    el.src = imgs[st];
+    el.style.width = st === 'egg' ? '270px' : '360px';
+    el.style.left = st === 'egg' ? '85px' : '40px';
+    el.style.top = st === 'egg' ? '110px' : '60px';
+    el.style.height = st === 'egg' ? '340px' : '400px';
+
+    if (st === 'egg') {
+      document.getElementById('hatchT').textContent = '破壳进度';
+      document.getElementById('hatchP').textContent = s.pet.hatch + '%';
+      document.getElementById('hatchBar').style.width = s.pet.hatch + '%';
+    } else {
+      var prog = Math.min(100, Math.round(total / ev.needTotal * 100));
+      document.getElementById('hatchT').textContent = '进化进度';
+      document.getElementById('hatchP').textContent = total + ' / ' + ev.needTotal;
+      document.getElementById('hatchBar').style.width = prog + '%';
+    }
+
+    var box = document.getElementById('attrs');
+    box.innerHTML = '';
+    Store.ATTRS.forEach(function (x, i) {
+      var v = a[x.key] || 0;
+      var pct = Math.min(100, (v / 40) * 100);
+      var isWeak = x.key === weak;
+      var row = document.createElement('div');
+      row.className = 'arow';
+      row.style.top = (86 + i * 116) + 'px';
+      row.innerHTML =
+        '<span class="adot" style="background:' + x.color + '"></span>' +
+        '<span class="aname">' + x.label + '</span>' +
+        '<span class="asub">' + x.subject + ' · ' + x.desc + '</span>' +
+        '<span class="aval">' + v + '</span>' +
+        '<div class="atrack"><i style="width:' + pct + '%;background:' + x.color + '"></i></div>' +
+        '<div class="abonus' + (isWeak ? ' show' : '') + '">最弱×1.5</div>' +
+        '<div class="afeed' + (s.stone < 20 ? ' off' : '') + '"><span>-20 喂养</span></div>';
+      row.querySelector('.afeed').addEventListener('click', function () { feed(x.key); });
+      box.appendChild(row);
+    });
+
+    var stars = starOf(total);
+    document.querySelectorAll('.stars i').forEach(function (x, i) { x.className = i < stars ? 'on' : ''; });
+    document.getElementById('rsum').textContent = '四维总和 ' + total + ' · 距离进化还差 ' +
+      Math.max(0, ev.needTotal - total);
+
+    var conds = [
+      { t: '四维总和 ≥ ' + ev.needTotal, v: total, need: ev.needTotal, ok: total >= ev.needTotal },
+      { t: '三条属性 ≥ ' + ev.needAttrs, v: ev.passedCount + '/3', need: 3, ok: ev.passedCount >= 3 },
+      { t: '最弱属性 ≥ ' + ev.needMin, v: ev.min, need: ev.needMin, ok: ev.min >= ev.needMin }
+    ];
+    var cbox = document.getElementById('conds');
+    cbox.innerHTML = '';
+    conds.forEach(function (c, i) {
+      var d = document.createElement('div');
+      d.className = 'cond' + (c.ok ? ' on' : '');
+      d.style.top = (234 + i * 74) + 'px';
+      d.innerHTML = '<span class="ck">' + (c.ok ? '✓' : '') + '</span><span class="ct">' + c.t +
+        '</span><span class="cv">' + c.v + '</span>';
+      cbox.appendChild(d);
+    });
+
+    var evBtn = document.getElementById('evolve');
+    if (st === 'grown') {
+      evBtn.className = 'evolve on';
+      evBtn.querySelector('span').textContent = '已进化 · 最强形态';
+    } else if (ev.canEvolve) {
+      evBtn.className = 'evolve on';
+      evBtn.querySelector('span').textContent = '进化！';
+    } else {
+      evBtn.className = 'evolve';
+      evBtn.querySelector('span').textContent = '还没达标';
+    }
+  }
+
+  function feed(key) {
+    var r = Store.feed(key);
+    if (!r.ok) { Store.toast(r.msg); return; }
+    render();
+    Store.toast(r.bonus ? key + ' +' + r.gain + ' · 最弱属性加成！' : key + ' +' + r.gain);
+    if (r.hatch >= 100 && Store.stage() !== 'egg') {
+      setTimeout(function () { Store.toast('破壳成功！' + Store.get().pet.name + ' 出来啦'); }, 900);
+    }
+  }
+
+  document.getElementById('evolve').addEventListener('click', function () {
+    var st = Store.stage();
+    if (st === 'grown') { Store.toast('已经是最终形态啦'); return; }
+    if (!Store.evolveInfo().canEvolve) {
+      var ev = Store.evolveInfo();
+      Store.toast('还差：总和 ' + Math.max(0, ev.needTotal - ev.total) + ' · 短板 ' + Math.max(0, ev.needMin - ev.min));
+      return;
+    }
+    Store.toast('进化成功！属性上限提升了');
+  });
+
+  document.getElementById('petName').addEventListener('click', function () {
+    var nm = prompt('给它取个名字', Store.get().pet.name);
+    if (nm && nm.trim()) { Store.get().pet.name = nm.trim().slice(0, 6); Store.save(); render(); Store.toast('改好啦'); }
+  });
+
+  document.getElementById('back').addEventListener('click', function () { location.href = 'home.html'; });
+  document.querySelectorAll('.nav-label').forEach(function (el) {
+    el.addEventListener('click', function () { location.href = el.dataset.go; });
+  });
+
+  render();
+</script>
+</body>
+</html>

@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>储物袋 · 知识冒险岛</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%;overflow:hidden;background:#0b2350;
+    font-family:"Noto Sans SC","PingFang SC","Hiragino Sans GB",-apple-system,sans-serif;
+    -webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
+  .view{position:relative;width:100%;height:100%;overflow:hidden}
+  .stage{position:absolute;left:50%;top:50%;width:1366px;height:1024px;transform-origin:center center}
+  .stage *{position:absolute}
+  img{display:block}
+  .bg{left:0;top:0;width:1366px;height:1024px;object-fit:cover}
+
+  .title-bar{left:29px;top:20.59px;width:370.85px;height:128.06px;border-radius:53.36px;
+    background:linear-gradient(180deg,#1739AA,#0B2788);opacity:.75}
+  .home-btn{left:40.02px;top:36.59px;width:93.38px;height:96.05px;cursor:pointer;opacity:1}
+  .title{left:154.74px;top:49.59px;width:245.45px;height:69.37px;font-size:50.69px;
+    font-weight:900;color:#fff;display:flex;align-items:center;
+    text-shadow:0 2.66px 2.67px rgba(20,42,102,.6)}
+
+  .wallet{left:808.39px;top:45.25px;width:266.8px;height:77.18px;border-radius:40.02px;
+    background:rgba(2,56,149,.85);border:1.87px solid #246DE1;display:flex;align-items:center}
+  .wallet img{position:static;width:75.05px;height:70.05px;margin-left:10.2px}
+  .wallet .num{position:static;margin-left:0;width:109.39px;height:53.23px;
+    display:flex;align-items:center;justify-content:center;
+    font-family:Inter,sans-serif;font-size:37.35px;font-weight:700;color:#fff}
+  .wallet2{left:1109.87px;top:45.25px;width:221.44px;height:77.18px;border-radius:40.02px;
+    background:rgba(2,56,149,.85);border:1.87px solid #246DE1;display:flex;align-items:center}
+  .wallet2 img{position:static;width:65.05px;height:63.55;margin-left:10.95px}
+  .wallet2 .num{position:static;width:61.36px;height:53.23px;display:flex;align-items:center;
+    justify-content:center;font-family:Inter,sans-serif;font-size:37.35px;font-weight:700;color:#fff}
+  .plus{width:53.36px;height:61.21px;border-radius:29.35px;
+    background:linear-gradient(180deg,#347FF6,#0746BA);color:#fff;font-size:46px;font-weight:500;
+    display:flex;align-items:center;justify-content:center;line-height:1;cursor:pointer;
+    padding-bottom:6px}
+  .p1{left:1011.16px;top:53.23px}
+  .p2{left:1267.00px;top:50.59px}
+
+  .tab{left:56.03px;width:253.46px;height:130.41px;border-radius:34.68px;cursor:pointer;
+    background:linear-gradient(180deg,#2F67E2,#2448AC);border:2.13px solid #4389ED;
+    box-shadow:0 5.32px 8px rgba(17,45,152,.4);display:flex;align-items:center}
+  .tab img{position:static;margin-left:34.68px;width:69.37px;height:74.52px}
+  .tab span{position:static;margin-left:13.34px;font-size:42.69px;font-weight:900;
+    line-height:1;text-shadow:0 2.66px 2.67px rgba(20,42,102,.6)}
+  .tab.on{background:linear-gradient(180deg,#65C7FF,#1167FF);border:4.27px solid #C2FFFF;
+    box-shadow:0 5.32px 24px rgba(0,231,255,.85)}
+
+  .pet{left:349px;top:223.59px;width:342.75px;height:706.02px}
+
+  .panel{left:707.48px;top:224.4px;width:573.61px;height:683.97px;opacity:.85}
+  .panel-title{left:739.5px;top:235.05px;width:242.79px;height:53.23px;font-size:32.02px;
+    font-weight:700;color:#fff;display:flex;align-items:center;
+    text-shadow:0 2.66px 2.67px rgba(20,42,102,.6)}
+
+  .item{cursor:pointer}
+  .item .card{left:0;top:0;width:100%;height:100%;border-radius:27.52px}
+  .item .card.grad{background:linear-gradient(180deg,#65C7FF,#1167FF);
+    border:4.27px solid #C2FFFF;border-radius:34.68px;
+    box-shadow:0 5.32px 24px rgba(0,231,255,.85)}
+  .item .thing{object-fit:contain}
+  .nm{width:154.74px;height:42.58px;font-size:26.68px;font-weight:700;color:#fff;
+    display:flex;align-items:center;justify-content:center;text-align:center;
+    text-shadow:0 2.66px 2.67px rgba(20,42,102,.6)}
+  .cnt{width:45.36px;height:34.6px;font-size:24.01px;font-weight:700;color:#fff;
+    display:flex;align-items:center;justify-content:center;
+    text-shadow:0 2.66px 2.67px rgba(20,42,102,.6)}
+
+  .tidy{left:851.55px;top:762px;width:328.16px;height:109.12px;border-radius:56.03px;
+    background:linear-gradient(180deg,#FFF568,#FFBE00);border:4px solid #FFF4A2;
+    box-shadow:0 7.98px 8px rgba(108,61,0,.5);display:flex;align-items:center;
+    justify-content:center;cursor:pointer}
+  .tidy span{position:static;font-size:48.02px;font-weight:900;color:#713100;line-height:1}
+
+  .slot{border:3px dashed rgba(255,255,255,.3);border-radius:28px;background:rgba(255,255,255,.07)}
+  .slot span{left:0;top:50%;width:100%;text-align:center;font-size:20px;color:rgba(255,255,255,.42);
+    font-weight:700;transform:translateY(-50%)}
+  .own-tag{left:0;top:118px;width:100%;text-align:center;font-size:15px;font-weight:900;color:#fff;text-shadow:0 1px 4px rgba(6,20,52,.5)}
+
+  .nav-bar{left:0;top:893px;width:1366px;height:121px;
+    background:linear-gradient(180deg,rgba(12,40,96,.42),rgba(10,32,80,.62))}
+  .nav-ico{top:906.55px;width:61.55px;height:54.04px;cursor:pointer}
+  .nav-label{top:961px;width:114.72px;height:45.36px;font-size:23.48px;font-weight:700;
+    color:#fff;text-align:center;line-height:1.9;cursor:pointer;text-shadow:0 2px 6px rgba(4,18,52,.6)}
+
+  .toast{left:50%;top:620px;transform:translateX(-50%);padding:16px 34px;border-radius:22px;
+    background:rgba(9,25,60,.9);color:#fff;font-size:26px;font-weight:700;
+    opacity:0;pointer-events:none;transition:opacity .22s;white-space:nowrap}
+  .toast.show{opacity:1}
+</style>
+</head>
+<body>
+<div class="view">
+  <div class="stage" id="stage">
+    <img class="bg" src="assets/bag2-bg.png" alt="">
+    <div class="title-bar"></div>
+    <img class="home-btn" id="homeBtn" src="assets/bag2-ico-home.png" alt="">
+    <div class="title">储物袋</div>
+    <div class="wallet"><img src="assets/bag2-ico-stone.png" alt=""><span class="num" id="bagStone">1280</span></div>
+    <div class="wallet2"><img src="assets/bag2-ico-potion.png" alt=""><span class="num" id="bagExp">12</span></div>
+    <div class="plus p1" data-plus="灵石">+</div>
+    <div class="plus p2" data-plus="药水">+</div>
+
+      <div class="tab on" data-tab="道具" style="top:218.23px">
+        <img src="assets/bag2-ico-potion.png" alt="">
+        <span>道具</span>
+      </div>
+      <div class="tab" data-tab="装备" style="top:367.27px">
+        <img src="assets/bag2-i-acc.png" alt="">
+        <span>装备</span>
+      </div>
+      <div class="tab" data-tab="服装" style="top:513.64px">
+        <img src="assets/bag2-i-clothes.png" alt="">
+        <span>服装</span>
+      </div>
+      <div class="tab" data-tab="宠物" style="top:660.02px">
+        <img src="assets/bag2-i-pet.png" alt="">
+        <span>宠物</span>
+      </div>
+    <img class="pet" src="assets/bag2-pet.png" alt="">
+    <img class="panel" src="assets/bag2-panel.png" alt="">
+    <div class="panel-title">宠物背包</div>
+
+      <div id="bagItems" style="left:0;top:0;width:1366px;height:1024px"></div>
+    <div class="tidy" id="tidy"><span>整理背包</span></div>
+    <div class="nav-bar"></div>
+    <img class="nav-ico" src="assets/nav-home.png" style="left:114.6px" alt="">
+    <div class="nav-label" data-go="home.html" style="left:88.04px">首页</div>
+    <img class="nav-ico" src="assets/nav-task.png" style="left:384.1px" alt="">
+    <div class="nav-label" data-go="task.html" style="left:357.51px">任务</div>
+    <img class="nav-ico" src="assets/nav-battle.png" style="left:653.9px" alt="">
+    <div class="nav-label" data-go="battle.html" style="left:624.3px">战斗</div>
+    <img class="nav-ico" src="assets/nav-bag.png" style="left:923.0px" alt="">
+    <div class="nav-label" style="left:896.44px;color:#35DFFC">储物袋</div>
+    <img class="nav-ico" src="assets/nav-me.png" style="left:1189.8px" alt="">
+    <div class="nav-label" data-go="me.html" style="left:1163.23px">我的</div>
+
+    <div class="toast" id="toast"></div>
+  </div>
+</div>
+<script src="store.js?v=2"></script>
+<script>
+  if (window.Store) {
+    var bs = document.getElementById('bagStone'), be = document.getElementById('bagExp');
+    if (bs) bs.textContent = Store.fmt(Store.get().stone);
+    if (be) be.textContent = Store.get().exp;
+  }
+
+  var stage = document.getElementById('stage');
+  function fit() {
+    var s = Math.min(window.innerWidth / 1366, window.innerHeight / 1024);
+    stage.style.transform = 'translate(-50%,-50%) scale(' + s + ')';
+  }
+  addEventListener('resize', fit); addEventListener('orientationchange', fit); fit();
+
+  var toastEl = document.getElementById('toast'), tm = null;
+  function toast(m) { toastEl.textContent = m; toastEl.classList.add('show');
+    clearTimeout(tm); tm = setTimeout(function () { toastEl.classList.remove('show'); }, 1400); }
+
+  document.getElementById('homeBtn').addEventListener('click', function () { location.href = 'home.html'; });
+  document.querySelectorAll('.plus').forEach(function (p) {
+    p.addEventListener('click', function () { location.href = 'mall.html'; });
+  });
+
+  var POS = [
+    { x: 736.83, y: 301.58, w: 160, h: 196 },
+    { x: 918.25, y: 301.58, w: 160, h: 196 },
+    { x: 1098.29, y: 301.58, w: 158, h: 196 },
+    { x: 737.03, y: 513.00, w: 160, h: 196 },
+    { x: 918.16, y: 513.00, w: 160, h: 196 },
+    { x: 1096.79, y: 513.00, w: 160, h: 196 }
+  ];
+  var BGS = [
+    'linear-gradient(165deg,#9BD8FF,#4E9BE8)',
+    'linear-gradient(165deg,#FFD29B,#F09348)',
+    'linear-gradient(165deg,#FFB3CB,#E4739B)',
+    'linear-gradient(165deg,#C4F0A6,#6BC24E)',
+    'linear-gradient(165deg,#D5BEFF,#8E6FE4)',
+    'linear-gradient(165deg,#9BEDE6,#41BDAF)'
+  ];
+  var CUR = '道具';
+
+  function renderBag(cat) {
+    if (cat) CUR = cat;
+    document.querySelector('.panel-title').textContent = CUR + '背包';
+    var list = Store.bagList(CUR);
+    var box = document.getElementById('bagItems');
+    box.innerHTML = '';
+
+    for (var i = 0; i < 6; i++) {
+      var p = POS[i];
+      var el = document.createElement('div');
+      el.style.left = p.x + 'px';
+      el.style.top = p.y + 'px';
+      el.style.width = p.w + 'px';
+      el.style.height = p.h + 'px';
+
+      if (list[i]) {
+        (function (it, idx) {
+          el.className = 'item';
+          el.dataset.item = it.name;
+          var tag = it.owned
+            ? '<span class="own-tag" style="top:158px">已拥有</span>'
+            : '<i class="cnt" style="left:auto;right:12px;top:156px;width:auto">x' + it.count + '</i>';
+          el.innerHTML =
+            '<div class="card" style="left:0;top:0;width:100%;height:100%;border-radius:28px;' +
+            'background:' + BGS[idx % BGS.length] + ';' +
+            'border:2px solid rgba(255,255,255,.55);box-shadow:0 6px 18px rgba(6,20,52,.28);' +
+            'box-sizing:border-box"></div>' +
+            '<img class="thing" src="' + it.icon + '" style="left:' + ((p.w - 100) / 2) +
+            'px;top:12px;width:100px;height:100px" alt="">' +
+            '<span class="nm" style="left:0;top:126px;width:100%">' + it.name + '</span>' + tag;
+          el.addEventListener('click', function () { onItemClick(it); });
+        })(list[i], i);
+      } else {
+        el.className = 'slot';
+        el.innerHTML = '<span>空</span>';
+      }
+      box.appendChild(el);
+    }
+  }
+
+  function onItemClick(it) {
+    if (it.owned) { toast('「' + it.name + '」已拥有 · 永久装扮'); return; }
+    var item = Store.getItem(it.id);
+    if (!item || item.kind !== 'consume') { toast('「' + it.name + '」持有 x' + it.count); return; }
+    Store.modal({
+      icon: it.icon,
+      title: '使用「' + it.name + '」',
+      desc: item.desc + '<br>当前持有 <em>x' + it.count + '</em>',
+      cancel: '先不用',
+      ok: '用掉一个',
+      onOk: function () {
+        var r = Store.useItem(it.id);
+        if (!r.ok) { Store.toast(r.msg); return; }
+        renderBag(CUR);
+        Store.toast('已使用 · 经验 +' + r.gain);
+      }
+    });
+  }
+
+  document.querySelectorAll('.tab').forEach(function (t) {
+    t.addEventListener('click', function () {
+      document.querySelectorAll('.tab').forEach(function (x) { x.classList.remove('on'); });
+      t.classList.add('on');
+      renderBag(t.dataset.tab);
+    });
+  });
+
+  document.getElementById('tidy').addEventListener('click', function () {
+    var n = Store.bagList(CUR).length;
+    toast('「' + CUR + '」共 ' + n + ' 件 · 已按品级排好');
+  });
+
+  document.querySelectorAll('.nav-label[data-go]').forEach(function (el) {
+    el.addEventListener('click', function () { location.href = el.dataset.go; });
+  });
+
+  renderBag('道具');
+</script>
+</body>
+</html>

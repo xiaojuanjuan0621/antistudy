@@ -1,0 +1,434 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>数学课程 · 知识冒险岛</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%;overflow:hidden;background:#0b2350;
+    font-family:"Noto Sans SC","PingFang SC","Hiragino Sans GB",-apple-system,sans-serif;
+    -webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
+  .view{position:relative;width:100%;height:100%;overflow:hidden}
+  .stage{position:absolute;left:50%;top:50%;width:1366px;height:1024px;transform-origin:center center}
+  .stage *{position:absolute}
+  img{display:block}
+  .bg{left:0;top:0;width:1366px;height:1024px;object-fit:cover}
+
+  .back{left:53.36px;top:20.01px;width:44.02px;height:41.35px;border-radius:21.34px;
+    background:linear-gradient(180deg,#2766DC,#1542AD);border:1.6px solid #2766DC;
+    display:flex;align-items:center;justify-content:center;cursor:pointer}
+  /* 视觉 44×41，实际点击热区外扩到 58×55，iPad 上更好点 */
+  .back::before{content:"";position:absolute;left:-7px;top:-7px;width:58px;height:55px}
+  .back:active{transform:scale(.94);filter:brightness(1.1)}
+  .back span{position:static;color:#fff;font-size:30px;font-weight:700;line-height:1;margin-top:-4px}
+  .page-title{left:116.06px;top:25.35px;width:420px;height:33px;font-size:28px;font-weight:700;
+    color:#fff;cursor:pointer;transition:color .15s}
+  .page-title:hover{color:#CFE4FF}
+  .page-title:active{transform:translateY(1px)}
+  /* 左侧卡片与右侧内容区统一从 108 起，高度一起加高（原来 151 / 235 起） */
+  .profile{left:34px;top:108px;width:285px;height:738px}
+  .p-bg{left:0;top:0;width:285px;height:738px;border-radius:24.97px}
+  /* 卡内内容包一层，整体下移 21px 让上下留白均匀（卡片加了 42px） */
+  .p-inner{left:0;top:21px;width:285px;height:696px}
+  .p-badge{left:203.9px;top:239.37px;width:36.06px;height:53.01px}
+  .p-boy{left:76px;top:14px;width:155.36px;height:157.48px}
+  .lv{font-size:22.19px;font-weight:700;color:#fff;line-height:1.18;white-space:nowrap}
+  .lv2{font-size:20.81px;font-weight:700;color:#fff;line-height:1.18;white-space:nowrap}
+  .p-track{left:40.23px;top:293.99px;width:192.81px;height:25.7px;border-radius:11.1px;background:#1756AF}
+  .p-track i{left:0;top:0;width:151.19px;height:25.7px;border-radius:11.1px;
+    background:linear-gradient(180deg,#36FF80,#12DE69)}
+  .s-t{font-size:19.42px;font-weight:700;color:#fff;line-height:1.18;white-space:nowrap}
+  .s-v{font-size:18.03px;font-weight:700;color:#fff;line-height:1.18;white-space:nowrap}
+  .s-g{font-size:16.65px;font-weight:400;color:#B1C8F4;line-height:1.18;white-space:nowrap}
+
+  .main{left:318.73px;top:108px;width:994.23px;height:596px}
+  .main::before{content:"";position:absolute;left:0;top:.72px;width:994.23px;height:595.28px;
+    border-radius:17.51px;background:#092467}
+  /* 黑板区与右侧卡片（.main）上下齐平：顶部对齐卡片顶边，底部对齐卡片底边 */
+  .board{left:388.27px;top:0.72px;width:557.91px;height:595.28px;border-radius:21.02px;
+    overflow:hidden;background:#D9D9D9}
+  .board img{left:-684.71px;top:-193.13px;width:1762.6px;height:844.3px;border-radius:24px}
+  .board .board-boy{left:354.46px;top:278.65px;width:210px;height:307.46px;border-radius:0}
+  .board-q{left:267px;top:248.34px;font-size:24.01px;font-weight:400;color:#fff;white-space:nowrap}
+
+  /* 课程体系切换：右上角只有一个下拉按钮（同一学科只能选一个体系），
+     右侧紧邻年级按钮，切换体系后年级自动跟着变 */
+  .series-btn{right:216px;top:17px;min-width:172px;height:56px;padding:0 16px 0 20px;
+    border-radius:28px;display:flex;align-items:center;justify-content:center;gap:9px;
+    cursor:pointer;background:linear-gradient(180deg,#208DFF,#075DD6);
+    border:1.6px solid #208DFF;box-shadow:0 3px 10px rgba(32,141,255,.45);
+    transition:filter .12s,transform .12s}
+  .series-btn:hover{filter:brightness(1.08)}
+  .series-btn:active{transform:scale(.97)}
+  .series-btn span{position:static;font-size:21.34px;font-weight:700;color:#fff;white-space:nowrap}
+  .series-btn b{position:static;font-size:16px;font-weight:700;color:#fff;transition:transform .18s}
+  .series-btn.open b{transform:rotate(180deg)}
+
+  /* 体系下拉：选项来自 store.js 的 SERIES（不按年级过滤，可跨年级切换） */
+  .series-menu{right:216px;top:84px;min-width:172px;padding:8px;border-radius:16px;z-index:60;
+    background:rgba(9,32,80,.97);border:1.6px solid #2B63C6;
+    box-shadow:0 12px 28px rgba(2,12,36,.6);display:none;flex-direction:column;gap:4px}
+  .series-menu.show{display:flex}
+  .series-menu i{position:static;height:46px;border-radius:12px;display:flex;align-items:center;
+    justify-content:space-between;gap:10px;padding:0 14px;font-style:normal;
+    font-size:18px;font-weight:700;color:#CBDCF8;cursor:pointer;white-space:nowrap}
+  .series-menu i span{position:static;font-style:normal}
+  .series-menu i em{position:static;font-style:normal;font-size:14px;font-weight:400;color:#8FA9D8}
+  .series-menu i.on{color:#fff;background:linear-gradient(180deg,#208DFF,#075DD6)}
+  .series-menu i:not(.on):hover{background:rgba(255,255,255,.10)}
+
+  .lv3{font-size:25.35px;font-weight:700;color:#fff;white-space:nowrap}
+  .ls-num{font-size:30.68px;font-weight:700;color:#fff;line-height:1.18;white-space:nowrap}
+  .ls-title{font-size:29.35px;font-weight:700;color:#fff;line-height:1.18;white-space:nowrap}
+  .ls-sub{font-size:21.34px;font-weight:700;color:#fff;white-space:nowrap}
+  .play{left:524.27px;top:228px;width:76px;height:76px;border-radius:50%;
+    background:linear-gradient(180deg,#FFCB51,#FF8000);border:1.6px solid #FFCB51;
+    display:flex;align-items:center;justify-content:center;cursor:pointer}
+  .play span{position:static;width:0;height:0;border-left:20px solid #fff;
+    border-top:12px solid transparent;border-bottom:12px solid transparent;margin-left:6px}
+  .grade{right:44px;top:12px;width:160px;height:66.5px}
+  .grade::before{content:"";position:absolute;left:0;top:3.89px;width:160px;height:62.61px;
+    border-radius:26.68px;background:linear-gradient(180deg,#1858D6,#102A82);border:1.6px solid #1858D6}
+  .grade img{left:11.83px;top:0;width:42.69px;height:63.76px}
+  .grade span{left:60px;top:29.76px;position:absolute;font-size:21.34px;font-weight:700;color:#fff;white-space:nowrap}
+  .grade b{left:131.89px;top:27px;position:absolute;font-size:18px;color:#fff;font-weight:700;
+    transition:transform .18s}
+  .grade.open b{transform:rotate(180deg)}
+
+  /* 年级下拉：选项来自 store.js 的 GRADES */
+  .grade-menu{right:44px;top:88px;width:160px;padding:8px;border-radius:16px;z-index:60;
+    background:rgba(9,32,80,.97);border:1.6px solid #2B63C6;
+    box-shadow:0 12px 28px rgba(2,12,36,.6);display:flex;flex-direction:column;gap:4px}
+  .grade-menu i{position:relative;left:auto;top:auto;height:44px;border-radius:12px;
+    display:flex;align-items:center;justify-content:center;font-style:normal;
+    font-size:19px;font-weight:700;color:#CBDCF8;cursor:pointer}
+  .grade-menu i.on{color:#fff;background:linear-gradient(180deg,#208DFF,#075DD6)}
+  .grade-menu i:not(.on):hover{background:rgba(255,255,255,.10)}
+
+  /* 讲次卡片行：一行横向排列，4 讲（或更少）铺满整行；讲次更多时固定 200 宽，左右滑动查看 */
+  .lesson-view{left:319px;top:721px;width:996px;height:124px;
+    overflow-x:auto;overflow-y:hidden;display:flex;gap:16px;pointer-events:auto;
+    scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.22) transparent;
+    -webkit-overflow-scrolling:touch}
+  .lesson-view::-webkit-scrollbar{height:6px}
+  .lesson-view::-webkit-scrollbar-track{background:transparent}
+  .lesson-view::-webkit-scrollbar-thumb{background:rgba(255,255,255,.22);border-radius:3px}
+
+  .lesson{position:relative;flex:0 0 auto;border-radius:22px;overflow:hidden;cursor:pointer;
+    box-shadow:0 6px 18px rgba(2,14,40,.35);transition:transform .14s}
+  .lesson:active{transform:scale(.98)}
+  .lesson.done{background:linear-gradient(180deg,#F2FFF8,#D3F3E2);border:2px solid #7BE6A8}
+  .lesson.cur{background:linear-gradient(160deg,#3F8DFF,#1B4BA8);border:2px solid #7BB6FF}
+  .lesson.lock{background:linear-gradient(160deg,#2C3E63,#1C2A46);border:2px solid #3E5580}
+  .l-num{left:24px;top:16px;font-size:22px;font-weight:700;line-height:1.18;white-space:nowrap}
+  .l-title{left:24px;top:52px;width:190px;font-size:21px;font-weight:700;line-height:1.18;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .l-st{position:absolute}
+  .st{position:static;display:flex;align-items:center;justify-content:center;gap:3px;
+    color:#fff;font-size:21.34px;font-weight:700;border-radius:14.67px}
+  .st.done{width:61.36px;height:29.35px;font-size:14.67px;
+    background:linear-gradient(180deg,#2CE86F,#0CBA4A);border:1.6px solid #2CE86F}
+  .st.todo{width:77.37px;height:53.36px;background:linear-gradient(180deg,#FFA83A,#FF7B04);
+    border:1.6px solid #FFA83A;padding-top:16px}
+  .mini{position:absolute;width:38.69px;height:38.69px;border-radius:50%;
+    background:linear-gradient(180deg,#FFCB51,#FF8000);border:1.6px solid #FFCB51}
+  .mini::after{content:"";position:absolute;left:15px;top:11px;width:0;height:0;
+    border-left:13px solid #fff;border-top:8px solid transparent;border-bottom:8px solid transparent}
+  .tick{left:503.09px;top:794.37px;width:28.01px;height:21.34px;color:#75F3A5;
+    font-size:24px;font-weight:700;line-height:1}
+
+  .lockcard{left:1091px;top:726.8px;width:222px;height:115px;border-radius:17.51px;background:#092467}
+  .lockcard img{left:92.04px;top:21px;width:38.69px;height:41.35px}
+  .lock-txt{left:63.52px;top:51px;display:flex;align-items:center;gap:2.5px;
+    font-size:21.34px;font-weight:700;color:#DEE6FF;white-space:nowrap}
+  .lock-txt img{position:static;width:29.35px;height:33.35px}
+
+  .nav-bar{left:0;top:900px;width:1366px;height:121px;
+    background:linear-gradient(180deg,rgba(12,40,96,.42),rgba(10,32,80,.62));
+    box-shadow:0 -1px 10px rgba(4,16,44,.35)}
+  .nav-ico{top:913.55px;width:61.55px;height:54.04px;cursor:pointer}
+  .nav-label{top:968px;width:114.72px;height:45.36px;font-size:23.48px;font-weight:700;
+    color:#fff;text-align:center;line-height:1.9;cursor:pointer;
+    text-shadow:0 2px 6px rgba(4,18,52,.6)}
+
+  .toast{left:50%;top:640px;transform:translateX(-50%);padding:16px 34px;border-radius:22px;
+    background:rgba(9,25,60,.88);color:#fff;font-size:26px;font-weight:700;
+    opacity:0;pointer-events:none;transition:opacity .22s;white-space:nowrap}
+  .toast.show{opacity:1}
+</style>
+</head>
+<body>
+<div class="view">
+  <div class="stage" id="stage">
+    <img class="bg" src="assets/course2-bg.png" alt="">
+    <div class="back"><span>‹</span></div>
+    <div class="page-title">数学课程</div>
+    <div class="profile">
+      <img class="p-bg" src="assets/course2-profile.png" alt="">
+      <div class="p-inner">
+        <img src="assets/course2-i-book.png" style="left:36.06px;top:361.46px;width:38.84px;height:44.98px" alt="">
+        <img src="assets/course2-i-video.png" style="left:36.06px;top:404.84px;width:40.23px;height:43.38px" alt="">
+        <img src="assets/course2-i-medal.png" style="left:36.06px;top:469.1px;width:41.61px;height:46.59px" alt="">
+        <img src="assets/course2-i-time.png" style="left:34.68px;top:515.69px;width:40.23px;height:36.95px" alt="">
+        <img src="assets/course2-i-streak.png" style="left:36.06px;top:578.34px;width:38.84px;height:44.98px" alt="">
+        <img src="assets/course2-i-gem.png" style="left:36.06px;top:626.54px;width:38.84px;height:40.16px" alt="">
+        <img class="p-badge" src="assets/course2-badge.png" alt="">
+        <img class="p-boy" src="assets/course2-boy.png" alt="">
+        <div class="lv" style="left:43px;top:187.96px">Level 5</div>
+        <div class="lv2" style="left:138.71px;top:189.57px">数学逻辑</div>
+        <div class="lv2" style="left:40.23px;top:253.83px">进阶进度</div>
+        <div class="lv" style="left:126.23px;top:253.83px;color:#FFF046">68%</div>
+        <div class="p-track"><i></i></div>
+        <div class="s-t" style="left:81.84px;top:371.1px">共学习</div>
+        <div class="s-v" style="left:81.84px;top:411.26px">28个视频</div>
+        <div class="s-g" style="left:176.16px;top:414.48px">28/40</div>
+        <div class="s-t" style="left:81.84px;top:480.34px">总时长</div>
+        <div class="s-v" style="left:81.84px;top:520.51px;color:#FFE161">12.6h</div>
+        <div class="s-g" style="left:156.74px;top:523.72px">12.6/20h</div>
+        <div class="s-t" style="left:81.84px;top:589.59px">连续学习</div>
+        <div class="s-v" style="left:81.84px;top:631.36px">7天</div>
+        <div class="s-g" style="left:156.74px;top:632.96px">7/7天</div>
+      </div>
+    </div>
+    <div class="main">
+      <div class="board">
+        <img src="assets/course2-board.png" alt="">
+        <img class="board-boy" src="assets/course2-board-boy.png" alt="">
+        <span class="board-q">123 + 456 = ?</span>
+      </div>
+      <div class="lv3" style="left:50.78px;top:190px">Level 5</div>
+      <div class="ls-num" style="left:50.78px;top:261px">第</div>
+      <div class="ls-num" style="left:84.13px;top:255px;color:#BAFF55">3讲</div>
+      <div class="ls-title" style="left:153.5px;top:261px">数的奇妙世界</div>
+      <div class="ls-sub" style="left:52.11px;top:345px">认识更大的数</div>
+      <div class="play"><span></span></div>
+    </div>
+    
+    <div class="series-btn" id="seriesBtn">
+      <span id="seriesName">乐读数学</span><b>▾</b>
+    </div>
+    <div class="grade" id="gradeBtn">
+      <img src="assets/course2-hat.png" alt="">
+      <span>四年级</span><b>▾</b>
+    </div>
+    <div class="series-menu" id="seriesMenu"></div>
+    <div class="lesson-view" id="lessonRow"></div>
+    <div class="nav-bar"></div>
+    <img class="nav-ico" src="assets/nav-home.png" style="left:114.6px" alt="">
+    <div class="nav-label" style="left:88.04px">首页</div>
+    <img class="nav-ico" src="assets/nav-task.png" style="left:384.1px" alt="">
+    <div class="nav-label" style="left:357.51px">任务</div>
+    <img class="nav-ico" src="assets/nav-battle.png" style="left:653.9px" alt="">
+    <div class="nav-label" style="left:624.3px">战斗</div>
+    <img class="nav-ico" src="assets/nav-bag.png" style="left:923.0px" alt="">
+    <div class="nav-label" style="left:896.44px">储物袋</div>
+    <img class="nav-ico" src="assets/nav-me.png" style="left:1189.8px" alt="">
+    <div class="nav-label" style="left:1163.23px">我的</div>
+    <div class="toast" id="toast"></div>
+  </div>
+</div>
+<script src="store.js?v=2"></script>
+<script>
+  var stage = document.getElementById('stage');
+  function fit() {
+    var s = Math.min(window.innerWidth / 1366, window.innerHeight / 1024);
+    stage.style.transform = 'translate(-50%,-50%) scale(' + s + ')';
+  }
+  addEventListener('resize', fit); addEventListener('orientationchange', fit); fit();
+
+  var qs = new URLSearchParams(location.search);
+  var cid = qs.get('course') || 'series_math_g4';
+  var course = Store.getCourse(cid) || Store.getCourse('series_math_g4');
+  cid = course.id;
+  /* 当前体系所属年级（来自 SERIES 配置），用于 tab 过滤与年级下拉显示 */
+  var curSeries = Store.seriesOf(course.subject).filter(function (s) { return s.id === cid; })[0];
+  var gradeNow = (curSeries && curSeries.grade) || '四年级';
+  var lessons = course.lessons;
+  var cur = Store.currentLesson(cid);
+  var learnedN = Store.learnedCount(cid);
+  var totalN = lessons.length;
+
+  document.title = course.subject + '课程 · 知识冒险岛';
+  document.querySelector('.page-title').textContent = course.subject + '课程' + (course.preview ? ' · 试看' : '');
+
+  var nums = document.querySelectorAll('.ls-num');
+  nums[0].textContent = '';
+  nums[1].textContent = '第' + cur.n + '讲';
+  nums[1].style.left = '50.78px';
+  document.querySelector('.ls-title').textContent = cur.title;
+  document.querySelector('.ls-sub').textContent = cur.sub;
+  document.querySelector('.board-q').textContent = '第 ' + cur.n + ' 讲';
+  document.querySelector('.lv3').textContent = Store.isLearned(cid, cur.n) ? '本讲已学完' : '正在学习';
+
+  var pct = totalN ? Math.round(learnedN / totalN * 100) : 0;
+  var lv2s = document.querySelectorAll('.lv2');
+  /* 左侧资料卡的属性名跟着学科走：语文=文心、数学=算力、英语=共鸣、探索=灵感 */
+  var attrInfo = Store.attrOf(course.subject);
+  lv2s[0].textContent = attrInfo ? attrInfo.label : course.subject;
+  lv2s[1].textContent = '进阶进度';
+  var lvs = document.querySelectorAll('.lv');
+  lvs[lvs.length - 1].textContent = pct + '%';
+  lvs[0].textContent = 'Level ' + Store.level();
+  var pt = document.querySelector('.p-track i');
+  pt.style.width = Math.max(2, pct / 100 * 192.81) + 'px';
+
+  var mins = 0;
+  lessons.forEach(function (l) { if (Store.isLearned(cid, l.n)) mins += l.min; });
+  var sv = document.querySelectorAll('.s-v'), sg = document.querySelectorAll('.s-g');
+  sv[0].textContent = learnedN + '个视频'; sg[0].textContent = learnedN + '/' + totalN;
+  sv[1].textContent = (mins / 60).toFixed(1) + 'h';
+  var totMin = 0; lessons.forEach(function (l) { totMin += l.min; });
+  sg[1].textContent = (mins / 60).toFixed(1) + '/' + (totMin / 60).toFixed(0) + 'h';
+  sv[2].textContent = Store.get().streak + '天';
+  sg[2].textContent = Store.get().streak + '/7天';
+
+  function renderLessons() {
+    var row = document.getElementById('lessonRow');
+    row.innerHTML = '';
+    /* 讲次卡片一行横向排列：
+     *   ≤4 讲 → 均分整行（4 讲 237 宽，2 讲 490 宽），右侧不留空
+     *    >4 讲 → 固定 200 宽，超出部分左右滑动查看，不会挤出屏幕 */
+    var gap = 16, avail = 996, maxW = 237, minW = 200;
+    var n = lessons.length || 1;
+    var cardW = Math.min(maxW, Math.max(minW, (avail - gap * (n - 1)) / n));
+    lessons.forEach(function (l) {
+      var done = Store.isLearned(cid, l.n);
+      var unlocked = Store.isUnlocked(cid, l.n);
+      var isCur = (!done && unlocked);
+      var el = document.createElement('div');
+      el.className = 'lesson';
+      el.style.width = cardW + 'px';
+      el.style.height = '118px';
+      /* 两态：已学完（绿色）/ 未学习（灰色），与播放页右侧讲次列表保持一致 */
+      var learned = done;
+      el.classList.add(learned ? 'done' : 'lock');
+      var txtColor = learned ? '#1C5138' : '#8FA5C2';
+      var stTxt = learned ? '已学完' : '未学习';
+      var stBg = learned ? 'linear-gradient(180deg,#2CE86F,#0CBA4A)'
+        : 'linear-gradient(180deg,#55688C,#3A4A66)';
+
+      el.innerHTML =
+        '<div class="l-num" style="color:' + txtColor + '">第' + l.n + '讲</div>' +
+        '<div class="l-title" style="width:' + (cardW - 48) + 'px;color:' + txtColor + '">' + l.title + '</div>' +
+        '<div class="l-st" style="left:' + (cardW - 79) + 'px;top:10px">' +
+        '<div class="st" style="width:66px;height:26px;font-size:13px;border-radius:13px;background:' + stBg + '">' +
+        stTxt + '</div></div>';
+
+      el.addEventListener('click', function () {
+        /* 全部讲次都能直接点进去学，不再有「先学完上一讲」的限制 */
+        location.href = 'play.html?course=' + cid + '&n=' + l.n;
+      });
+      row.appendChild(el);
+    });
+  }
+  renderLessons();
+
+  function openCur() {
+    location.href = 'play.html?course=' + cid + '&n=' + cur.n;
+  }
+
+  /* 课程体系切换：同一学科同一时间只学一个体系，所以做成「一个下拉按钮」
+   * 名称来自 store.js 的 SERIES 配置（Store.seriesOf），页面不写死
+   * 列表不按年级过滤：选中别的年级的体系后，右侧年级按钮会自动跟着变
+   * 后台调 Store.addSeries() 会派发 store:series 事件，这里自动重渲染，不用刷新页面
+   */
+  var seriesBtn = document.getElementById('seriesBtn');
+  var seriesName = document.getElementById('seriesName');
+  var seriesMenu = document.getElementById('seriesMenu');
+  var seriesOpen = false;
+
+  function closeSeriesMenu() {
+    seriesOpen = false;
+    seriesMenu.classList.remove('show');
+    seriesBtn.classList.remove('open');
+  }
+
+  function renderSeries() {
+    var list = Store.seriesOf(course.subject);
+    if (!list.length) list = [{ id: cid, name: course.name, grade: gradeNow }];
+    var curName = '';
+    list.forEach(function (s) { if (s.id === cid) curName = s.name; });
+    seriesName.textContent = curName || course.name;
+
+    seriesMenu.innerHTML = '';
+    list.forEach(function (s) {
+      var it = document.createElement('i');
+      if (s.id === cid) it.className = 'on';
+      it.innerHTML = '<span>' + s.name + '</span>' +
+        (s.grade && s.grade !== gradeNow ? '<em>' + s.grade + '</em>' : '');
+      it.addEventListener('click', function (e) {
+        e.stopPropagation();
+        closeSeriesMenu();
+        if (s.id === cid) return;
+        location.href = 'course.html?course=' + s.id;
+      });
+      seriesMenu.appendChild(it);
+    });
+  }
+  renderSeries();
+  addEventListener('store:series', renderSeries);
+
+  seriesBtn.addEventListener('click', function (e) {
+    e.stopPropagation();
+    var open = !seriesOpen;
+    closeSeriesMenu();
+    closeGradeMenu();
+    if (!open) return;
+    seriesOpen = true;
+    seriesMenu.classList.add('show');
+    seriesBtn.classList.add('open');
+  });
+  document.addEventListener('click', closeSeriesMenu);
+  document.querySelector('.play').addEventListener('click', openCur);
+  document.querySelector('.board').addEventListener('click', openCur);
+  /* 年级下拉：选项来自 store.js 的 GRADES；切年级后自动跳到该年级第一个体系 */
+  var gradeBtn = document.querySelector('.grade');
+  gradeBtn.querySelector('span').textContent = gradeNow;
+  var gradeMenu = null;
+  function closeGradeMenu() {
+    if (gradeMenu && gradeMenu.parentNode) gradeMenu.parentNode.removeChild(gradeMenu);
+    gradeMenu = null;
+    gradeBtn.classList.remove('open');
+  }
+  function openGradeMenu() {
+    closeGradeMenu();
+    gradeMenu = document.createElement('div');
+    gradeMenu.className = 'grade-menu';
+    Store.grades().forEach(function (g) {
+      var it = document.createElement('i');
+      it.textContent = g;
+      if (g === gradeNow) it.className = 'on';
+      it.addEventListener('click', function (e) {
+        e.stopPropagation();
+        closeGradeMenu();
+        if (g === gradeNow) return;
+        var list = Store.seriesOf(course.subject, g);
+        if (!list.length) { Store.toast(g + '的' + course.subject + '课程还没录入'); return; }
+        location.href = 'course.html?course=' + list[0].id;
+      });
+      gradeMenu.appendChild(it);
+    });
+    document.querySelector('.stage').appendChild(gradeMenu);
+    gradeBtn.classList.add('open');
+  }
+  gradeBtn.addEventListener('click', function (e) {
+    e.stopPropagation();
+    closeSeriesMenu();
+    if (gradeMenu) closeGradeMenu(); else openGradeMenu();
+  });
+  document.addEventListener('click', closeGradeMenu);
+  /* 返回首页：左上角圆形按钮 + 「数学课程」标题都可以点 */
+  function goHome() { location.href = 'home.html'; }
+  document.querySelector('.back').addEventListener('click', goHome);
+  document.querySelector('.page-title').addEventListener('click', goHome);
+  document.querySelectorAll('.nav-label').forEach(function (n) {
+    n.addEventListener('click', function () { Store.go(n.textContent); });
+  });
+  document.querySelectorAll('.nav-ico').forEach(function (n, i) {
+    var names = ['首页', '任务', '战斗', '储物袋', '我的'];
+    n.addEventListener('click', function () { Store.go(names[i]); });
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>知识冒险岛 · 首页</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%;overflow:hidden;background:#0b2350;
+    font-family:"Noto Sans SC","PingFang SC","Hiragino Sans GB",-apple-system,sans-serif;
+    -webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
+  .view{position:relative;width:100%;height:100%;overflow:hidden}
+  .stage{position:absolute;left:50%;top:50%;width:1366px;height:1024px;transform-origin:center center}
+  .stage *{position:absolute}
+  img{display:block}
+  .bg{left:0;top:0;width:1366px;height:1024px;object-fit:cover}
+  .boy{left:71px;top:218.28px;width:412.22px;height:699.38px;object-fit:contain}
+  .egg{left:346px;top:539.28px;width:274.83px;height:371.24px;object-fit:contain}
+
+  .card{cursor:pointer}
+  .card-bg{left:0;top:0;width:378.04px;object-fit:fill;border-radius:30.9px}
+  .card-name{width:81px;height:48px;font-size:40.1px;font-weight:700;color:#fff;line-height:1.1}
+  .card-sub{height:28px;font-size:22.9px;font-weight:400;color:#fff;white-space:nowrap}
+  .card-btn{width:110.3px;height:41.54px;border-radius:21.49px;background:#F7FFFA;
+    display:flex;align-items:center;justify-content:center;gap:8px}
+  .card-btn .t{position:static;font-size:18.62px;font-weight:700}
+  .card-btn .chev{position:static;font-size:26px;font-weight:700;line-height:1;margin-top:-2px}
+
+  .clock{left:37.35px;top:55.28px;width:160px;height:65px;font-family:Inter,sans-serif;
+    font-size:53.36px;font-weight:700;color:#11284F;line-height:1.2}
+  .date{left:208.1px;top:63.28px;width:48px;height:21px;font-size:17.34px;font-weight:700;color:#11284F}
+  .week{left:208.1px;top:92.63px;width:53px;height:21px;font-size:17.34px;font-weight:700;color:#11284F}
+  .vline{left:280.14px;top:68.62px;width:1.33px;height:44.02px;background:rgba(184,214,239,.8)}
+  .weather{left:293.48px;top:59.28px;width:69.07px;height:57.56px}
+  .temp{left:380.18px;top:61.95px;width:59px;height:31px;font-family:Inter,sans-serif;
+    font-size:25.35px;font-weight:700;color:#11284F}
+  .sky{left:380.18px;top:95.3px;width:65px;height:19px;font-size:16px;font-weight:700;color:#11284F}
+
+  .checkin{left:988.53px;top:48.28px;width:164.08px;height:46.69px;border-radius:23.34px;
+    background:#EAF6FF;display:flex;align-items:center;justify-content:center;gap:7px;cursor:pointer}
+  .checkin .cal{position:static;width:23px;height:23px;flex:0 0 auto}
+  .checkin span{position:static;font-size:16px;font-weight:700;color:#4A93FE;white-space:nowrap}
+  .checkin i{position:static;font-style:normal;color:#FE7D4A}
+  .user{left:1172.57px;top:48.28px;width:157.41px;height:46.69px;border-radius:23.34px;
+    background:#F1F0FF;display:flex;align-items:center;justify-content:center;gap:10px;cursor:pointer}
+  .user span{position:static;font-size:16px;font-weight:700;color:#11284F;white-space:nowrap}
+  .user .avatar{position:static;width:38.37px;height:38.37px;border-radius:50%;overflow:hidden;
+    border:1.92px solid #fff;background:#CECFFD;flex:0 0 auto}
+  .user .avatar img{position:static;width:100%;height:100%;object-fit:cover;object-position:50% 12%}
+
+  .hatch{left:363px;top:480.28px;width:165.41px;height:118.72px;cursor:pointer}
+  .hatch-panel{left:-0.15px;top:12.94px;width:165.47px;height:106px;border-radius:25.35px;
+    background:rgba(248,249,255,.87);border:1.87px solid rgba(255,255,255,.85);
+    box-shadow:0 4px 9.34px rgba(107,84,217,.14)}
+  .hatch-title{left:34.86px;top:27.32px;width:97px;height:29px;font-size:24px;font-weight:700;
+    color:#7438FF;line-height:1.2}
+  .hatch-bar{left:14.67px;top:66.7px;width:137.4px;height:32.02px;border-radius:16px;
+    background:linear-gradient(180deg,#BD5DFF,#6737FF);display:flex;align-items:center;justify-content:center}
+  .hatch-pct{position:static;font-family:Inter,sans-serif;font-size:28px;font-weight:700;color:#fff}
+  .hatch-track{left:24.01px;top:89.38px;width:117.39px;height:8px;border-radius:4px;background:#6C70FF}
+  .hatch-track i{left:0;top:0;width:80.04px;height:8px;border-radius:4px;
+    background:#35DFFC;transition:width .4s}
+  .hatch-track b{left:70.8px;top:-0.66px;width:9.34px;height:9.34px;border-radius:50%;
+    background:#EEE3FF;transition:left .4s}
+
+  .toolbar{left:600px;top:712.77px;width:720px;height:125.71px;border-radius:35.71px;
+    background:rgba(248,252,255,.9);border:2px solid rgba(255,255,255,.85);
+    box-shadow:0 4.29px 10px rgba(107,84,217,.14)}
+  .t-ico{cursor:pointer}
+  .t-label{width:auto;height:21px;font-size:17.14px;font-weight:700;color:#11284F;
+    text-align:center;white-space:nowrap;transform:translateX(-50%);cursor:pointer}
+  .t-sep{top:744.2px;width:.86px;height:50px;background:#E0E5FF}
+
+  .nav-bar{left:0;top:893px;width:1366px;height:121px;opacity:.8;
+    background:linear-gradient(180deg,#E7F0FE,#DBDFFE);
+    box-shadow:0 2.31px 9.23px rgba(146,148,207,.15)}
+  .nav-ico{top:906.55px;width:61.55px;height:54.04px;cursor:pointer;transition:transform .18s}
+  .nav-label{top:961px;width:114.72px;height:45.36px;font-size:23.48px;font-weight:700;
+    color:#2442A3;text-align:center;line-height:1.9;cursor:pointer}
+
+  .entry{cursor:pointer}
+  .entry img{left:0;top:0;object-fit:contain}
+  .entry-tag{width:92.47px;height:67.73px;border-radius:25.15px}
+  .entry-txt{height:16px;font-size:13.54px;font-weight:700;color:#fff;
+    text-align:center;line-height:16px;white-space:nowrap}
+
+  .wchip{left:1172px;top:104px;width:177px;height:44px;border-radius:22px;
+    background:rgba(255,255,255,.92);display:flex;align-items:center;gap:8px;padding:0 16px;
+    cursor:pointer;box-shadow:0 3px 10px rgba(107,84,217,.14)}
+  .wchip img{position:static;width:24px;height:24px;object-fit:contain}
+  .wchip span{position:static;font-size:18px;font-weight:700;color:#11284F}
+
+  .toast{left:50%;top:640px;transform:translateX(-50%);padding:16px 34px;border-radius:22px;
+    background:rgba(9,25,60,.88);color:#fff;font-size:26px;font-weight:700;
+    opacity:0;pointer-events:none;transition:opacity .22s;white-space:nowrap}
+  .toast.show{opacity:1}
+
+  .card:active,.entry:active{transform:scale(.985)}
+</style>
+</head>
+<body>
+<div class="view">
+  <div class="stage" id="stage">
+    <img class="bg" src="assets/home2-bg.png" alt=""><img class="boy" src="assets/home2-boy.png" alt=""><img class="egg" src="assets/home2-egg.png" alt="">
+    <div class="card" data-card="语文" style="left:538.61px;top:218.28px;width:378.04px;height:214.87px">
+      <img class="card-bg" src="assets/home2-card-chinese.png" style="height:203.95px" alt="">
+      <div class="card-name" style="left:38.68px;top:24.35px">语文</div>
+      <div class="card-sub" style="left:38.68px;top:83.08px;width:115px">学而思语文</div>
+      <div class="card-btn" style="left:35.76px;top:136.58px">
+        <span class="t" style="color:#3692FF">去看课</span><span class="chev" style="color:#3692FF">›</span>
+      </div>
+    </div>
+    <div class="card" data-card="英语" style="left:936.83px;top:218.28px;width:378.04px;height:214.87px">
+      <img class="card-bg" src="assets/home2-card-english.png" style="height:203.95px" alt="">
+      <div class="card-name" style="left:38.68px;top:24.35px">英语</div>
+      <div class="card-sub" style="left:38.68px;top:83.08px;width:128px">连续打卡7天</div>
+      <div class="card-btn" style="left:34.12px;top:136.58px">
+        <span class="t" style="color:#FF8C26">去巩固</span><span class="chev" style="color:#FF8C26">›</span>
+      </div>
+    </div>
+    <div class="card" data-card="数学" style="left:534.0px;top:457.74px;width:378.04px;height:200.54px">
+      <img class="card-bg" src="assets/home2-card-math.png" style="height:187.47px" alt="">
+      <div class="card-name" style="left:38.68px;top:24.35px">数学</div>
+      <div class="card-sub" style="left:38.68px;top:83.08px;width:92px">乐读数学</div>
+      <div class="card-btn" style="left:31.64px;top:129.26px">
+        <span class="t" style="color:#2FC56E">去探索</span><span class="chev" style="color:#2FC56E">›</span>
+      </div>
+    </div>
+    <div class="card" data-card="科普" style="left:932.22px;top:457.74px;width:378.04px;height:200.54px">
+      <img class="card-bg" src="assets/home2-card-science.png" style="height:187.47px" alt="">
+      <div class="card-name" style="left:38.68px;top:24.35px">科普</div>
+      <div class="card-sub" style="left:38.68px;top:83.08px;width:92px">科普合集</div>
+      <div class="card-btn" style="left:38.68px;top:129.26px">
+        <span class="t" style="color:#A539F3">去看看</span><span class="chev" style="color:#A539F3">›</span>
+      </div>
+    </div>
+    <div class="clock">09:30</div>
+    <div class="date">01/18</div>
+    <div class="week">星期六</div>
+    <div class="vline"></div>
+    <img class="weather" src="assets/home2-weather.png" alt="">
+    <div class="temp">12°C</div>
+    <div class="sky">晴转多云</div>
+    <div class="checkin">
+      <svg class="cal" viewBox="0 0 24 24" fill="none">
+        <rect x="2.6" y="4.6" width="18.8" height="17" rx="4.6" stroke="#5099FD" stroke-width="2.2"/>
+        <path d="M2.6 9.6h18.8" stroke="#5099FD" stroke-width="2.2"/>
+        <path d="M7.6 2.6v4.2M16.4 2.6v4.2" stroke="#5099FD" stroke-width="2.2" stroke-linecap="round"/>
+      </svg>
+      <span>连续打卡<i>XX</i>天</span>
+    </div>
+    <div class="user">
+      <span class="avatar"><img src="assets/home2-boy.png" alt=""></span>
+      <span>小星星</span>
+    </div>
+    <div class="hatch">
+      <div class="hatch-panel"></div>
+      <div class="hatch-title">破壳进度</div>
+      <div class="hatch-bar"><span class="hatch-pct">68%</span></div>
+      <div class="hatch-track"><i id="hatchFill"></i><b></b></div>
+    </div>
+    <div class="toolbar"></div>
+    <img class="t-ico" src="assets/home2-ico-ai.png" style="left:624.29px;top:722.77px;width:78.07px;height:66.77px" alt="">
+    <div class="t-label" style="left:663.33px;top:799.91px">AI伙伴</div>
+    <img class="t-ico" src="assets/home2-ico-book.png" style="left:751.43px;top:732.77px;width:67.8px;height:58.56px" alt="">
+    <div class="t-label" style="left:785.33px;top:799.91px">绘本馆</div>
+    <img class="t-ico" src="assets/home2-ico-music.png" style="left:870.0px;top:729.91px;width:59.58px;height:59.58px" alt="">
+    <div class="t-label" style="left:899.79px;top:799.91px">音乐馆</div>
+    <img class="t-ico" src="assets/home2-ico-anime.png" style="left:982.86px;top:732.77px;width:67.8px;height:56.5px" alt="">
+    <div class="t-label" style="left:1016.76px;top:799.91px">动画馆</div>
+    <img class="t-ico" src="assets/home2-ico-star.png" style="left:1100.0px;top:729.91px;width:66.77px;height:60.61px" alt="">
+    <div class="t-label" style="left:1133.39px;top:799.91px">收藏夹</div>
+    <img class="t-ico" src="assets/home2-ico-more.png" style="left:1218.57px;top:732.77px;width:53.42px;height:54.45px" alt="">
+    <div class="t-label" style="left:1245.28px;top:799.91px">更多</div>
+    <i class="t-sep" style="left:724.29px"></i>
+    <i class="t-sep" style="left:840.0px"></i>
+    <i class="t-sep" style="left:955.71px"></i>
+    <i class="t-sep" style="left:1072.86px"></i>
+    <i class="t-sep" style="left:1190.0px"></i>
+    <div class="nav-bar"></div>
+    <img class="nav-ico" data-nav="首页" src="assets/nav-home.png" style="left:114.6px" alt="">
+    <div class="nav-label" data-nav="首页" style="left:88.04px">首页</div>
+    <img class="nav-ico" data-nav="任务" src="assets/nav-task.png" style="left:384.1px" alt="">
+    <div class="nav-label" data-nav="任务" style="left:357.51px">任务</div>
+    <img class="nav-ico" data-nav="战斗" src="assets/nav-battle.png" style="left:653.9px" alt="">
+    <div class="nav-label" data-nav="战斗" style="left:624.3px">战斗</div>
+    <img class="nav-ico" data-nav="储物袋" src="assets/nav-bag.png" style="left:923.0px" alt="">
+    <div class="nav-label" data-nav="储物袋" style="left:896.44px">储物袋</div>
+    <img class="nav-ico" data-nav="我的" src="assets/nav-me.png" style="left:1189.8px" alt="">
+    <div class="nav-label" data-nav="我的" style="left:1163.23px">我的</div>
+    <div class="entry" data-entry="灵石商城" style="left:30.22px;top:145.33px;width:115.59px;height:131.41px">
+      <span class="entry-tag" style="left:11.76px;top:63.68px;background:linear-gradient(180deg,#B264F1,#663A8B)"></span>
+      <span class="entry-txt" style="left:30.82px;top:106.67px;width:55px">灵石商城</span>
+      <img src="assets/entry-shop.png" style="width:115.59px;height:106.67px" alt="">
+    </div>
+    <div class="entry" data-entry="储物袋" style="left:30.22px;top:285.85px;width:111.13px;height:129.79px">
+      <span class="entry-tag" style="left:9.33px;top:62.05px;background:linear-gradient(180deg,#FF9A48,#E12D0C)"></span>
+      <span class="entry-txt" style="left:35.29px;top:105.04px;width:41px">储物袋</span>
+      <img src="assets/entry-bag.png" style="width:111.13px;height:103.33px" alt="">
+    </div>
+    <div class="entry" data-entry="灵宠" style="left:30.22px;top:424.75px;width:113.91px;height:126.54px">
+      <span class="entry-tag" style="left:11.76px;top:58.81px;background:linear-gradient(180deg,#60BEFE,#419EFB)"></span>
+      <span class="entry-txt" style="left:44.21px;top:101.8px;width:28px">灵宠</span>
+      <img src="assets/entry-pet.png" style="width:113.91px;height:105.91px" alt="">
+    </div>
+    <div class="wchip" id="wchip"><img src="assets/task-gem-s.png" alt=""><span id="stoneTop">1,280</span></div>
+    <div class="toast" id="toast"></div>
+  </div>
+</div>
+<script src="store.js?v=2"></script>
+<script>
+  // 首次进入的选蛋引导由入口页用 home.html?first=1 触发；
+  // 单页预览/直接打开首页时不再强制跳走，否则所有热区都点不到
+  try {
+    if (!Store.hasEgg() && /[?&]first=1/.test(location.search)) location.replace('egg-select.html');
+  } catch (e) {}
+
+  var stage = document.getElementById('stage');
+  function fit() {
+    var s = Math.min(window.innerWidth / 1366, window.innerHeight / 1024);
+    stage.style.transform = 'translate(-50%,-50%) scale(' + s + ')';
+  }
+  addEventListener('resize', fit);
+  addEventListener('orientationchange', fit);
+  fit();
+
+  var SUBJECT_COURSE = {
+    '语文': 'series_chinese_xes',
+    '数学': 'series_math_g4',
+    '英语': 'series_english_tbd',
+    '科普': 'series_bio_g4'
+  };
+
+  function clock() {
+    var d = new Date();
+    var pad = function (n) { return (n < 10 ? '0' : '') + n; };
+    document.querySelector('.clock').textContent = pad(d.getHours()) + ':' + pad(d.getMinutes());
+    document.querySelector('.date').textContent = pad(d.getMonth() + 1) + '/' + pad(d.getDate());
+    var W = ['星期日','星期一','星期二','星期三','星期四','星期五','星期六'];
+    document.querySelector('.week').textContent = W[d.getDay()];
+  }
+  clock();
+  setInterval(clock, 30000);
+
+  function render() {
+    var s = Store.get();
+    document.getElementById('stoneTop').textContent = Store.fmt(s.stone);
+    document.querySelector('.user span:last-child').textContent = s.user.name;
+
+    var ci = document.querySelector('.checkin span i');
+    if (ci) ci.textContent = s.streak;
+
+    var pct = s.pet.hatch;
+    var fill = document.getElementById('hatchFill');
+    var dot = document.querySelector('.hatch-track b');
+    var w = 117.39 * pct / 100;
+    fill.style.width = w + 'px';
+    dot.style.left = Math.max(0, w - 9.34) + 'px';
+    document.querySelector('.hatch-pct').textContent = pct + '%';
+  }
+
+  render();
+
+  document.querySelectorAll('.card').forEach(function (c) {
+    c.addEventListener('click', function () {
+      var cid = SUBJECT_COURSE[c.dataset.card];
+      if (!cid) { Store.toast('「' + c.dataset.card + '」体系还没录入'); return; }
+      Store.toast('进入「' + c.dataset.card + '」课程');
+      setTimeout(function () { location.href = 'course.html?course=' + cid; }, 380);
+    });
+  });
+
+  document.querySelectorAll('.t-ico,.t-label').forEach(function (el) {
+    el.addEventListener('click', function () {
+      var n = el.classList.contains('t-label') ? el.textContent : el.nextElementSibling.textContent;
+      Store.toast('「' + n + '」还没做');
+    });
+  });
+
+  document.querySelectorAll('.entry').forEach(function (e) {
+    e.addEventListener('click', function () {
+      var n = e.dataset.entry;
+      var map = { '灵石商城': 'mall.html', '储物袋': 'bag.html', '灵宠': 'pet.html' };
+      if (map[n]) { Store.toast('打开「' + n + '」'); setTimeout(function () { location.href = map[n]; }, 320); }
+      else { Store.toast('「' + n + '」还没做'); }
+    });
+  });
+
+  document.querySelectorAll('.nav-ico,.nav-label').forEach(function (el) {
+    el.addEventListener('click', function () {
+      var n = el.dataset.nav;
+      document.querySelectorAll('.nav-label').forEach(function (t) { t.style.color = '#2442A3'; });
+      document.querySelectorAll('.nav-label[data-nav="' + n + '"]').forEach(function (t) { t.style.color = '#0F8CEB'; });
+      Store.go(n);
+    });
+  });
+
+  document.querySelector('.checkin').addEventListener('click', function () {
+    var r = Store.checkin();
+    render();
+    Store.toast(r.ok ? '打卡成功 · 连续 ' + r.streak + ' 天 · 灵石 +10' : '今天已经打过卡啦 · 连续 ' + r.streak + ' 天');
+  });
+
+  document.querySelector('.user').addEventListener('click', function () {
+    location.href = 'me.html';
+  });
+
+  document.getElementById('wchip').addEventListener('click', function () {
+    location.href = 'mall.html';
+  });
+
+  document.querySelector('.hatch').addEventListener('click', function () {
+    location.href = 'pet.html';
+  });
+</script>
+</body>
+</html>

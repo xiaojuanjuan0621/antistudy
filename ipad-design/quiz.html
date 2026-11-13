@@ -1,0 +1,329 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>课后闯关 · 知识冒险岛</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%;overflow:hidden;background:#cfe3ff;
+    font-family:"Noto Sans SC","PingFang SC","Hiragino Sans GB",-apple-system,sans-serif;
+    -webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
+  .view{position:relative;width:100%;height:100%;overflow:hidden}
+  .stage{position:absolute;left:50%;top:50%;width:1366px;height:1024px;transform-origin:center center}
+  .stage *{position:absolute}
+  img{display:block}
+  .bg{left:0;top:0;width:1366px;height:1024px;object-fit:cover}
+  .mask{left:0;top:0;width:1366px;height:1024px;
+    background:linear-gradient(180deg,rgba(240,248,255,.9),rgba(233,242,255,.94))}
+
+  .back{left:37px;top:36px;width:64px;height:64px;border-radius:32px;background:#fff;
+    box-shadow:0 4px 12px rgba(107,84,217,.16);display:flex;align-items:center;
+    justify-content:center;cursor:pointer}
+  .back span{position:static;font-size:42px;color:#11284F;line-height:1;margin-top:-6px}
+  .page-t{left:126px;top:44px;height:36px;font-size:30px;font-weight:700;color:#11284F}
+  .page-s{left:126px;top:84px;height:24px;font-size:17px;color:#5C7396}
+
+  .dots{left:960px;top:52px;display:flex;gap:12px;height:32px}
+  .dots i{position:static;width:32px;height:32px;border-radius:16px;background:#D8E4F5;
+    display:flex;align-items:center;justify-content:center;font-style:normal;
+    font-size:15px;font-weight:700;color:#8FA5C2}
+  .dots i.on{background:linear-gradient(180deg,#FFD24A,#FF9A00);color:#fff;
+    box-shadow:0 2px 8px rgba(255,154,0,.5)}
+  .dots i.ok{background:linear-gradient(180deg,#7BE6A8,#2FC56E);color:#fff}
+
+  .stone{left:1120px;top:48px;height:44px;border-radius:22px;background:#fff;
+    box-shadow:0 3px 10px rgba(107,84,217,.14);display:flex;align-items:center;
+    gap:8px;padding:0 18px}
+  .stone img{position:static;width:24px;height:24px;object-fit:contain}
+  .stone span{position:static;font-size:17px;font-weight:700;color:#11284F}
+
+  .card{left:200px;top:140px;width:966px;height:620px;border-radius:32px;
+    background:rgba(255,255,255,.96);border:2px solid #fff;
+    box-shadow:0 12px 40px rgba(80,110,180,.16)}
+  .tag{left:50px;top:36px;height:34px;border-radius:17px;background:#EAF3FF;
+    display:flex;align-items:center;gap:8px;padding:0 16px}
+  .tag b{position:static;font-size:15px;color:#3692FF;font-weight:700}
+  .qtext{left:50px;top:92px;width:866px;font-size:31px;font-weight:700;color:#11284F;line-height:1.45}
+  .qsub{left:50px;top:156px;width:866px;font-size:16px;color:#8FA5C2}
+
+  .opt{left:50px;width:866px;height:88px;border-radius:20px;background:#F5F9FF;
+    border:2.5px solid #E4EEFB;display:flex;align-items:center;gap:18px;padding:0 22px;cursor:pointer;
+    transition:background .15s,border-color .15s,transform .12s}
+  .opt:active{transform:scale(.995)}
+  .opt .k{position:static;width:44px;height:44px;border-radius:22px;background:#fff;
+    border:2px solid #DCE8F8;display:flex;align-items:center;justify-content:center;
+    font-size:19px;font-weight:700;color:#5C7396;flex:0 0 auto}
+  .opt .v{position:static;flex:1;font-size:26px;font-weight:700;color:#11284F}
+  .opt.right{background:#EAFBF1;border-color:#2FC56E}
+  .opt.right .k{background:#2FC56E;border-color:#2FC56E;color:#fff}
+  .opt.wrong{background:#FFF0EE;border-color:#FF6B52}
+  .opt.wrong .k{background:#FF6B52;border-color:#FF6B52;color:#fff}
+  .opt.dim{opacity:.5}
+
+  .fb{left:50px;top:508px;width:600px;height:82px;border-radius:18px;background:#EAF3FF;
+    display:none;align-items:center;gap:12px;padding:0 20px}
+  .fb.show{display:flex}
+  .fb .ico{position:static;width:36px;height:36px;border-radius:18px;background:#3692FF;
+    color:#fff;font-size:20px;font-weight:700;display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+  .fb .tx{position:static;flex:1;font-size:17px;line-height:1.45;color:#23436F}
+  .fb.bad{background:#FFF3F0}
+  .fb.bad .ico{background:#FF6B52}
+
+  .next{left:682px;top:516px;width:234px;height:78px;border-radius:42px;
+    background:linear-gradient(180deg,#8FA3C0,#71849F);border:4px solid rgba(255,255,255,.7);
+    display:flex;align-items:center;justify-content:center;cursor:pointer}
+  .next.on{background:linear-gradient(180deg,#FFF797,#FFDA2A 45%,#FF9A00);
+    border-color:#FFF4A8;box-shadow:0 5px 0 rgba(237,102,0,.75)}
+  .next span{position:static;font-size:30px;font-weight:900;color:#fff}
+  .next.on span{color:#702500}
+
+  .result{left:200px;top:140px;width:966px;height:620px;border-radius:32px;display:none;
+    background:rgba(255,255,255,.97);border:2px solid #fff;
+    box-shadow:0 12px 44px rgba(80,110,180,.2);flex-direction:column;
+    align-items:center;justify-content:center}
+  .result.show{display:flex}
+  .result *{position:static}
+  .r-title{font-size:46px;font-weight:900;color:#11284F;margin-bottom:10px}
+  .r-sub{font-size:20px;color:#5C7396;margin-bottom:26px}
+  .stars{display:flex;gap:16px;margin-bottom:30px}
+  .stars i{width:64px;height:64px;font-style:normal;font-size:56px;line-height:1;
+    color:#D8E4F5;text-align:center}
+  .stars i.on{color:#FFC107}
+  .r-bonus{display:flex;gap:40px;margin-bottom:34px}
+  .r-bonus div{display:flex;align-items:center;gap:8px;font-size:22px;font-weight:700;color:#11284F}
+  .r-bonus img{width:30px;height:30px;position:static}
+  .r-btn{width:360px;height:96px;border-radius:48px;
+    background:linear-gradient(180deg,#FFF797,#FFDA2A 45%,#FF9A00);
+    border:5px solid #FFF4A8;box-shadow:0 6px 0 rgba(237,102,0,.8);
+    display:flex;align-items:center;justify-content:center;cursor:pointer}
+  .r-btn span{font-size:36px;font-weight:900;color:#702500}
+
+  .nav-bar{left:0;top:893px;width:1366px;height:121px;opacity:.8;
+    background:linear-gradient(180deg,#E7F0FE,#DBDFFE)}
+  .nav-ico{top:906.55px;width:61.55px;height:54.04px;cursor:pointer}
+  .nav-label{top:961px;width:114.72px;height:45.36px;font-size:23.48px;font-weight:700;
+    color:#2442A3;text-align:center;line-height:1.9;cursor:pointer}
+
+  .toast{left:50%;top:800px;transform:translateX(-50%);padding:16px 34px;border-radius:22px;
+    background:rgba(9,25,60,.9);color:#fff;font-size:24px;font-weight:700;
+    opacity:0;pointer-events:none;transition:opacity .22s;white-space:nowrap}
+  .toast.show{opacity:1}
+</style>
+</head>
+<body>
+<div class="view">
+  <div class="stage" id="stage">
+    <img class="bg" src="assets/home2-bg.png" alt="">
+    <div class="mask"></div>
+
+    <div class="back" id="back"><span>‹</span></div>
+    <div class="page-t" id="pageT">课后闯关</div>
+    <div class="page-s" id="pageS">数学 · 分数的奥秘全集</div>
+    <div class="dots" id="dots"></div>
+    <div class="stone"><img src="assets/task-gem-s.png" alt=""><span id="stoneTxt">1,280</span></div>
+
+    <div class="card" id="card">
+      <div class="tag"><b id="tagTxt">第 1 题 / 共 3 题</b></div>
+      <div class="qtext" id="qtext">题目加载中…</div>
+      <div class="qsub" id="qsub">选一个你认为正确的答案</div>
+      <div id="opts" style="left:0;top:0;width:966px;height:620px"></div>
+      <div class="fb" id="fb"><span class="ico" id="fbIco">✓</span><span class="tx" id="fbTx"></span></div>
+      <div class="next" id="next"><span>确认</span></div>
+    </div>
+
+    <div class="result" id="result">
+      <div class="r-title" id="rTitle">闯关成功！</div>
+      <div class="r-sub" id="rSub">本讲内容已经掌握</div>
+      <div class="stars"><i id="s1">★</i><i id="s2">★</i><i id="s3">★</i></div>
+      <div class="r-bonus">
+        <div><img src="assets/task-gem-s.png" alt=""><span id="rStone">+20 灵石</span></div>
+        <div><img src="assets/task-star.png" alt=""><span id="rExp">+60 经验</span></div>
+      </div>
+      <div class="r-btn" id="rBtn"><span id="rBtnTxt">领取奖励</span></div>
+    </div>
+
+    <div class="nav-bar"></div>
+    <img class="nav-ico" src="assets/nav-home.png" style="left:114.6px" alt="">
+    <div class="nav-label" data-go="home.html" style="left:88.04px">首页</div>
+    <img class="nav-ico" src="assets/nav-task.png" style="left:384.1px" alt="">
+    <div class="nav-label" data-go="task.html" style="left:357.51px">任务</div>
+    <img class="nav-ico" src="assets/nav-battle.png" style="left:653.9px" alt="">
+    <div class="nav-label" data-go="battle.html" style="left:624.3px">战斗</div>
+    <img class="nav-ico" src="assets/nav-bag.png" style="left:923.0px" alt="">
+    <div class="nav-label" data-go="bag.html" style="left:896.44px">储物袋</div>
+    <img class="nav-ico" src="assets/nav-me.png" style="left:1189.8px" alt="">
+    <div class="nav-label" data-go="me.html" style="left:1163.23px">我的</div>
+
+    <div class="toast" id="toast"></div>
+  </div>
+</div>
+<script src="store.js?v=2"></script>
+<script>
+  var stage = document.getElementById('stage');
+  function fit() {
+    var s = Math.min(window.innerWidth / 1366, window.innerHeight / 1024);
+    stage.style.transform = 'translate(-50%,-50%) scale(' + s + ')';
+  }
+  addEventListener('resize', fit); addEventListener('orientationchange', fit); fit();
+
+  var qp = new URLSearchParams(location.search);
+  var cid = qp.get('course') || 'series_math_g4';
+  var course = Store.getCourse(cid) || Store.getCourse('series_math_g4');
+  cid = course.id;
+  var n = parseInt(qp.get('n'), 10) || Store.currentLesson(cid).n;
+  var lesson = null;
+  for (var i = 0; i < course.lessons.length; i++) if (course.lessons[i].n === n) lesson = course.lessons[i];
+  if (!lesson) lesson = Store.currentLesson(cid);
+
+  /* 题目来源：默认内置题库；接后台后由 Store.useQuizApi() 提供（按视频对应） */
+  var quiz = Store.quizOf(cid, lesson.n);
+  var idx = 0, answered = 0, right = 0, picked = null, locked = false;
+
+  document.getElementById('pageS').textContent = course.subject + ' · 第 ' + lesson.n + ' 讲 ' + lesson.title;
+  document.getElementById('stoneTxt').textContent = Store.fmt(Store.get().stone);
+
+  var dots = document.getElementById('dots');
+  quiz.forEach(function (q, i) {
+    var d = document.createElement('i');
+    d.textContent = i + 1;
+    dots.appendChild(d);
+  });
+
+  function paintDots() {
+    var ds = dots.querySelectorAll('i');
+    for (var i = 0; i < ds.length; i++) {
+      ds[i].className = '';
+      if (i < idx) ds[i].className = 'ok';
+      if (i === idx) ds[i].className = 'on';
+    }
+  }
+
+  function render() {
+    picked = null; locked = false;
+    var q = quiz[idx];
+    document.getElementById('tagTxt').textContent = '第 ' + (idx + 1) + ' 题 / 共 ' + quiz.length + ' 题';
+    document.getElementById('qtext').textContent = q.q;
+    document.getElementById('qsub').textContent = '选一个你认为正确的答案';
+    document.getElementById('fb').className = 'fb';
+    document.getElementById('next').className = 'next';
+    document.getElementById('next').querySelector('span').textContent = '确认';
+
+    var box = document.getElementById('opts');
+    box.innerHTML = '';
+    var K = ['A', 'B', 'C', 'D'];
+    q.opts.forEach(function (o, i) {
+      var el = document.createElement('div');
+      el.className = 'opt';
+      el.style.top = (180 + i * 108) + 'px';
+      el.innerHTML = '<span class="k">' + K[i] + '</span><span class="v">' + o + '</span>';
+      el.addEventListener('click', function () {
+        if (locked) return;
+        document.querySelectorAll('.opt').forEach(function (x) { x.classList.remove('right', 'wrong'); x.classList.add('dim'); });
+        el.classList.remove('dim');
+        picked = i;
+        document.getElementById('next').classList.add('on');
+      });
+      box.appendChild(el);
+    });
+    paintDots();
+  }
+
+  function submit() {
+    if (picked === null) { Store.toast('先选一个答案'); return; }
+    if (locked) { goNext(); return; }
+    locked = true;
+    var q = quiz[idx];
+    var all = document.querySelectorAll('.opt');
+    all.forEach(function (x) { x.classList.remove('dim'); });
+
+    if (picked === q.a) {
+      right++;
+      all[picked].classList.add('right');
+      document.getElementById('fb').className = 'fb show';
+      document.getElementById('fbIco').textContent = '✓';
+      document.getElementById('fbTx').textContent = q.why;
+    } else {
+      all[picked].classList.add('wrong');
+      all[q.a].classList.add('right');
+      document.getElementById('fb').className = 'fb show bad';
+      document.getElementById('fbIco').textContent = '×';
+      document.getElementById('fbTx').textContent = q.why;
+    }
+    document.getElementById('next').classList.add('on');
+    document.getElementById('next').querySelector('span').textContent =
+      (idx === quiz.length - 1) ? '看结果' : '下一题';
+    answered++;
+  }
+
+  function goNext() {
+    if (idx < quiz.length - 1) { idx++; render(); }
+    else finish();
+  }
+
+  var reward = null;
+
+  function finish() {
+    document.getElementById('card').style.display = 'none';
+    var res = document.getElementById('result');
+    res.classList.add('show');
+
+    var pass = right >= Math.ceil(quiz.length * 0.66);
+    var stars = right === quiz.length ? 3 : (right >= quiz.length - 1 ? 2 : 1);
+
+    document.getElementById('rTitle').textContent = pass ? '闯关成功！' : '再练一次吧';
+    document.getElementById('rSub').textContent = pass
+      ? '答对 ' + right + ' / ' + quiz.length + ' 题 · 本讲内容掌握啦'
+      : '只答对 ' + right + ' / ' + quiz.length + ' 题 · 需要答对 2 题以上';
+
+    [1, 2, 3].forEach(function (k) {
+      var el = document.getElementById('s' + k);
+      el.className = (pass && k <= stars) ? 'on' : '';
+    });
+
+    if (pass) {
+      var r = Store.completeLesson(cid, lesson.n);
+      reward = {
+        stone: r.stone, exp: r.exp, first: r.first,
+        lessonTitle: lesson.title, courseName: course.name,
+        subject: course.subject, n: lesson.n, stars: stars
+      };
+      document.getElementById('rStone').textContent = '+' + r.stone + ' 灵石';
+      document.getElementById('rExp').textContent = '+' + r.exp + ' 经验';
+      if (!r.first) {
+        document.getElementById('rSub').textContent = '这讲之前学过啦 · 再练一次不加奖励';
+        document.getElementById('rBtnTxt').textContent = '回到课程';
+      } else {
+        document.getElementById('rBtnTxt').textContent = '领取奖励';
+      }
+    } else {
+      document.getElementById('rStone').textContent = '+0 灵石';
+      document.getElementById('rExp').textContent = '+0 经验';
+      document.getElementById('rBtnTxt').textContent = '再试一次';
+    }
+  }
+
+  document.getElementById('next').addEventListener('click', function () {
+    if (!locked) submit();
+    else goNext();
+  });
+
+  document.getElementById('rBtn').addEventListener('click', function () {
+    if (!reward) { location.reload(); return; }
+    if (!reward.first) { location.href = 'course.html?course=' + cid; return; }
+    Store.setReward(reward);
+    location.href = 'reward.html';
+  });
+
+  document.getElementById('back').addEventListener('click', function () {
+    location.href = 'course.html?course=' + cid;
+  });
+
+  document.querySelectorAll('.nav-label').forEach(function (el) {
+    el.addEventListener('click', function () { location.href = el.dataset.go; });
+  });
+
+  render();
+</script>
+</body>
+</html>

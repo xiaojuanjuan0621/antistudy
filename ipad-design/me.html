@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>我的 · 知识冒险岛</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%;overflow:hidden;background:#cfe3ff;
+    font-family:"Noto Sans SC","PingFang SC","Hiragino Sans GB",-apple-system,sans-serif;
+    -webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
+  .view{position:relative;width:100%;height:100%;overflow:hidden}
+  .stage{position:absolute;left:50%;top:50%;width:1366px;height:1024px;transform-origin:center center}
+  .stage *{position:absolute}
+  img{display:block}
+  .bg{left:0;top:0;width:1366px;height:1024px;object-fit:cover}
+  .mask{left:0;top:0;width:1366px;height:1024px;
+    background:linear-gradient(180deg,rgba(236,246,255,.82),rgba(224,238,255,.94))}
+
+  .page-t{left:53px;top:42px;height:38px;font-size:32px;font-weight:700;color:#11284F}
+  .stone{left:1090px;top:42px;height:46px;border-radius:23px;background:#fff;
+    box-shadow:0 3px 10px rgba(107,84,217,.14);display:flex;align-items:center;gap:8px;padding:0 18px}
+  .stone img{position:static;width:25px;height:25px;object-fit:contain}
+  .stone span{position:static;font-size:18px;font-weight:700;color:#11284F}
+
+  .lcard{left:53px;top:150px;width:400px;height:660px;border-radius:30px;
+    background:rgba(255,255,255,.95);border:2px solid #fff;
+    box-shadow:0 10px 30px rgba(80,110,180,.14)}
+  .avwrap{left:100px;top:44px;width:200px;height:200px;border-radius:100px;overflow:hidden;
+    border:6px solid #fff;box-shadow:0 8px 22px rgba(107,84,217,.2);background:#DCE8FA}
+  .avwrap img{left:0;top:0;width:200px;height:200px;object-fit:cover;object-position:50% 12%}
+  .uname{left:0;top:264px;width:400px;text-align:center;font-size:32px;font-weight:900;color:#11284F}
+  .usub{left:0;top:308px;width:400px;text-align:center;font-size:16px;color:#7A8FAE}
+  .lvbar{left:60px;top:352px;width:280px;height:44px;border-radius:22px;background:#F0F5FD;
+    display:flex;align-items:center;justify-content:center}
+  .lvbar span{position:static;font-size:17px;font-weight:700;color:#5B3CE0}
+  .etrack{left:60px;top:410px;width:280px;height:14px;border-radius:7px;background:#E6EDF8;overflow:hidden}
+  .etrack i{left:0;top:0;height:14px;border-radius:7px;
+    background:linear-gradient(90deg,#8E7BFF,#5B3CE0);transition:width .4s}
+  .etxt{left:60px;top:432px;width:280px;text-align:center;font-size:13px;color:#8FA5C2}
+
+  .sep{left:40px;width:320px;height:1px;background:#EAF1FA}
+  .mini{left:0;width:400px;text-align:center}
+  .mini .mv{font-size:34px;font-weight:900;color:#11284F;font-family:Inter,sans-serif}
+  .mini .ml{font-size:14px;color:#7A8FAE;margin-top:4px}
+
+  .sbar{left:493px;top:150px;width:820px;height:186px;border-radius:30px;
+    background:rgba(255,255,255,.95);border:2px solid #fff;
+    box-shadow:0 10px 30px rgba(80,110,180,.14)}
+  .sitem{top:46px;width:200px;text-align:center}
+  .mini .mv,.mini .ml{position:static;display:block}
+  .sitem .sv{position:static;font-size:44px;font-weight:900;color:#11284F;font-family:Inter,sans-serif;line-height:1}
+  .sitem .sl{position:static;font-size:15px;color:#7A8FAE;margin-top:10px}
+  .sitem .su{position:static;font-size:13px;color:#B6C6DB;margin-top:2px}
+  .vsep{top:48px;width:1px;height:92px;background:#EAF1FA}
+
+  .acard{left:493px;top:360px;width:820px;height:330px;border-radius:30px;
+    background:rgba(255,255,255,.95);border:2px solid #fff;
+    box-shadow:0 10px 30px rgba(80,110,180,.14)}
+  .ah{left:26px;top:22px;font-size:21px;font-weight:700;color:#11284F}
+  .ah-s{left:120px;top:27px;font-size:14px;color:#93A8C4}
+  .badge{width:150px;height:118px;border-radius:20px;background:#F6FAFF;border:2px solid #E9F1FB;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px}
+  .badge *{position:static}
+  .badge img{width:46px;height:46px;object-fit:contain;filter:grayscale(1);opacity:.35}
+  .badge b{font-size:14px;font-weight:700;color:#9FB0C8}
+  .badge.on{background:#FFF9E8;border-color:#FFE28A}
+  .badge.on img{filter:none;opacity:1}
+  .badge.on b{color:#8A5B00}
+
+  .row2{left:493px;top:710px;width:400px;height:100px;border-radius:50px;background:#fff;
+    border:2px solid #EAF1FA;box-shadow:0 6px 18px rgba(80,110,180,.1);
+    display:flex;align-items:center;gap:14px;padding:0 26px;cursor:pointer}
+  .row2 .ic{position:static;width:46px;height:46px;border-radius:23px;background:#EEF4FF;
+    display:flex;align-items:center;justify-content:center}
+  .row2 .ic img{position:static;width:26px;height:26px;object-fit:contain}
+  .row2 .tt{position:static;flex:1;font-size:20px;font-weight:700;color:#11284F}
+  .row2 .tt small{position:static;display:block;font-size:13px;font-weight:400;color:#9FB0C8;margin-top:3px}
+  .row2.danger .ic{background:#FFF0EE}
+  .row2.danger .tt{color:#C0392B}
+
+  .nav-bar{left:0;top:893px;width:1366px;height:121px;opacity:.8;
+    background:linear-gradient(180deg,#E7F0FE,#DBDFFE)}
+  .nav-ico{top:906.55px;width:61.55px;height:54.04px;cursor:pointer}
+  .nav-label{top:961px;width:114.72px;height:45.36px;font-size:23.48px;font-weight:700;
+    color:#2442A3;text-align:center;line-height:1.9;cursor:pointer}
+
+  .toast{left:50%;top:820px;transform:translateX(-50%);padding:16px 34px;border-radius:22px;
+    background:rgba(9,25,60,.92);color:#fff;font-size:24px;font-weight:700;
+    opacity:0;pointer-events:none;transition:opacity .22s;white-space:nowrap}
+  .toast.show{opacity:1}
+</style>
+</head>
+<body>
+<div class="view">
+  <div class="stage" id="stage">
+    <img class="bg" src="assets/home2-bg.png" alt="">
+    <div class="mask"></div>
+
+    <div class="page-t">我的</div>
+    <div class="stone"><img src="assets/task-gem-s.png" alt=""><span id="stoneTxt">1,280</span></div>
+
+    <div class="lcard">
+      <div class="avwrap"><img src="assets/home2-boy.png" alt=""></div>
+      <div class="uname" id="uname">小星星</div>
+      <div class="usub" id="usub">四年级 · 已加入 12 天</div>
+      <div class="lvbar"><span id="lvTxt">Lv.5 · 数学逻辑</span></div>
+      <div class="etrack"><i id="ebar" style="width:0%"></i></div>
+      <div class="etxt" id="etxt">0 / 200 经验</div>
+      <div class="sep" style="top:492px"></div>
+      <div class="mini" style="top:498px">
+        <div class="mv" id="mAttr">0</div>
+        <div class="ml">四维总和</div>
+      </div>
+      <div class="mini" style="top:574px">
+        <div class="mv" id="mBadge">0</div>
+        <div class="ml">已点亮成就</div>
+      </div>
+    </div>
+
+    <div class="sbar">
+      <div class="sitem" style="left:52px"><div class="sv" id="s1">0</div><div class="sl">已学讲次</div><div class="su" id="s1u">共 10 讲</div></div>
+      <i class="vsep" style="left:266px"></i>
+      <div class="sitem" style="left:322px"><div class="sv" id="s2">0</div><div class="sl">累计学习</div><div class="su">分钟</div></div>
+      <i class="vsep" style="left:536px"></i>
+      <div class="sitem" style="left:592px"><div class="sv" id="s3">7</div><div class="sl">连续打卡</div><div class="su">天</div></div>
+    </div>
+
+    <div class="acard">
+      <div class="ah">成就墙</div>
+      <div class="ah-s" id="ahCount">0 / 6 已点亮</div>
+      <div id="badges"></div>
+    </div>
+
+    <div class="row2" id="parentBtn" style="left:493px">
+      <span class="ic"><img src="assets/course2-i-medal.png" alt=""></span>
+      <span class="tt">家长中心<small>排期 · 看板 · 时长管控</small></span>
+      <span style="position:static;font-size:26px;color:#B6C6DB">›</span>
+    </div>
+
+    <div class="row2 danger" id="resetBtn" style="left:913px">
+      <span class="ic"><img src="assets/course2-i-time.png" alt=""></span>
+      <span class="tt">重置演示数据<small>清空进度，从选蛋重新开始</small></span>
+      <span style="position:static;font-size:26px;color:#B6C6DB">›</span>
+    </div>
+
+    <div class="nav-bar"></div>
+    <img class="nav-ico" src="assets/nav-home.png" style="left:114.6px" alt="">
+    <div class="nav-label" data-go="home.html" style="left:88.04px">首页</div>
+    <img class="nav-ico" src="assets/nav-task.png" style="left:384.1px" alt="">
+    <div class="nav-label" data-go="task.html" style="left:357.51px">任务</div>
+    <img class="nav-ico" src="assets/nav-battle.png" style="left:653.9px" alt="">
+    <div class="nav-label" data-go="battle.html" style="left:624.3px">战斗</div>
+    <img class="nav-ico" src="assets/nav-bag.png" style="left:923.0px" alt="">
+    <div class="nav-label" data-go="bag.html" style="left:896.44px">储物袋</div>
+    <img class="nav-ico" src="assets/nav-me.png" style="left:1189.8px" alt="">
+    <div class="nav-label" style="left:1163.23px;color:#0F8CEB">我的</div>
+
+    <div class="toast" id="toast"></div>
+  </div>
+</div>
+<script src="store.js?v=2"></script>
+<script>
+  var stage = document.getElementById('stage');
+  function fit() {
+    var s = Math.min(window.innerWidth / 1366, window.innerHeight / 1024);
+    stage.style.transform = 'translate(-50%,-50%) scale(' + s + ')';
+  }
+  addEventListener('resize', fit); addEventListener('orientationchange', fit); fit();
+
+  function stats() {
+    var s = Store.get(), count = 0, mins = 0;
+    Object.keys(s.lessons).forEach(function (k) {
+      var rec = s.lessons[k];
+      if (!rec || !rec.done) return;
+      count++;
+      var parts = k.split(':');
+      var c = Store.getCourse(parts[0]);
+      if (!c) return;
+      c.lessons.forEach(function (l) { if (String(l.n) === parts[1]) mins += l.min; });
+    });
+    return { count: count, mins: Math.round(mins) };
+  }
+
+  var BADGES = [
+    { key: 'first', name: '第一讲', check: function (s, st) { return st.count >= 1; }, img: 'assets/task-star.png' },
+    { key: 'three', name: '学完三讲', check: function (s, st) { return st.count >= 3; }, img: 'assets/course2-i-book.png' },
+    { key: 'six', name: '全体系通关', check: function (s, st) { return st.count >= 6; }, img: 'assets/task-chest.png' },
+    { key: 'streak', name: '连续七天', check: function (s) { return s.streak >= 7; }, img: 'assets/course2-sign.png' },
+    { key: 'hatch', name: '破壳而出', check: function (s) { return s.pet.hatch >= 100; }, img: 'assets/bag2-dragon.png' },
+    { key: 'balance', name: '四维均衡', check: function (s) { return Store.attrTotal() >= 80; }, img: 'assets/course2-i-medal.png' }
+  ];
+
+  function render() {
+    var s = Store.get();
+    var st = stats();
+    document.getElementById('stoneTxt').textContent = Store.fmt(s.stone);
+    document.getElementById('uname').textContent = s.user.name;
+    document.getElementById('lvTxt').textContent = 'Lv.' + Store.level() + ' · 知识冒险家';
+    document.getElementById('ebar').style.width = Store.expPct() + '%';
+    document.getElementById('etxt').textContent = Store.expInLevel() + ' / 200 经验';
+    document.getElementById('mAttr').textContent = Store.attrTotal();
+    document.getElementById('s1').textContent = st.count;
+    document.getElementById('s2').textContent = st.mins;
+    document.getElementById('s3').textContent = s.streak;
+    var totalLessons = 0;
+    Object.keys(Store.COURSES).forEach(function (k) { totalLessons += Store.COURSES[k].lessons.length; });
+    var s1u = document.getElementById('s1u');
+    if (s1u) s1u.textContent = '共 ' + totalLessons + ' 讲';
+
+    var box = document.getElementById('badges');
+    box.innerHTML = '';
+    var lit = 0;
+    BADGES.forEach(function (b, i) {
+      var on = b.check(s, st);
+      if (on) lit++;
+      var el = document.createElement('div');
+      el.className = 'badge' + (on ? ' on' : '');
+      el.style.left = (26 + (i % 4) * 168) + 'px';
+      el.style.top = (72 + Math.floor(i / 4) * 130) + 'px';
+      el.innerHTML = '<img src="' + b.img + '" alt=""><b>' + b.name + '</b>';
+      box.appendChild(el);
+    });
+    document.getElementById('ahCount').textContent = lit + ' / ' + BADGES.length + ' 已点亮';
+    document.getElementById('mBadge').textContent = lit;
+  }
+
+  document.getElementById('parentBtn').addEventListener('click', function () {
+    var pin = prompt('请输入家长密码（演示：1234）');
+    if (pin === null) return;
+    if (pin.trim() !== '1234') { Store.toast('密码不对'); return; }
+    Store.toast('家长中心还没做 · 需要先定排期表结构');
+  });
+
+  document.getElementById('resetBtn').addEventListener('click', function () {
+    if (!confirm('确定清空所有学习进度，重新从选蛋开始？')) return;
+    Store.reset();
+    location.href = 'egg-select.html';
+  });
+
+  document.querySelectorAll('.nav-label[data-go]').forEach(function (el) {
+    el.addEventListener('click', function () { location.href = el.dataset.go; });
+  });
+
+  render();
+</script>
+</body>
+</html>
